@@ -8,7 +8,9 @@ requirejs.config({
 		gridlib : 'libs/gridlib',
 
 		view : 'views',
-		controller : 'controllers'
+		controller : 'controllers',
+		provider : 'providers',
+		manager : 'managers'
 	},
 	'shim': {
 		'underscore': {

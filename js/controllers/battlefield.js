@@ -1,36 +1,56 @@
 define('controller/battlefield', [
-	'backbone',
+	'controller/base',
 	'd3',
 	'view/battlefield',
 	'gridlib/screen_coordinate',
 	'gridlib/grid',
-	'gridlib/cube'
+	'gridlib/cube',
+	'provider/events'
 ], function(
-	Backbone,
+	BaseController,
 	d3,
 	BattlefiledView,
 	ScreenCoordinate,
 	Grid,
-	Cube
+	Cube,
+	eventsProvider
 ) {
-	return Backbone.View.extend({
+	return BaseController.extend({
+		SCALE : 80,
 		MAX_DISTANCE : 20,
 		FIELD_HOR_GRID_COUNT : 15,
 		FIELD_VER_GRID_COUNT : 11,
+		EDITABLE_OBSTACLES : true,
+
+		cm_context : {
+			main : 'battlefield',
+			sub : 'main'
+		},
 
 		initialize : function() {
+			BaseController.prototype.initialize.apply(this, arguments);
+
+			/*this.observeEvent(eventsProvider.hex.clicked, function(e, data) {
+				console.log('events', arguments);
+			});*/
+
 			this.initializeView();
 		},
 
 		initializeView : function() {
 			this.view = new BattlefiledView({
-				el : this.$el
+				el : this.$el,
+				controller : this
 			});
+
+			/*this.publishEvent(eventsProvider.hex.clicked, {
+				lol : 1
+			});*/
 
 
 			var orientation = true;
-			var diagram_movement_range = this.makeMovementRange();
-			diagram_movement_range.update(50, orientation);
+			var diagram_movement_range = this.view.render();
+			diagram_movement_range.update(this.SCALE, orientation);
 		},
 
 		/**
@@ -108,8 +128,15 @@ define('controller/battlefield', [
 			diagram.polygons = diagram.tiles.append('polygon');
 
 			diagram.makeTilesSelectable = function(callback) {
+				//Create empty 'set' of selected hexes
 				diagram.selected = d3.set();
-				diagram.toggle = function(cube) {
+
+				/**
+				 * Creates obstacle on the map or removes it
+				 *
+				 * @param cube
+				 */
+				diagram.toggleObstacle = function(cube) {
 					if (diagram.selected.has(cube)) {
 						diagram.selected.remove(cube);
 					} else {
@@ -117,31 +144,12 @@ define('controller/battlefield', [
 					}
 				};
 
-				var drag_state = 0;
-				var drag = d3.behavior.drag()
-					.on('dragstart', function(d) {
-						drag_state = diagram.selected.has(d.cube);
-					})
-					.on('drag', function() {
-						var target = d3.select(d3.event.sourceEvent.target);
-						if (target !== undefined && target.data()[0] && target.data()[0].cube) {
-							var cube = target.data()[0].cube;
-							if (drag_state) {
-								diagram.selected.remove(cube);
-							} else {
-								diagram.selected.add(cube);
-							}
-						}
-						callback();
-					});
+				diagram.tiles.on('click', function(d) {
+					d3.event.preventDefault();
+					diagram.toggleObstacle(d.cube);
 
-				diagram.tiles
-					.on('click', function(d) {
-						d3.event.preventDefault();
-						diagram.toggle(d.cube);
-						callback();
-					})
-					.call(drag);
+					callback();
+				});
 			};
 
 
@@ -340,46 +348,13 @@ define('controller/battlefield', [
 			};
 		},
 
-		makeMovementRange : function() {
-			var diagram = this.makeGridDiagram(d3.select("#diagram-movement-range"), Grid.trapezoidalShape(0, this.FIELD_HOR_GRID_COUNT - 1, 0, this.FIELD_VER_GRID_COUNT, Grid.evenRToCube))
-				.addLabels();
+		getDistanceLimit : function() {
+			return parseInt(d3.select("#limit-movement-range").node().value, 10);
+		},
 
-			var redraw = function () {
-				var bfs = this.breadthFirstSearch(new Cube(0, 0, 0), Infinity, this.MAX_DISTANCE, diagram.selected.has.bind(diagram.selected));
-
-				distance_limit = parseInt(d3.select("#limit-movement-range").node().value, 10);
-				d3.selectAll(".movement-range").text(distance_limit);
-
-				diagram.tiles
-					.classed('blocked', function(d) {
-						return diagram.selected.has(d.cube);
-					})
-					.classed('shadow', function(d) {
-						return !bfs.cost_so_far.has(d.cube) || bfs.cost_so_far.get(d.cube) > distance_limit;
-					})
-					.classed('start', function(d) {
-						return Cube.$length(d.cube) == 0;
-					})
-					.classed('goal', function(d) {
-						return d.cube.equals(mouseover);
-					});
-
-				diagram.tiles.selectAll("text")
-					.text(function(d) { return bfs.cost_so_far.has(d.cube)? bfs.cost_so_far.get(d.cube) : ""; });
-
-				// Reconstruct path to mouseover position
-				var path = [];
-				var node = mouseover;
-				while (node != null) {
-					path.push(node);
-					node = bfs.came_from.get(node);
-				}
-				diagram.setPath(path);
-			}.bind(this);
-
-			diagram.makeTilesSelectable(redraw);
-			diagram.selected = d3.set([
-				/*new Cube(2, -1, -1),
+		getObstacles : function() {
+			return [
+				new Cube(2, -1, -1),
 				new Cube(2, -2, 0),
 				new Cube(0, -2, 2),
 				new Cube(-1, -1, 2),
@@ -393,30 +368,8 @@ define('controller/battlefield', [
 				new Cube(-2, 1, 1),
 				new Cube(-3, 1, 2),
 				new Cube(-4, 1, 3),
-				new Cube(-5, 1, 4)*/
-			]);
-
-			var onEventOccur = function(d) {
-				mouseover = d.cube;
-				redraw();
-			};
-
-			var mouseover = new Cube(2, 2, -4);
-			diagram.tiles
-				.on('mouseover', onEventOccur)
-				.on('touchstart', onEventOccur)
-				.on('touchmove', onEventOccur);
-
-			var distance_limit = 4;
-
-			diagram.onUpdate(redraw);
-			diagram.addPath();
-
-			d3.select("#limit-movement-range")
-				.on('change', redraw)
-				.on('input', redraw);
-
-			return diagram;
+				new Cube(-5, 1, 4)
+			];
 		}
 	});
 });
