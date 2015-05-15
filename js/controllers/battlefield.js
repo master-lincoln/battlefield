@@ -63,7 +63,7 @@ define('controller/battlefield', [
 
 		getMaxDistance : function() {
 			//return this.MAX_DISTANCE;
-			return 4;
+			return Infinity;
 		},
 
 		getMaxMovement : function() {
