@@ -3,144 +3,11 @@
 // Copyright 2013 Red Blob Games <redblobgames@gmail.com>
 // License: Apache v2.0 <http://www.apache.org/licenses/LICENSE-2.0.html>
 
-console.info("I'm happy to answer questions about the code — email me at redblobgames@gmail.com");
-
-
-/* There are lots of diagrams on the page and many of them get updated
- * at the same time, on a button press. Drawing them all is slow; let's
- * delay the drawing.
- *
- * The logic is:
- * 1. If a diagram is updated, put it in a queue.
- * 2. If a diagram is in the queue and is on screen,
- *    a. if it's the first time drawing it, draw it immediately
- *    b. otherwise, animate the transition from previous state
- * 3. If a diagram is in the queue and is not on screen,
- *    draw it in the background (if the user is idle)
- */
-
-// The idle tracker will call a callback when the user is idle 1000,
-// 1100, 1200, etc. milliseconds. I use this to draw off-screen
-// diagrams in the background. If there are no diagrams to redraw,
-// call idle_tracker.stop() to remove the interval and event handlers.
-var idle_tracker = {
-	interval: 1000,
-	idle_threshold: 1000,
-	running: false,
-	needs_to_run: false,
-	last_activity: Date.now(),
-	callback: null
-};
-idle_tracker.user_activity = function(e) {
-	this.last_activity = Date.now();
-}
-idle_tracker.loop = function() {
-	idle_tracker.running = setTimeout(idle_tracker.loop, idle_tracker.interval);
-	if (idle_tracker.needs_to_run || Date.now() - idle_tracker.last_activity > idle_tracker.idle_threshold) {
-		idle_tracker.callback();
-	}
-	idle_tracker.needs_to_run = false;
-}
-idle_tracker.start = function() {
-	this.needs_to_run = true;
-	if (!this.running) {
-		// There is no loop running so start it, and also start tracking user idle
-		this.running = setTimeout(this.loop, 0);
-		window.addEventListener('scroll', this.user_activity);
-		window.addEventListener('touchmove', this.user_activity);
-	} else {
-		// There's a loop scheduled but I want it to run immediately
-		clearTimeout(this.running);
-		this.running = setTimeout(this.loop, 1);
-	}
-};
-idle_tracker.stop = function() {
-	if (this.running) {
-		// Stop tracking user idle when we don't need to (performance)
-		window.removeEventListener('scroll', this.user_activity);
-		window.removeEventListener('touchmove', this.user_activity);
-		clearTimeout(this.running);
-		this.running = false;
-	}
-}
-
-// How far outside the viewport is this element? 0 if it's visible even partially.
-function distanceToScreen(node) {
-	// Compare two ranges: the top:bottom of the browser window and
-	// the top:bottom of the element
-	var viewTop = window.pageYOffset;
-	var viewBottom = viewTop + window.innerHeight;
-
-	// Workaround for Firefox: SVG nodes have no
-	// offsetTop/offsetHeight so I check the parent instead
-	if (node.offsetTop === undefined) {
-		node = node.parentNode;
-	}
-	var elementTop = node.offsetTop;
-	var elementBottom = elementTop + node.offsetHeight;
-	return Math.max(0, elementTop - viewBottom, viewTop - elementBottom);
-}
-
-// Draw all the on-screen elements that are queued up, and anything
-// else if we're idle
-function _delayedDraw() {
-	var actions = [];
-	var idle_draws_allowed = 4;
-
-	// First evaluate all the actions and how far the elements are from being viewed
-	delay.queue.forEach(function(id, ea) {
-		var element = ea[0], action = ea[1];
-		var d = distanceToScreen(element.node());
-		actions.push([id, action, d]);
-	});
-
-	// Sort so that the ones closest to the viewport are first
-	actions.sort(function(a, b) { return a[2] - b[2]; });
-
-	// Draw all the ones that are visible now, or up to
-	// idle_draws_allowed that aren't visible now
-	actions.forEach(function(ia) {
-		var id = ia[0], action = ia[1], d = ia[2];
-		if (d == 0 || idle_draws_allowed > 0) {
-			if (d != 0) --idle_draws_allowed;
-
-			delay.queue.remove(id);
-			delay.refresh.add(id);
-
-			var animate = delay.refresh.has(id) && d == 0;
-			action(function(selection) {
-				return animate? selection.transition().duration(200) : selection;
-			});
-		}
-	});
-}
-
-// Function for use with d3.timer
-function _delayDrawOnTimeout() {
-	_delayedDraw();
-	if (delay.queue.keys().length == 0) { idle_tracker.stop(); }
-}
-
-// Interface used by the rest of the code: call this function with the
-// d3 selection of the element being drawn (typically an <svg>) and an
-// action. The action will be called with an animate parameter, which
-// is a function that takes a d3 selection and returns it optionally
-// with an animated transition.
 function delay(element, action) {
-	delay.queue.set(element.attr('id'), [element, action]);
-	idle_tracker.start();
+	action(function(selection) {
+		return selection;
+	});
 }
-delay.queue = d3.map();  // which elements need redrawing?
-delay.refresh = d3.set();  // set of elements we've seen before
-idle_tracker.callback = _delayDrawOnTimeout;
-
-/* NOTE: on iOS, scroll event doesn't occur until after the scrolling
- * stops, which is too late for this redraw. I am not sure how to do
- * this properly. Instead of drawing only on scroll, I also draw in
- * the background when the user is idle. */
-
-
-
 
 // (x, y) should be the center
 // scale should be the distance from corner to corner
@@ -340,7 +207,9 @@ function makeGridDiagram(svg, cubes) {
 		diagram.grid = grid;
 
 		delay(svg, function(animate) {
-			if (first_draw) { animate = function(selection) { return selection; }; }
+			if (first_draw) {
+				animate = function(selection) { return selection; };
+			}
 
 			// NOTE: In Webkit I can use svg.node().clientWidth but in Gecko that returns 0 :(
 			diagram.translate = new ScreenCoordinate((parseFloat(svg.attr('width')) - bounds.minX - bounds.maxX)/2,
