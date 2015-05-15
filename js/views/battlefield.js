@@ -1,11 +1,13 @@
 define('view/battlefield', [
 	'view/base',
 	'gridlib/grid',
-	'gridlib/cube'
+	'gridlib/cube',
+	'd3'
 ], function(
 	BaseView,
 	Grid,
-	Cube
+	Cube,
+	d3
 ) {
 	return BaseView.extend({
 		diagram : null,
@@ -15,14 +17,15 @@ define('view/battlefield', [
 		},
 
 		render : function() {
+			var controller = this.controller;
 			var diagram = this.diagram = this.createDiagram();
 
 			this.diagram.addLabels();
 
 			var redraw = function () {
-				var bfs = this.controller.breadthFirstSearch(new Cube(0, 0, 0), Infinity, this.controller.MAX_DISTANCE, diagram.selected.has.bind(diagram.selected));
+				var bfs = controller.breadthFirstSearch(new Cube(0, 0, 0), Infinity, controller.getMaxDistance(), diagram.selected.has.bind(diagram.selected));
 
-				var distance_limit = this.controller.getDistanceLimit();
+				var distance_limit = this.getDistanceLimit();
 
 				d3.selectAll(".movement-range").text(distance_limit);
 
@@ -53,11 +56,11 @@ define('view/battlefield', [
 				diagram.setPath(path);
 			}.bind(this);
 
-			if (this.EDITABLE_OBSTACLES) {
+			if (controller.areObstaclesManuallyEditable()) {
 				diagram.makeTilesSelectable(redraw);
 			}
 
-			diagram.selected = d3.set(this.controller.getObstacles());
+			diagram.selected = this.controller.getObstacles();
 
 			var onEventOccur = function(d) {
 				mouseover = d.cube;
@@ -81,10 +84,14 @@ define('view/battlefield', [
 			return diagram;
 		},
 
+		getDistanceLimit : function() {
+			return parseInt(d3.select("#limit-movement-range").node().value, 10);
+		},
+
 		createDiagram : function() {
 			return this.controller.makeGridDiagram(
-				d3.select("#diagram-movement-range"),
-				Grid.trapezoidalShape(0, this.controller.FIELD_HOR_GRID_COUNT - 1, 0, this.controller.FIELD_VER_GRID_COUNT,	Grid.evenRToCube)
+				this.d3,
+				Grid.trapezoidalShape(0, this.controller.getHorizontalHexCount(), 0, this.controller.getVerticalHexCount(),	Grid.evenRToCube)
 			);
 		},
 

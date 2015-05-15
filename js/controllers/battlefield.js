@@ -18,8 +18,8 @@ define('controller/battlefield', [
 	return BaseController.extend({
 		SCALE : 80,
 		MAX_DISTANCE : 20,
-		FIELD_HOR_GRID_COUNT : 15,
-		FIELD_VER_GRID_COUNT : 11,
+		HOR_HEX_COUNT : 15,
+		VER_HEX_COUNT : 11,
 		EDITABLE_OBSTACLES : true,
 
 		cm_context : {
@@ -50,7 +50,27 @@ define('controller/battlefield', [
 
 			var orientation = true;
 			var diagram_movement_range = this.view.render();
-			diagram_movement_range.update(this.SCALE, orientation);
+			diagram_movement_range.update(this.getScale(), orientation);
+		},
+
+		getScale : function() {
+			return this.SCALE;
+		},
+
+		getMaxDistance : function() {
+			return this.MAX_DISTANCE;
+		},
+
+		getHorizontalHexCount : function() {
+			return this.HOR_HEX_COUNT - 1;
+		},
+
+		getVerticalHexCount : function() {
+			return this.VER_HEX_COUNT - 1;
+		},
+
+		areObstaclesManuallyEditable : function() {
+			return this.EDITABLE_OBSTACLES;
 		},
 
 		/**
@@ -348,12 +368,8 @@ define('controller/battlefield', [
 			};
 		},
 
-		getDistanceLimit : function() {
-			return parseInt(d3.select("#limit-movement-range").node().value, 10);
-		},
-
 		getObstacles : function() {
-			return [
+			return d3.set([
 				new Cube(2, -1, -1),
 				new Cube(2, -2, 0),
 				new Cube(0, -2, 2),
@@ -369,7 +385,7 @@ define('controller/battlefield', [
 				new Cube(-3, 1, 2),
 				new Cube(-4, 1, 3),
 				new Cube(-5, 1, 4)
-			];
+			]);
 		}
 	});
 });
