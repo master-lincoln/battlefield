@@ -12,8 +12,6 @@ define('view/base', [
 		initialize : function(options) {
 			this.controller = options.controller;
 			this.d3 = d3.select(this.el);
-
-			this.render();
 		},
 
 		_destroy : function() {
