@@ -89,12 +89,8 @@ define('view/battlefield', [
 			var cube = this.controller.getDestinationPoint();
 
 			while (cube != null) {
-				//if (cube.z >= 0 && cube.x <= 0 && cube.y <= 0) {
-					path.push(cube);
-					cube = bfs.came_from.get(cube);
-				//}
-
-
+				path.push(cube);
+				cube = bfs.came_from.get(cube);
 			}
 
 			this.diagram.setPath(path);
@@ -217,7 +213,8 @@ define('view/battlefield', [
 				//On Hex click
 				diagram.tiles.on('click', function(d) {
 					d3.event.preventDefault();
-					diagram.toggleObstacle(d.cube);
+					//diagram.toggleObstacle(d.cube);
+					controller.setStartingPoint(d.cube);
 console.log(d.cube)
 					callback();
 				});

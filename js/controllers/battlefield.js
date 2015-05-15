@@ -28,6 +28,7 @@ define('controller/battlefield', [
 			sub : 'main'
 		},
 
+		starting_point : null,
 		destination_point : null,
 
 		initialize : function() {
@@ -91,7 +92,13 @@ define('controller/battlefield', [
 		},
 
 		getStartingPoint : function() {
-			return new Cube(0, 0, 0);
+			return this.starting_point || new Cube(3, -4, 1);
+		},
+
+		setStartingPoint : function(cube) {
+			this.starting_point = cube;
+
+			this.view.redraw();
 		},
 
 		setDestinationPoint : function(cube) {
