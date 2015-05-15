@@ -1,4 +1,4 @@
-(function() {
+define('gridlib/fractional_cube', ['gridlib/cube'], function(Cube) {
 	'use strict';
 
 	var FractionalCube = function(x,y,z) {
@@ -53,5 +53,5 @@
 		return "#{" + this.v().join(",") + "}";
 	};
 
-	window.FractionalCube = FractionalCube;
-}());
+	return FractionalCube;
+});

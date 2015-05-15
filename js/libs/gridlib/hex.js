@@ -1,4 +1,4 @@
-(function() {
+define('gridlib/hex', [], function() {
 	'use strict';
 
 	var Hex = function(q,r) {
@@ -12,5 +12,5 @@
 		}
 	};
 
-	window.Hex = Hex;
-}());
+	return Hex;
+});

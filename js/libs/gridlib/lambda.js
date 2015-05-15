@@ -1,5 +1,22 @@
-(function() {
+define('gridlib/lambda', [], function() {
 	'use strict';
+
+	var HxOverrides = function() {
+
+	};
+
+	HxOverrides.iter = function(a) {
+		return {
+			cur : 0,
+			arr : a,
+			hasNext : function() {
+				return this.cur < this.arr.length;
+			},
+			next : function() {
+				return this.arr[this.cur++];
+			}
+		};
+	};
 
 	var $fid = 0;
 
@@ -42,5 +59,21 @@
 		return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator;
 	}
 
-	window.$iterator = $iterator;
-}());
+	var Lambda = function() {
+
+	};
+
+	Lambda.array = function(it) {
+		var a = [];
+		var $it0 = $iterator(it)();
+
+		while ($it0.hasNext()) {
+			var i = $it0.next();
+			a.push(i);
+		}
+
+		return a;
+	};
+
+	return Lambda;
+});

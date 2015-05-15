@@ -1,4 +1,4 @@
-(function() {
+define('gridlib/screen_coordinate', [], function() {
 	'use strict';
 
 	var ScreenCoordinate = function(x,y) {
@@ -9,45 +9,45 @@
 	ScreenCoordinate.prototype = {
 		equals: function(p) {
 			return this.x == p.x && this.y == p.y;
-		}
-		,toString: function() {
+		},
+		toString: function() {
 			return this.x + "," + this.y;
-		}
-		,length_squared: function() {
+		},
+		length_squared: function() {
 			return this.x * this.x + this.y * this.y;
-		}
-		,length: function() {
+		},
+		length: function() {
 			return Math.sqrt(this.length_squared());
-		}
-		,normalize: function() {
+		},
+		normalize: function() {
 			var d = this.length();
 			return new ScreenCoordinate(this.x / d,this.y / d);
-		}
-		,scale: function(d) {
+		},
+		scale: function(d) {
 			return new ScreenCoordinate(this.x * d,this.y * d);
-		}
-		,rotateLeft: function() {
+		},
+		rotateLeft: function() {
 			return new ScreenCoordinate(this.y,-this.x);
-		}
-		,rotateRight: function() {
+		},
+		rotateRight: function() {
 			return new ScreenCoordinate(-this.y,this.x);
-		}
-		,add: function(p) {
+		},
+		add: function(p) {
 			return new ScreenCoordinate(this.x + p.x,this.y + p.y);
-		}
-		,subtract: function(p) {
+		},
+		subtract: function(p) {
 			return new ScreenCoordinate(this.x - p.x,this.y - p.y);
-		}
-		,dot: function(p) {
+		},
+		dot: function(p) {
 			return this.x * p.x + this.y * p.y;
-		}
-		,cross: function(p) {
+		},
+		cross: function(p) {
 			return this.x * p.y - this.y * p.x;
-		}
-		,distance: function(p) {
+		},
+		distance: function(p) {
 			return this.subtract(p).length();
 		}
 	};
 
-	window.ScreenCoordinate = ScreenCoordinate;
-}());
+	return ScreenCoordinate;
+});

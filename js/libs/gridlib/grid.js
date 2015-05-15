@@ -1,4 +1,14 @@
-(function() {
+define('gridlib/grid', [
+	'gridlib/cube',
+	'gridlib/hex',
+	'gridlib/screen_coordinate',
+	'gridlib/lambda',
+], function(
+	Cube,
+	Hex,
+	ScreenCoordinate,
+	Lambda
+) {
 	'use strict';
 
 	var Grid = function(scale,orientation,shape) {
@@ -83,7 +93,7 @@
 		return new Hex(x + (z + (z & 1) >> 1),z);
 	};
 
-	Grid.trapezoidalShape = function(minQ,maxQ,minR,maxR,toCube) {
+	Grid.trapezoidalShape = function(minQ, maxQ, minR, maxR, toCube) {
 		var hexes = [];
 		var _g1 = minQ;
 		var _g = maxQ + 1;
@@ -174,5 +184,5 @@
 		}
 	};
 
-	window.Grid = Grid;
-}());
+	return Grid;
+});

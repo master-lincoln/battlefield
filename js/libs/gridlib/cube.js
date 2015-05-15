@@ -1,4 +1,4 @@
-(function() {
+define('gridlib/cube', [], function() {
 	'use strict';
 
 	var Std = function() {
@@ -64,5 +64,5 @@
 	Cube.directions = [new Cube(1,-1,0),new Cube(1,0,-1),new Cube(0,1,-1),new Cube(-1,1,0),new Cube(-1,0,1),new Cube(0,-1,1)];
 	Cube.diagonals = [new Cube(2,-1,-1),new Cube(1,1,-2),new Cube(-1,2,-1),new Cube(-2,1,1),new Cube(-1,-1,2),new Cube(1,-2,1)];
 
-	window.Cube = Cube;
-}());
+	return Cube;
+});

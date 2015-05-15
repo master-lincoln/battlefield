@@ -1,4 +1,18 @@
-define('controller/battlefield', ['backbone', 'view/battlefield'], function(Backbone, BattlefiledView) {
+define('controller/battlefield', [
+	'backbone',
+	'd3',
+	'view/battlefield',
+	'gridlib/screen_coordinate',
+	'gridlib/grid',
+	'gridlib/cube'
+], function(
+	Backbone,
+	d3,
+	BattlefiledView,
+	ScreenCoordinate,
+	Grid,
+	Cube
+) {
 	return Backbone.View.extend({
 		initialize : function() {
 			this.initializeView();
@@ -192,6 +206,7 @@ define('controller/battlefield', ['backbone', 'view/battlefield'], function(Back
 				}
 
 				diagram.onUpdate(relocate);
+
 				return diagram;
 			};
 
@@ -221,25 +236,30 @@ define('controller/battlefield', ['backbone', 'view/battlefield'], function(Back
 				post_callbacks.push(callback);
 			};
 
-			var hexagon_points = makeHexagonShape(diagram.scale);
+			var hexagon_points = this.makeHexagonShape(diagram.scale);
 
 			diagram.update = function(scale, orientation) {
 				if (scale != diagram.scale) {
 					diagram.scale = scale;
-					hexagon_points = makeHexagonShape(scale);
+					hexagon_points = this.makeHexagonShape(scale);
 					diagram.polygons.attr('points', hexagon_points);
 				}
 				diagram.orientation = orientation;
 
-				pre_callbacks.forEach(function (f) { f(); });
+				pre_callbacks.forEach(function (f) {
+					f();
+				});
+
 				var grid = new Grid(scale, orientation, diagram.nodes.map(function(node) { return node.cube; }));
 				var bounds = grid.bounds();
 				var first_draw = !diagram.grid;
 				diagram.grid = grid;
 
-				delay(svg, function(animate) {
+				this.delay(svg, function(animate) {
 					if (first_draw) {
-						animate = function(selection) { return selection; };
+						animate = function(selection) {
+							return selection;
+						};
 					}
 
 					// NOTE: In Webkit I can use svg.node().clientWidth but in Gecko that returns 0 :(
@@ -261,7 +281,7 @@ define('controller/battlefield', ['backbone', 'view/battlefield'], function(Back
 				});
 
 				return diagram;
-			};
+			}.bind(this);
 
 			return diagram;
 		},
@@ -275,9 +295,12 @@ define('controller/battlefield', ['backbone', 'view/battlefield'], function(Back
 		 * @returns {{cost_so_far: (Array|*), came_from: (Array|*)}}
 		 */
 		breadthFirstSearch : function(start, maxMovement, maxMagnitude, blocked) {
-			var cost_so_far = d3.map(); cost_so_far.set(start, 0);
-			var came_from = d3.map(); came_from.set(start, null);
+			var cost_so_far = d3.map();
+			var came_from = d3.map();
 			var fringes = [[start]];
+
+			cost_so_far.set(start, 0);
+			came_from.set(start, null);
 
 			for (var k = 0; k < maxMovement && fringes[k].length > 0; k++) {
 				fringes[k+1] = [];
@@ -293,11 +316,14 @@ define('controller/battlefield', ['backbone', 'view/battlefield'], function(Back
 				});
 			}
 
-			return {cost_so_far: cost_so_far, came_from: came_from};
+			return {
+				cost_so_far: cost_so_far,
+				came_from: came_from
+			};
 		},
 
 		makeMovementRange : function() {
-			var diagram = makeGridDiagram(d3.select("#diagram-movement-range"), Grid.hexagonalShape(5))
+			var diagram = this.makeGridDiagram(d3.select("#diagram-movement-range"), Grid.hexagonalShape(5))
 				.addLabels();
 
 			diagram.makeTilesSelectable(redraw);
@@ -327,17 +353,26 @@ define('controller/battlefield', ['backbone', 'view/battlefield'], function(Back
 
 			var distance_limit = 4;
 
-			function redraw() {
-				var bfs = breadthFirstSearch(new Cube(0, 0, 0), Infinity, 5, diagram.selected.has.bind(diagram.selected));
+			var redraw = function () {
+				var bfs = this.breadthFirstSearch(new Cube(0, 0, 0), Infinity, 5, diagram.selected.has.bind(diagram.selected));
 
 				distance_limit = parseInt(d3.select("#limit-movement-range").node().value);
 				d3.selectAll(".movement-range").text(distance_limit);
 
 				diagram.tiles
-					.classed('blocked', function(d) { return diagram.selected.has(d.cube); })
-					.classed('shadow', function(d) { return !bfs.cost_so_far.has(d.cube) || bfs.cost_so_far.get(d.cube) > distance_limit; })
-					.classed('start', function(d) { return Cube.$length(d.cube) == 0; })
-					.classed('goal', function(d) { return d.cube.equals(mouseover); });
+					.classed('blocked', function(d) {
+						return diagram.selected.has(d.cube);
+					})
+					.classed('shadow', function(d) {
+						return !bfs.cost_so_far.has(d.cube) || bfs.cost_so_far.get(d.cube) > distance_limit;
+					})
+					.classed('start', function(d) {
+						return Cube.$length(d.cube) == 0;
+					})
+					.classed('goal', function(d) {
+						return d.cube.equals(mouseover);
+					});
+
 				diagram.tiles.selectAll("text")
 					.text(function(d) { return bfs.cost_so_far.has(d.cube)? bfs.cost_so_far.get(d.cube) : ""; });
 
@@ -349,7 +384,7 @@ define('controller/battlefield', ['backbone', 'view/battlefield'], function(Back
 					node = bfs.came_from.get(node);
 				}
 				diagram.setPath(path);
-			}
+			}.bind(this);
 
 			diagram.onUpdate(redraw);
 			diagram.addPath();
