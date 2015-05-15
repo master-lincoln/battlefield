@@ -133,8 +133,6 @@ function delay(element, action) {
 delay.queue = d3.map();  // which elements need redrawing?
 delay.refresh = d3.set();  // set of elements we've seen before
 idle_tracker.callback = _delayDrawOnTimeout;
-window.addEventListener('scroll', _delayedDraw);
-window.addEventListener('resize', _delayedDraw);
 
 /* NOTE: on iOS, scroll event doesn't occur until after the scrolling
  * stops, which is too late for this redraw. I am not sure how to do
@@ -161,37 +159,6 @@ function hexToPolygon(scale, x, y, orientation) {
 	}
 	return points;
 }
-
-
-// Arrow drawing utility takes a <path>, source, dest, and sets the d= and transform
-function makeArrow(path, w, skip, A, B, withBase) {
-	var d = A.subtract(B);
-	var h = d.length()-2*w-skip;
-
-	var path_d = ['M', 0, 0];
-	if (h > 0.0) {
-		path_d = path_d.concat([
-			'l', 2*w, 2*w,
-			'l', 0, -w,
-			'l', h, 0,
-			'l', -0.3*w, -w,
-			'l', 0.3*w, -w,
-			'l', -h, 0,
-			'l', 0, -w,
-			'Z']);
-		if (withBase) {
-			path_d = path_d.concat([
-				'M', h+w, -10*w,
-				'l', 0, 20*w
-			]);
-		}
-	}
-
-	path
-		.attr('transform', "translate(" + B + ") rotate(" + (180 / Math.PI * Math.atan2(d.y, d.x)) + ")")
-		.attr('d', path_d.join(" "));
-}
-
 
 // The shape of a hexagon is adjusted by the scale; the rotation is handled elsewhere, using svg transforms
 function makeHexagonShape(scale) {
@@ -399,120 +366,6 @@ function makeGridDiagram(svg, cubes) {
 	return diagram;
 }
 
-// Diagram "spacing"
-
-function format_quarters(a) {
-	// Format a/4 as a mixed numeral
-	var suffix = ["", "¼", "½", "¾"][a % 4];
-	var prefix = Math.floor(a/4);
-	if (prefix == 0 && suffix != "") { prefix = ""; }
-	return prefix + suffix;
-}
-
-function makeNeighbors(id_diagram, id_code, converter, parity_var) {
-	// Note that this code is a little messy because I'm trying to handle cube, axial, offset
-	var code = d3.select(id_code).selectAll("span.table span");
-	var code_parity = d3.select(id_code).selectAll("span.parity");
-	var numSpans = code[0].length;  // should be 6 (axial) or 12 (offset)
-
-	// There will be either 7 (axial) or 14 nodes (offset)
-	var cubes = [];
-	for (var i = 0; i < (numSpans * 7 / 6); i++) {
-		if (converter == null) {
-			cubes.push(i < 6? Cube.direction(i) : new Cube(0, 0, 0));
-		} else {
-			cubes.push(new Cube(i, -i, 0));  // dummy coordinates for now
-		}
-	}
-
-	var diagram = makeGridDiagram(d3.select(id_diagram), cubes);
-	diagram.parity_var = parity_var;
-	diagram.converter = converter;
-	diagram.nodes.forEach(function (d, i) {
-		d.direction = (i < numSpans)? (i % 6) : null;
-		d.key = i;
-	});
-
-	if (converter) {
-		diagram.addLabels();
-	} else {
-		diagram.addCubeCoordinates(false);
-	}
-
-	function neighbor(odd, i) {
-		var base = odd? new Cube(1, -2, 1) : new Cube(0, 0, 0);
-		var h1 = diagram.converter(base);
-		var h2 = diagram.converter(Cube.neighbor(base, i));
-		var dq = h2.q - h1.q, dr = h2.r - h1.r;
-		return new Hex(dq, dr);
-	}
-
-	if (diagram.converter) {
-		diagram.onUpdate(function() {
-			diagram.tiles.selectAll("text").text(function(d) {
-				if (d.key < numSpans) {
-					var h = neighbor(d.key >= 6, d.direction);
-					return [h.q > 0? "+" : "", h.q == 0? "0" : h.q, ", ",
-						h.r > 0? "+" : "", h.r == 0? "0" : h.r].join("");
-				} else if (numSpans == 12) {
-					return ((d.key == 12)? "EVEN" : "ODD") + " " + diagram.parity_var;
-				} else {
-					return "axial";
-				}
-			});
-			code_parity.text(diagram.parity_var);
-			code.text(function(_, i) {
-				var h = neighbor(i >= 6, i % 6);
-				function fmt(x) { if (x > 0) x = "+" + x; else x = "" + x; if (x.length < 2) x = " " + x; return x; }
-				return ["Hex(", fmt(h.q), ", ", fmt(h.r), ")"].join("");
-			});
-		});
-	}
-
-
-	diagram.onLayout(function() {
-		var offcenter = diagram.orientation? new Cube(4, -4, 0) : new Cube(4, -2, -2);
-
-		diagram.nodes.forEach(function (d, i) {
-			if (i < 6) {
-				d.cube = Cube.direction(i);
-			} else if (i < 12 && numSpans == 12) {
-				d.cube = Cube.neighbor(offcenter, i % 6);
-			} else if (i == 13) {
-				d.cube = offcenter;
-			} else {
-				d.cube = new Cube(0, 0, 0);
-			}
-		});
-	});
-
-	function setSelection(d) {
-		code.classed('highlight', function(_, i) { return i < numSpans && i == d.key; });
-		diagram.tiles.classed('highlight', function(_, i) { return i < numSpans && i == d.key; });
-	}
-
-	diagram.tiles
-		.on('mouseover', setSelection)
-		.on('touchstart', setSelection);
-
-	return diagram;
-}
-
-// Helper function used for hex regions. A hex shaped region is the
-// subset of hexes where a <= x <= b, c <= y <= d, e <= z <= f
-function colorRegion(diagram, xmin, xmax, ymin, ymax, zmin, zmax, label) {
-	// Here's the range algorithm as described in the article
-	var results = d3.set();
-	for (var x = xmin; x <= xmax; x++) {
-		for (var y = Math.max(ymin, -x-zmax); y <= Math.min(ymax, -x-zmin); y++) {
-			var z = -x-y;
-			results.add(new Cube(x, y, z));
-		}
-	}
-
-	diagram.tiles.classed(label, function(d) { return results.has(d.cube); });
-}
-
 function breadthFirstSearch(start, maxMovement, maxMagnitude, blocked) {
 	/* see http://www.redblobgames.com/pathfinding/a-star/introduction.html */
 	var cost_so_far = d3.map(); cost_so_far.set(start, 0);
@@ -599,67 +452,6 @@ function makeMovementRange() {
 
 	return diagram;
 }
-
-
-function makePathfinding() {
-	var radius = 6;
-	var diagram = makeGridDiagram(d3.select("#diagram-pathfinding"), Grid.hexagonalShape(radius));
-
-	diagram.makeTilesSelectable(redraw);
-	diagram.selected = d3.set([
-		new Cube(2, -1, -1),
-		new Cube(2, -2, 0),
-		new Cube(1, -2, 1),
-		new Cube(0, -2, 2),
-		new Cube(-1, -1, 2),
-		new Cube(0, 2, -2),
-		new Cube(1, 2, -1),
-		new Cube(1, -3, 0),
-		new Cube(-2, 0, 2),
-		new Cube(-3, 0, 3)
-	]);
-
-	var start = new Cube(-2, 4, -2);
-	var goal = new Cube(1, -4, 3);
-	diagram.tiles
-		.on('mouseover', function(d) { goal = d.cube; redraw(); })
-		.on('touchstart', function(d) { goal = d.cube; redraw(); })
-		.on('touchmove', function(d) { goal = d.cube; redraw(); });
-
-	function redraw() {
-		var bfs = breadthFirstSearch(start, 1000, radius, diagram.selected.has.bind(diagram.selected));
-		var path = [];
-		for (var p = goal; p != null; p = bfs.came_from.get(p)) {
-			path.push(p);
-		}
-
-		diagram.setPath(path);
-		path = d3.set(path);
-		diagram.tiles
-			.classed('blocked', function(d) { return diagram.selected.has(d.cube); })
-			.classed('start', function(d) { return d.cube.equals(start); })
-			.classed('goal', function(d) { return d.cube.equals(goal); })
-			.classed('path', function(d) { return path.has(d.cube); });
-	}
-
-	diagram.onUpdate(redraw);
-	diagram.addPath();
-	return diagram;
-}
-
-var grid_cube = makeGridDiagram(d3.select("#grid-cube"), Grid.hexagonalShape(3))
-	.addCubeCoordinates(true);
-
-var grid_axial = makeGridDiagram(d3.select("#grid-axial"), Grid.hexagonalShape(3))
-	.addHexCoordinates(Grid.cubeToTwoAxis, true);
-
-var neighbors_diagonal = makeGridDiagram(d3.select("#neighbors-diagonal"),
-	Grid.hexagonalShape(1).concat(
-		[new Cube(2, -1, -1), new Cube(-2, 1, 1),
-			new Cube(-1, 2, -1), new Cube(1, -2, 1),
-			new Cube(-1, -1, 2), new Cube(1, 1, -2)]))
-	.addCubeCoordinates(false);
-neighbors_diagonal.tiles.classed('highlight', function(d) { return Cube.$length(d.cube) == 2; });
 
 var diagram_movement_range = makeMovementRange();
 
