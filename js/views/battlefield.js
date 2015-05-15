@@ -55,7 +55,6 @@ define('view/battlefield', [
 		redraw : function () {
 			var controller = this.controller;
 
-			console.log("ok")
 			var bfs = this.getBFS();
 
 			//var distance_limit = this.controller.getDistanceLimit();
@@ -66,7 +65,8 @@ define('view/battlefield', [
 
 			//Add distance labels
 			if (controller.areDistanceLabelsEnabled()) {
-				this.addDistanceLabels(bfs);
+				//this.addDistanceLabels(bfs);
+				this.diagram.addCubeCoordinates();
 			}
 
 			// Reconstruct path to mouse over position
@@ -74,21 +74,27 @@ define('view/battlefield', [
 		},
 
 		getBFS : function() {
-			return this.controller.breadthFirstSearch(
-				new Cube(0, 0, 0),
-				Infinity,
-				this.controller.getMaxDistance(),
+			var controller = this.controller;
+
+			return controller.breadthFirstSearch(
+				controller.getStartingPoint(),
+				controller.getMaxMovement(),
+				controller.getMaxDistance(),
 				this.diagram.selected.has.bind(this.diagram.selected)
 			);
 		},
 
 		createRouteBetweenPoints : function(bfs) {
 			var path = [];
-			var node = this.controller.getDestinationPoint();
+			var cube = this.controller.getDestinationPoint();
 
-			while (node != null) {
-				path.push(node);
-				node = bfs.came_from.get(node);
+			while (cube != null) {
+				//if (cube.z >= 0 && cube.x <= 0 && cube.y <= 0) {
+					path.push(cube);
+					cube = bfs.came_from.get(cube);
+				//}
+
+
 			}
 
 			this.diagram.setPath(path);
@@ -149,7 +155,7 @@ define('view/battlefield', [
 		createDiagram : function() {
 			return this.createGridDiagram(
 				this.d3,
-				Grid.trapezoidalShape(0, this.controller.getHorizontalHexCount(), 0, this.controller.getVerticalHexCount(),	Grid.evenRToCube)
+				Grid.trapezoidalShape(0, this.controller.getHorizontalHexCount(), 0, this.controller.getVerticalHexCount(), Grid.evenRToCube)
 			);
 		},
 
@@ -208,10 +214,11 @@ define('view/battlefield', [
 					}
 				};
 
+				//On Hex click
 				diagram.tiles.on('click', function(d) {
 					d3.event.preventDefault();
 					diagram.toggleObstacle(d.cube);
-
+console.log(d.cube)
 					callback();
 				});
 			};
@@ -219,7 +226,10 @@ define('view/battlefield', [
 			diagram.addLabels = function(labelFunction) {
 				diagram.tiles.append('text')
 					.attr('y', "0.4em")
-					.text(function(d, i) { return labelFunction? labelFunction(d, i) : ""; });
+					.text(function(d, i) {
+						return labelFunction? labelFunction(d, i) : "";
+					});
+
 				return diagram;
 			};
 
@@ -227,6 +237,7 @@ define('view/battlefield', [
 				diagram.nodes.forEach(function (n) {
 					n.hex = converter(n.cube);
 				});
+
 				diagram.tiles.append('text')
 					.attr('y', "0.4em")
 					.each(function(d) {
@@ -268,8 +279,8 @@ define('view/battlefield', [
 							// Special case: label the origin with x/y/z so that you can tell where things to
 							labels = ["x", "y", "z"];
 						}
-						selection.append('tspan').attr('class', "q").text(labels[0]);
-						selection.append('tspan').attr('class', "s").text(labels[1]);
+						selection.append('tspan').attr('class', "q").text(labels[0] + ', ');
+						selection.append('tspan').attr('class', "s").text(labels[1] + ', ');
 						selection.append('tspan').attr('class', "r").text(labels[2]);
 					});
 
@@ -290,8 +301,12 @@ define('view/battlefield', [
 
 				if (with_mouseover) {
 					diagram.tiles
-						.on('mouseover', function(d) { return setSelection(d.cube); })
-						.on('touchstart', function(d) { return setSelection(d.cube); });
+						.on('mouseover', function(d) {
+							return setSelection(d.cube);
+						})
+						.on('touchstart', function(d) {
+							return setSelection(d.cube);
+						});
 				}
 
 				diagram.onUpdate(relocate);
