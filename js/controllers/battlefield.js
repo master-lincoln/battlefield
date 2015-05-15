@@ -45,7 +45,10 @@ define('controller/battlefield', [
 			for (var i = 0; i < 6; i++) {
 				var angle = 2 * Math.PI * (2 * i - orientation) / 12;
 
-				points.push(new ScreenCoordinate(x + 0.5 * scale * Math.cos(angle), y + 0.5 * scale * Math.sin(angle)));
+				points.push(new ScreenCoordinate(
+					x + 0.5 * scale * Math.cos(angle),
+					y + 0.5 * scale * Math.sin(angle)
+				));
 			}
 
 			return points;
@@ -94,7 +97,10 @@ define('controller/battlefield', [
 
 			diagram.tiles.enter()
 				.append('g').attr('class', "tile")
-				.each(function(d) { d.node = d3.select(this); });
+				.each(function(d) {
+					d.node = d3.select(this);
+				});
+
 			diagram.polygons = diagram.tiles.append('polygon');
 
 			diagram.makeTilesSelectable = function(callback) {
@@ -144,7 +150,9 @@ define('controller/battlefield', [
 
 
 			diagram.addHexCoordinates = function(converter, with_mouseover) {
-				diagram.nodes.forEach(function (n) { n.hex = converter(n.cube); });
+				diagram.nodes.forEach(function (n) {
+					n.hex = converter(n.cube);
+				});
 				diagram.tiles.append('text')
 					.attr('y', "0.4em")
 					.each(function(d) {
@@ -156,19 +164,26 @@ define('controller/battlefield', [
 
 				function setSelection(hex) {
 					diagram.tiles
-						.classed('q-axis-same', function(other) { return hex.q == other.hex.q; })
-						.classed('r-axis-same', function(other) { return hex.r == other.hex.r; });
+						.classed('q-axis-same', function(other) {
+							return hex.q == other.hex.q;
+						})
+						.classed('r-axis-same', function(other) {
+							return hex.r == other.hex.r;
+						});
 				}
 
 				if (with_mouseover) {
 					diagram.tiles
-						.on('mouseover', function(d) { setSelection(d.hex); })
-						.on('touchstart', function(d) { setSelection(d.hex); });
+						.on('mouseover', function(d) {
+							setSelection(d.hex);
+						})
+						.on('touchstart', function(d) {
+							setSelection(d.hex);
+						});
 				}
 
 				return diagram;
 			};
-
 
 			diagram.addCubeCoordinates = function(with_mouseover) {
 				diagram.tiles.append('text')
@@ -225,13 +240,13 @@ define('controller/battlefield', [
 				};
 			};
 
-
 			var pre_callbacks = [];
 			var post_callbacks = [];
 
 			diagram.onLayout = function(callback) {
 				pre_callbacks.push(callback);
 			};
+
 			diagram.onUpdate = function(callback) {
 				post_callbacks.push(callback);
 			};
@@ -244,40 +259,38 @@ define('controller/battlefield', [
 					hexagon_points = this.makeHexagonShape(scale);
 					diagram.polygons.attr('points', hexagon_points);
 				}
+
 				diagram.orientation = orientation;
 
 				pre_callbacks.forEach(function (f) {
 					f();
 				});
 
-				var grid = new Grid(scale, orientation, diagram.nodes.map(function(node) { return node.cube; }));
+				var grid = new Grid(scale, orientation, diagram.nodes.map(function(node) {
+					return node.cube;
+				}));
+
 				var bounds = grid.bounds();
-				var first_draw = !diagram.grid;
 				diagram.grid = grid;
 
-				this.delay(svg, function(animate) {
-					if (first_draw) {
-						animate = function(selection) {
-							return selection;
-						};
-					}
+				// NOTE: In Webkit I can use svg.node().clientWidth but in Gecko that returns 0 :(
+				diagram.translate = new ScreenCoordinate((parseFloat(svg.attr('width')) - bounds.minX - bounds.maxX)/2,
+					(parseFloat(svg.attr('height')) - bounds.minY - bounds.maxY)/2);
 
-					// NOTE: In Webkit I can use svg.node().clientWidth but in Gecko that returns 0 :(
-					diagram.translate = new ScreenCoordinate((parseFloat(svg.attr('width')) - bounds.minX - bounds.maxX)/2,
-						(parseFloat(svg.attr('height')) - bounds.minY - bounds.maxY)/2);
-					animate(diagram.root)
-						.attr('transform', "translate(" + diagram.translate + ")");
+				diagram.root
+					.attr('transform', "translate(" + diagram.translate + ")");
 
-					animate(diagram.tiles)
-						.attr('transform', function(node) {
-							var center = grid.hexToCenter(node.cube);
-							return "translate(" + center.x + "," + center.y + ")";
-						});
+				diagram.tiles
+					.attr('transform', function(node) {
+						var center = grid.hexToCenter(node.cube);
+						return "translate(" + center.x + "," + center.y + ")";
+					});
 
-					animate(diagram.polygons)
-						.attr('transform', "rotate(" + (orientation * -30) + ")");
+				diagram.polygons
+					.attr('transform', "rotate(" + (orientation * -30) + ")");
 
-					post_callbacks.forEach(function (f) { f(); });
+				post_callbacks.forEach(function (f) {
+					f();
 				});
 
 				return diagram;
@@ -285,6 +298,7 @@ define('controller/battlefield', [
 
 			return diagram;
 		},
+
 		/**
 		 * @see http://www.redblobgames.com/pathfinding/a-star/introduction.html
 		 *
@@ -326,37 +340,10 @@ define('controller/battlefield', [
 			var diagram = this.makeGridDiagram(d3.select("#diagram-movement-range"), Grid.hexagonalShape(5))
 				.addLabels();
 
-			diagram.makeTilesSelectable(redraw);
-			diagram.selected = d3.set([
-				new Cube(2, -1, -1),
-				new Cube(2, -2, 0),
-				new Cube(0, -2, 2),
-				new Cube(-1, -1, 2),
-				new Cube(-1, 0, 1),
-				new Cube(1, 0, -1),
-				new Cube(1, -3, 2),
-				new Cube(1, 2, -3),
-				new Cube(0, 2, -2),
-				new Cube(-1, 2, -1),
-				new Cube(2, -3, 1),
-				new Cube(-2, 1, 1),
-				new Cube(-3, 1, 2),
-				new Cube(-4, 1, 3),
-				new Cube(-5, 1, 4)
-			]);
-
-			var mouseover = new Cube(2, 2, -4);
-			diagram.tiles
-				.on('mouseover', function(d) { mouseover = d.cube; redraw(); })
-				.on('touchstart', function(d) { mouseover = d.cube; redraw(); })
-				.on('touchmove', function(d) { mouseover = d.cube; redraw(); });
-
-			var distance_limit = 4;
-
 			var redraw = function () {
 				var bfs = this.breadthFirstSearch(new Cube(0, 0, 0), Infinity, 5, diagram.selected.has.bind(diagram.selected));
 
-				distance_limit = parseInt(d3.select("#limit-movement-range").node().value);
+				distance_limit = parseInt(d3.select("#limit-movement-range").node().value, 10);
 				d3.selectAll(".movement-range").text(distance_limit);
 
 				diagram.tiles
@@ -386,6 +373,38 @@ define('controller/battlefield', [
 				diagram.setPath(path);
 			}.bind(this);
 
+			diagram.makeTilesSelectable(redraw);
+			diagram.selected = d3.set([
+				new Cube(2, -1, -1),
+				new Cube(2, -2, 0),
+				new Cube(0, -2, 2),
+				new Cube(-1, -1, 2),
+				new Cube(-1, 0, 1),
+				new Cube(1, 0, -1),
+				new Cube(1, -3, 2),
+				new Cube(1, 2, -3),
+				new Cube(0, 2, -2),
+				new Cube(-1, 2, -1),
+				new Cube(2, -3, 1),
+				new Cube(-2, 1, 1),
+				new Cube(-3, 1, 2),
+				new Cube(-4, 1, 3),
+				new Cube(-5, 1, 4)
+			]);
+
+			var onEventOccur = function(d) {
+				mouseover = d.cube;
+				redraw();
+			};
+
+			var mouseover = new Cube(2, 2, -4);
+			diagram.tiles
+				.on('mouseover', onEventOccur)
+				.on('touchstart', onEventOccur)
+				.on('touchmove', onEventOccur);
+
+			var distance_limit = 4;
+
 			diagram.onUpdate(redraw);
 			diagram.addPath();
 
@@ -394,12 +413,6 @@ define('controller/battlefield', [
 				.on('input', redraw);
 
 			return diagram;
-		},
-
-		delay : function(element, action) {
-			action(function(selection) {
-				return selection;
-			});
 		}
 	});
 });
