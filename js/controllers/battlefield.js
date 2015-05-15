@@ -14,6 +14,10 @@ define('controller/battlefield', [
 	Cube
 ) {
 	return Backbone.View.extend({
+		MAX_DISTANCE : 20,
+		FIELD_HOR_GRID_COUNT : 15,
+		FIELD_VER_GRID_COUNT : 11,
+
 		initialize : function() {
 			this.initializeView();
 		},
@@ -337,11 +341,11 @@ define('controller/battlefield', [
 		},
 
 		makeMovementRange : function() {
-			var diagram = this.makeGridDiagram(d3.select("#diagram-movement-range"), Grid.hexagonalShape(5))
+			var diagram = this.makeGridDiagram(d3.select("#diagram-movement-range"), Grid.trapezoidalShape(0, this.FIELD_HOR_GRID_COUNT - 1, 0, this.FIELD_VER_GRID_COUNT, Grid.evenRToCube))
 				.addLabels();
 
 			var redraw = function () {
-				var bfs = this.breadthFirstSearch(new Cube(0, 0, 0), Infinity, 5, diagram.selected.has.bind(diagram.selected));
+				var bfs = this.breadthFirstSearch(new Cube(0, 0, 0), Infinity, this.MAX_DISTANCE, diagram.selected.has.bind(diagram.selected));
 
 				distance_limit = parseInt(d3.select("#limit-movement-range").node().value, 10);
 				d3.selectAll(".movement-range").text(distance_limit);
@@ -375,7 +379,7 @@ define('controller/battlefield', [
 
 			diagram.makeTilesSelectable(redraw);
 			diagram.selected = d3.set([
-				new Cube(2, -1, -1),
+				/*new Cube(2, -1, -1),
 				new Cube(2, -2, 0),
 				new Cube(0, -2, 2),
 				new Cube(-1, -1, 2),
@@ -389,7 +393,7 @@ define('controller/battlefield', [
 				new Cube(-2, 1, 1),
 				new Cube(-3, 1, 2),
 				new Cube(-4, 1, 3),
-				new Cube(-5, 1, 4)
+				new Cube(-5, 1, 4)*/
 			]);
 
 			var onEventOccur = function(d) {

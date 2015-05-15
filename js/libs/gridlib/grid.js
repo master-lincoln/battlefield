@@ -1,10 +1,12 @@
 define('gridlib/grid', [
 	'gridlib/cube',
+	'gridlib/fractional_cube',
 	'gridlib/hex',
 	'gridlib/screen_coordinate',
 	'gridlib/lambda',
 ], function(
 	Cube,
+	FractionalCube,
 	Hex,
 	ScreenCoordinate,
 	Lambda
@@ -107,7 +109,7 @@ define('gridlib/grid', [
 		return new Hex(x + (z + (z & 1) >> 1), z);
 	};
 
-	Grid.trapezoidalShape = function(min_q, max_q, min_r, max_r, to_cube) {
+	Grid.trapezoidalShape = function(min_q, max_q, min_r, max_r, toCube) {
 		var hexes = [];
 		var g1 = min_q;
 		var g = max_q + 1;
@@ -119,7 +121,7 @@ define('gridlib/grid', [
 
 			while(g3 < g2) {
 				var r = g3++;
-				hexes.push(to_cube(new Hex(q, r)));
+				hexes.push(toCube(new Hex(q, r)));
 			}
 		}
 
@@ -160,7 +162,7 @@ define('gridlib/grid', [
 				var z = -x - y;
 
 				if (Math.abs(x) <= size && Math.abs(y) <= size && Math.abs(z) <= size) {
-					hexes.push(new Cube(x,y,z));
+					hexes.push(new Cube(x, y, z));
 				}
 			}
 		}
