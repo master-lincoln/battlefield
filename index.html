@@ -1,30 +1,16 @@
 <!DOCTYPE html>
 <html>
-<head lang="en">
-	<meta charset="UTF-8">
-	<title>Battlefield</title>
+	<head lang="en">
+		<meta charset="UTF-8">
+		<title>Battlefield</title>
 
-	<link href="css/styles.css" rel="stylesheet">
+		<link href="css/styles.css" rel="stylesheet">
 
-	<script type="text/javascript" src="js/d3.min.js"></script>
+		<script data-main="js/bootstrap" src="js/libs/require-min.js"></script>
+	</head>
+	<body>
+		<svg id="diagram-movement-range" width="500" height="470"></svg>
 
-
-	<script type="text/javascript" src="js/gridlib/iterator.js"></script>
-	<script type="text/javascript" src="js/gridlib/hx_overrides.js"></script>
-	<script type="text/javascript" src="js/gridlib/lambda.js"></script>
-	<script type="text/javascript" src="js/gridlib/screen_coordinate.js"></script>
-	<script type="text/javascript" src="js/gridlib/cube.js"></script>
-	<script type="text/javascript" src="js/gridlib/fractional_cube.js"></script>
-	<script type="text/javascript" src="js/gridlib/hex.js"></script>
-	<script type="text/javascript" src="js/gridlib/grid.js"></script>
-
-	<script type="text/javascript" src="js/grid.js"></script>
-</head>
-<body>
-	<svg id="diagram-movement-range" width="500" height="470"></svg>
-
-	<input id="limit-movement-range" type="range" min="0" max="20" value="4" style="width:50%">
-
-	<script type="text/javascript" src="js/grid_ui.js"></script>
-</body>
+		<input id="limit-movement-range" type="range" min="0" max="20" value="4" style="width:50%">
+	</body>
 </html>
