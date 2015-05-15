@@ -1,14 +1,6 @@
 define('gridlib/cube', [], function() {
 	'use strict';
 
-	var Std = function() {
-
-	};
-
-	Std["int"] = function(x) {
-		return x | 0;
-	};
-
 	var Cube = function(x,y,z) {
 		this.x = x;
 		this.y = y;
@@ -36,33 +28,33 @@ define('gridlib/cube', [], function() {
 	};
 
 	Cube.distance = function(a,b) {
-		return Std["int"]((Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + Math.abs(a.z - b.z)) / 2);
+		return ((Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + Math.abs(a.z - b.z)) / 2) | 0;
 	};
 
 	Cube.$length = function(h) {
-		return Std["int"]((Math.abs(h.x) + Math.abs(h.y) + Math.abs(h.z)) / 2);
+		return ((Math.abs(h.x) + Math.abs(h.y) + Math.abs(h.z)) / 2) | 0;
 	};
 
 	Cube.prototype = {
-		toString: function() {
+		toString : function() {
 			return this.v().join(",");
 		},
-		v: function() {
+		v : function() {
 			return [this.x,this.y,this.z];
 		},
-		rotateLeft: function() {
+		rotateLeft : function() {
 			return new Cube(-this.y,-this.z,-this.x);
 		},
-		rotateRight: function() {
+		rotateRight : function() {
 			return new Cube(-this.z,-this.x,-this.y);
 		},
-		equals: function(other) {
+		equals : function(other) {
 			return this.x == other.x && this.y == other.y && this.z == other.z;
 		}
 	};
 
-	Cube.directions = [new Cube(1,-1,0),new Cube(1,0,-1),new Cube(0,1,-1),new Cube(-1,1,0),new Cube(-1,0,1),new Cube(0,-1,1)];
-	Cube.diagonals = [new Cube(2,-1,-1),new Cube(1,1,-2),new Cube(-1,2,-1),new Cube(-2,1,1),new Cube(-1,-1,2),new Cube(1,-2,1)];
+	Cube.directions = [new Cube(1,-1,0), new Cube(1,0,-1), new Cube(0,1,-1), new Cube(-1,1,0), new Cube(-1,0,1), new Cube(0,-1,1)];
+	Cube.diagonals = [new Cube(2,-1,-1), new Cube(1,1,-2), new Cube(-1,2,-1), new Cube(-2,1,1), new Cube(-1,-1,2), new Cube(1,-2,1)];
 
 	return Cube;
 });

@@ -56,7 +56,9 @@ define('gridlib/lambda', [], function() {
 			};
 		}
 
-		return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator;
+		return typeof(o.iterator) === 'function' ?
+			$bind(o,o.iterator) :
+			o.iterator;
 	}
 
 	var Lambda = function() {

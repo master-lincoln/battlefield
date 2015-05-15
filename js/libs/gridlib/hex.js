@@ -1,13 +1,13 @@
 define('gridlib/hex', [], function() {
 	'use strict';
 
-	var Hex = function(q,r) {
+	var Hex = function(q, r) {
 		this.q = q;
 		this.r = r;
 	};
 
 	Hex.prototype = {
-		toString: function() {
+		toString : function() {
 			return this.q + ":" + this.r;
 		}
 	};
