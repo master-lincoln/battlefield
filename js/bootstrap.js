@@ -1,6 +1,8 @@
 (function() {
 	'use strict';
 
+	var orientation = true;
+
 	// (x, y) should be the center
 // scale should be the distance from corner to corner
 // orientation should be 0 (flat bottom hex) or 1 (flat side hex)
@@ -310,5 +312,8 @@
 		return diagram;
 	}
 
-	makeMovementRange();
+	var diagram_movement_range = makeMovementRange();
+
+	diagram_movement_range.update(50, orientation);
+
 }());
