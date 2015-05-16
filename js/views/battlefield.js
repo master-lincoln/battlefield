@@ -44,6 +44,11 @@ define('view/battlefield', [
 
 			diagram.onUpdate(redraw);
 			diagram.addPath();
+			//Add distance labels
+			if (controller.areDistanceLabelsEnabled()) {
+				//this.addDistanceLabels(bfs);
+				diagram.addCubeCoordinates();
+			}
 
 			/*d3.select("#limit-movement-range")
 				.on('change', redraw)
@@ -62,12 +67,6 @@ define('view/battlefield', [
 
 			//Update CSS classes on hexes
 			this.updateCssClasses(bfs);
-
-			//Add distance labels
-			if (controller.areDistanceLabelsEnabled()) {
-				//this.addDistanceLabels(bfs);
-				this.diagram.addCubeCoordinates();
-			}
 
 			// Reconstruct path to mouse over position
 			this.createRouteBetweenPoints(bfs);
@@ -109,7 +108,7 @@ define('view/battlefield', [
 			this.updateBlockedElementsClasses();
 			this.updateShadowedElementsClasses(bfs);
 			this.updateStartElementClass();
-			this.updateGoalElementClasses();
+			//this.updateGoalElementClasses();
 		},
 
 		updateBlockedElementsClasses : function() {
@@ -130,8 +129,11 @@ define('view/battlefield', [
 		},
 
 		updateStartElementClass : function() {
+			var starting_point = this.controller.getStartingPoint();
+
 			this.diagram.tiles.classed('start', function(d) {
-				return Cube.$length(d.cube) === 0;
+				var point = d.cube;
+				return point.x === starting_point.x && point.y === starting_point.y && point.z === starting_point.z;
 			});
 		},
 
@@ -215,7 +217,7 @@ define('view/battlefield', [
 					d3.event.preventDefault();
 					//diagram.toggleObstacle(d.cube);
 					controller.setStartingPoint(d.cube);
-console.log(d.cube)
+
 					callback();
 				});
 			};
