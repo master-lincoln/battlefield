@@ -52,9 +52,15 @@ define('controller/battlefield', [
 			});*/
 
 
-			var orientation = true;
-			var diagram_movement_range = this.view.render();
-			diagram_movement_range.update(this.getScale(), orientation);
+			$(document).on('click', function() {
+				var orientation = true;
+				var diagram_movement_range = this.view.render();
+				diagram_movement_range.update(this.getScale(), orientation);
+
+				this.view.redraw();
+			}.bind(this));
+
+
 		},
 
 		getScale : function() {

@@ -3,13 +3,15 @@ define('view/battlefield', [
 	'gridlib/grid',
 	'gridlib/cube',
 	'gridlib/screen_coordinate',
-	'd3'
+	'd3',
+	'jquery'
 ], function(
 	BaseView,
 	Grid,
 	Cube,
 	ScreenCoordinate,
-	d3
+	d3,
+	$
 ) {
 	return BaseView.extend({
 		diagram : null,
@@ -23,47 +25,21 @@ define('view/battlefield', [
 		render : function() {
 			var controller = this.controller;
 			var diagram = this.diagram = this.createDiagram();
-			var redraw = this.redraw.bind(this);
-
-			this.diagram.addLabels();
-
-			if (controller.areObstaclesManuallyEditable()) {
-				diagram.makeTilesSelectable(redraw);
-			}
 
 			diagram.selected = this.controller.getObstacles();
-
-			//Starting end point
-			diagram.tiles.on('mouseover', function(d) {
-				controller.setDestinationPoint(d.cube);
-
-				var bfs = this.getBFS();
-				this.createRouteBetweenPoints(bfs);
-				this.updateGoalElementClasses();
-			}.bind(this));
-
-			diagram.onUpdate(redraw);
 			diagram.addPath();
+
 			//Add distance labels
 			if (controller.areDistanceLabelsEnabled()) {
 				//this.addDistanceLabels(bfs);
 				diagram.addCubeCoordinates();
 			}
 
-			/*d3.select("#limit-movement-range")
-				.on('change', redraw)
-				.on('input', redraw);*/
-
 			return diagram;
 		},
 
 		redraw : function () {
-			var controller = this.controller;
-
 			var bfs = this.getBFS();
-
-			//var distance_limit = this.controller.getDistanceLimit();
-			//d3.selectAll(".movement-range").text(distance_limit);
 
 			//Update CSS classes on hexes
 			this.updateCssClasses(bfs);
@@ -105,49 +81,65 @@ define('view/battlefield', [
 		},
 
 		updateCssClasses : function(bfs) {
-			this.updateBlockedElementsClasses();
-			this.updateShadowedElementsClasses(bfs);
-			this.updateStartElementClass();
-			//this.updateGoalElementClasses();
+			var nodes = this.diagram.nodes,
+				diagram = this.diagram,
+				distance_limit = this.controller.getDistanceLimit(),
+				starting_point = this.controller.getStartingPoint(),
+				destination_point = this.controller.getDestinationPoint();
+
+			for (var i = 0, l = nodes.length; i < l; i++) {
+				var node = nodes[i],
+					cube = node.cube;
+
+				node.tile.classed({
+					'blocked' : diagram.selected.has(cube),
+					'shadow' : !bfs.cost_so_far.has(cube) || bfs.cost_so_far.get(cube) > distance_limit,
+					'start' : cube.x === starting_point.x && cube.y === starting_point.y && cube.z === starting_point.z,
+					'goal' : cube.equals(destination_point)
+				});
+			}
 		},
 
-		updateBlockedElementsClasses : function() {
-			var diagram = this.diagram;
+		getCubeFromSVGNode : function($el) {
+			var x = $el.attr('x') | 0,
+				y = $el.attr('y') | 0,
+				z = $el.attr('z') | 0;
 
-			diagram.tiles.classed('blocked', function(d) {
-				return diagram.selected.has(d.cube);
-			});
+			return this.getNode(x, y, z).cube;
 		},
 
-		updateShadowedElementsClasses : function(bfs) {
-			var diagram = this.diagram,
-				distance_limit = this.controller.getDistanceLimit();
+		getNode : function(x, y, z) {
+			var nodes = this.diagram.nodes;
 
-			diagram.tiles.classed('shadow', function(d) {
-				return !bfs.cost_so_far.has(d.cube) || bfs.cost_so_far.get(d.cube) > distance_limit;
-			});
+			for(var i = 0, l = nodes.length; i < l; i++) {
+				var cube = nodes[i].cube;
+
+				if (cube.x === x && cube.y === y && cube.z === z) {
+					return nodes[i];
+				}
+			}
+
+			return null;
 		},
-
-		updateStartElementClass : function() {
-			var starting_point = this.controller.getStartingPoint();
-
-			this.diagram.tiles.classed('start', function(d) {
-				var point = d.cube;
-				return point.x === starting_point.x && point.y === starting_point.y && point.z === starting_point.z;
-			});
-		},
-
-		updateGoalElementClasses : function() {
-			var destination_point = this.controller.getDestinationPoint();
-
-			this.diagram.tiles.classed('goal', function(d) {
-				return d.cube.equals(destination_point);
-			});
-		},
-
 
 		initializeUIListeners : function() {
+			this.$el.on('mouseover', '.tile', function(e) {
+				var $el = $(e.currentTarget),
+					cube = this.getCubeFromSVGNode($el);
 
+				this.controller.setDestinationPoint(cube);
+				var bfs = this.getBFS();
+				this.createRouteBetweenPoints(bfs);
+				this.updateCssClasses(bfs);
+			}.bind(this));
+
+			this.$el.on('click', '.tile', function(e) {
+				var $el = $(e.currentTarget),
+					cube = this.getCubeFromSVGNode($el);
+
+				this.controller.setStartingPoint(cube);
+				this.redraw();
+			}.bind(this));
 		},
 
 		createDiagram : function() {
@@ -177,62 +169,69 @@ define('view/battlefield', [
 		createGridDiagram : function(svg, cubes) {
 			var diagram = {};
 			var controller = this.controller;
+			var hexagon_points = controller.makeHexagonShape(this.controller.getScale());
 
-			diagram.nodes = cubes.map(function(n) {
-				return {cube: n, key: n.toString()};
+			var nodes = diagram.nodes = cubes.map(function(cube) {
+				return {cube : cube};
 			});
 
 			diagram.root = svg.append('g');
-			diagram.tiles = diagram.root.selectAll("g.tile").data(diagram.nodes, function(node) {
-				return node.key;
-			});
 
-			diagram.tiles.enter()
-				.append('g').attr('class', "tile")
-				.each(function(d) {
-					d.node = d3.select(this);
-				});
+			for(var i = 0, l = nodes.length; i < l; i++) {
+				var cube = nodes[i].cube;
+				var tile = diagram.root.append('g').attr('class', "tile").attr('x', cube.x).attr('y', cube.y).attr('z', cube.z);
+				var polygon = tile.append('polygon').attr('points', hexagon_points);
+				var text = tile.append('text').attr('y', "0.4em");
 
-			diagram.polygons = diagram.tiles.append('polygon');
+				nodes[i].tile = tile;
+				nodes[i].polygon = polygon;
+				nodes[i].text = text;
+			}
 
-			diagram.makeTilesSelectable = function(callback) {
-				//Create empty 'set' of selected hexes
-				diagram.selected = d3.set();
-
-				/**
-				 * Creates obstacle on the map or removes it
-				 *
-				 * @param cube
-				 */
-				diagram.toggleObstacle = function(cube) {
-					if (diagram.selected.has(cube)) {
-						diagram.selected.remove(cube);
-					} else {
-						diagram.selected.add(cube);
+			diagram.addPath = function() {
+				diagram.pathLayer = this.root.append('path')
+					.attr('d', "M 0 0")
+					.attr('class', "path");
+				diagram.setPath = function(path) {
+					var d = [];
+					for (var i = 0; i < path.length; i++) {
+						d.push(i == 0? 'M' : 'L');
+						d.push(diagram.grid.hexToCenter(path[i]));
 					}
+					diagram.pathLayer.attr('d', d.join(" "));
 				};
-
-				//On Hex click
-				diagram.tiles.on('click', function(d) {
-					d3.event.preventDefault();
-					//diagram.toggleObstacle(d.cube);
-					controller.setStartingPoint(d.cube);
-
-					callback();
-				});
 			};
 
-			diagram.addLabels = function(labelFunction) {
-				diagram.tiles.append('text')
-					.attr('y', "0.4em")
-					.text(function(d, i) {
-						return labelFunction? labelFunction(d, i) : "";
-					});
+			diagram.addCubeCoordinates = function(with_mouseover) {
+				for(var i = 0, l = nodes.length; i < l; i++) {
+					var node = nodes[i];
+					var labels = [node.cube.x, node.cube.y, node.cube.z];
+
+					if (labels[0] == 0 && labels[1] == 0 && labels[2] == 0) {
+						// Special case: label the origin with x/y/z so that you can tell where things to
+						labels = ["x", "y", "z"];
+					}
+
+					node.text.append('tspan').attr('class', "q").text(labels[0] + ', ');
+					node.text.append('tspan').attr('class', "s").text(labels[1] + ', ');
+					node.text.append('tspan').attr('class', "r").text(labels[2]);
+				}
+
+				//Code to live update cubes
+				/*function relocate() {
+					var BL = 4;  // adjust to vertically center
+					var offsets = diagram.orientation? [14, -9+BL, -14, -9+BL, 0, 13+BL] : [13, 0+BL, -9, -14+BL, -9, 14+BL];
+					offsets = offsets.map(function(f) { return f * diagram.scale / 50; });
+					diagram.tiles.select(".q").attr('x', offsets[0]).attr('y', offsets[1]);
+					diagram.tiles.select(".s").attr('x', offsets[2]).attr('y', offsets[3]);
+					diagram.tiles.select(".r").attr('x', offsets[4]).attr('y', offsets[5]);
+				}
+				diagram.onUpdate(relocate);*/
 
 				return diagram;
 			};
 
-			diagram.addHexCoordinates = function(converter, with_mouseover) {
+			/*diagram.addHexCoordinates = function(converter, with_mouseover) {
 				diagram.nodes.forEach(function (n) {
 					n.hex = converter(n.cube);
 				});
@@ -267,94 +266,12 @@ define('view/battlefield', [
 				}
 
 				return diagram;
-			};
-
-			diagram.addCubeCoordinates = function(with_mouseover) {
-				diagram.tiles.append('text')
-					.each(function(d) {
-						var selection = d3.select(this);
-						var labels = [d.cube.x, d.cube.y, d.cube.z];
-						if (labels[0] == 0 && labels[1] == 0 && labels[2] == 0) {
-							// Special case: label the origin with x/y/z so that you can tell where things to
-							labels = ["x", "y", "z"];
-						}
-						selection.append('tspan').attr('class', "q").text(labels[0] + ', ');
-						selection.append('tspan').attr('class', "s").text(labels[1] + ', ');
-						selection.append('tspan').attr('class', "r").text(labels[2]);
-					});
-
-				function relocate() {
-					var BL = 4;  // adjust to vertically center
-					var offsets = diagram.orientation? [14, -9+BL, -14, -9+BL, 0, 13+BL] : [13, 0+BL, -9, -14+BL, -9, 14+BL];
-					offsets = offsets.map(function(f) { return f * diagram.scale / 50; });
-					diagram.tiles.select(".q").attr('x', offsets[0]).attr('y', offsets[1]);
-					diagram.tiles.select(".s").attr('x', offsets[2]).attr('y', offsets[3]);
-					diagram.tiles.select(".r").attr('x', offsets[4]).attr('y', offsets[5]);
-				}
-
-				function setSelection(cube) {
-					["q", "s", "r"].forEach(function (axis, i) {
-						diagram.tiles.classed(axis + "-axis-same", function(other) { return cube.v()[i] == other.cube.v()[i]; });
-					});
-				}
-
-				if (with_mouseover) {
-					diagram.tiles
-						.on('mouseover', function(d) {
-							return setSelection(d.cube);
-						})
-						.on('touchstart', function(d) {
-							return setSelection(d.cube);
-						});
-				}
-
-				diagram.onUpdate(relocate);
-
-				return diagram;
-			};
-
-
-			diagram.addPath = function() {
-				diagram.pathLayer = this.root.append('path')
-					.attr('d', "M 0 0")
-					.attr('class', "path");
-				diagram.setPath = function(path) {
-					var d = [];
-					for (var i = 0; i < path.length; i++) {
-						d.push(i == 0? 'M' : 'L');
-						d.push(diagram.grid.hexToCenter(path[i]));
-					}
-					diagram.pathLayer.attr('d', d.join(" "));
-				};
-			};
-
-			var pre_callbacks = [];
-			var post_callbacks = [];
-
-			diagram.onLayout = function(callback) {
-				pre_callbacks.push(callback);
-			};
-
-			diagram.onUpdate = function(callback) {
-				post_callbacks.push(callback);
-			};
-
-			var hexagon_points = controller.makeHexagonShape(diagram.scale);
+			};*/
 
 			diagram.update = function(scale, orientation) {
-				if (scale != diagram.scale) {
-					diagram.scale = scale;
-					hexagon_points = controller.makeHexagonShape(scale);
-					diagram.polygons.attr('points', hexagon_points);
-				}
-
 				diagram.orientation = orientation;
 
-				pre_callbacks.forEach(function (f) {
-					f();
-				});
-
-				var grid = new Grid(scale, orientation, diagram.nodes.map(function(node) {
+				var grid = new Grid(scale, orientation, nodes.map(function(node) {
 					return node.cube;
 				}));
 
@@ -368,18 +285,13 @@ define('view/battlefield', [
 				diagram.root
 					.attr('transform', "translate(" + diagram.translate + ")");
 
-				diagram.tiles
-					.attr('transform', function(node) {
-						var center = grid.hexToCenter(node.cube);
-						return "translate(" + center.x + "," + center.y + ")";
-					});
+				for(var i = 0, l = nodes.length; i < l; i++) {
+					var node = nodes[i];
+					var center = grid.hexToCenter(node.cube);
 
-				diagram.polygons
-					.attr('transform', "rotate(" + (orientation * -30) + ")");
-
-				post_callbacks.forEach(function (f) {
-					f();
-				});
+					node.tile.attr('transform', "translate(" + center.x + "," + center.y + ")");
+					node.polygon.attr('transform', "rotate(" + (orientation * -30) + ")");
+				}
 
 				return diagram;
 			}.bind(this);
