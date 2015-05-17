@@ -6,8 +6,16 @@ define('controller/base', [
 	app
 ) {
 	return Backbone.View.extend({
-		initialize : function() {
+		models : null,
+		collections : null,
 
+		initialize : function(options) {
+			this.models = options.models || {};
+			this.collections = options.collections || {};
+		},
+
+		getCollection : function(name) {
+			return this.collections[name];
 		},
 
 		/**

@@ -27,7 +27,6 @@ define('view/battlefield', [
 			var diagram = this.diagram = this.createDiagram();
 
 			diagram.enablePath();
-			diagram.setObstacles(this.controller.getObstacles());
 
 			//Add distance labels
 			if (controller.areDistanceLabelsEnabled()) {
@@ -77,7 +76,7 @@ define('view/battlefield', [
 				controller.getStartingPoint(),
 				controller.getUnitSpeed(),
 				controller.getMaxDistance(),
-				this.diagram.isBlocked
+				controller.isHexBlocked.bind(controller)
 			);
 		},
 
@@ -103,7 +102,8 @@ define('view/battlefield', [
 		},*/
 
 		updateCssClasses : function(bfs) {
-			var nodes = this.diagram.nodes,
+			var controller = this.controller,
+				nodes = this.diagram.nodes,
 				diagram = this.diagram,
 				distance_limit = this.controller.getDistanceLimit(),
 				starting_point = this.controller.getStartingPoint(),
@@ -114,7 +114,7 @@ define('view/battlefield', [
 					cube = node.cube;
 
 				node.tile.classed({
-					'blocked' : diagram.selected.has(cube),
+					'blocked' : controller.isHexBlocked(cube),
 					'shadow' : !bfs.cost_so_far.has(cube) || bfs.cost_so_far.get(cube) > distance_limit,
 					'start' : cube.x === starting_point.x && cube.y === starting_point.y && cube.z === starting_point.z,
 					'goal' : cube.equals(destination_point)
@@ -171,17 +171,6 @@ define('view/battlefield', [
 					}
 					diagram.pathLayer.attr('d', d.join(" "));
 				};
-			};
-
-			/**
-			 * @param {d3 set} obstacles
-			 */
-			diagram.setObstacles = function(obstacles) {
-				this.selected = obstacles;
-			};
-
-			diagram.isBlocked = function(cube) {
-				return diagram.selected.has(cube);
 			};
 
 			diagram.addCubeCoordinates = function(/*with_mouseover*/) {

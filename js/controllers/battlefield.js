@@ -102,6 +102,14 @@ define('controller/battlefield', [
 			return 4;
 		},
 
+		isHexBlocked : function(cube) {
+			var is_obstacle = this.getCollection('obstacles').hasObstacle(cube);
+
+			//Later we will check here whether unit is standing on this hex as well
+
+			return is_obstacle;
+		},
+
 		/**
 		 * (x, y) should be the center
 		 * scale should be the distance from corner to corner
@@ -175,55 +183,6 @@ define('controller/battlefield', [
 				cost_so_far: cost_so_far,
 				came_from: came_from
 			};
-		},
-
-		getObstacles : function() {
-			var top_border = [],
-				bottom_border = [];
-			var hor_count = this.getHorizontalHexCount() + 2,
-				ver_count = this.getVerticalHexCount();
-
-			for(var i = 0, l = hor_count; i < l; i++) {
-				top_border.push(new Cube(i, 1 - i, -1));
-				bottom_border.push(new Cube(i - 6, - 5 - i, ver_count + 1));
-			}
-
-			var left_border = [
-				new Cube(-1, 1, 0),
-				new Cube(-2, 1, 1),
-				new Cube(-2, 0, 2),
-				new Cube(-3, 0, 3),
-				new Cube(-3, -1, 4),
-				new Cube(-4, -1, 5),
-				new Cube(-4, -2, 6),
-				new Cube(-5, -2, 7),
-				new Cube(-5, -3, 8),
-				new Cube(-6, -3, 9),
-				new Cube(-6, -4, 10)
-			];
-
-			var right_border = [
-				new Cube(15, -15, 0),
-				new Cube(14, -15, 1),
-				new Cube(14, -16, 2),
-				new Cube(13, -16, 3),
-				new Cube(13, -17, 4),
-				new Cube(12, -17, 5),
-				new Cube(12, -18, 6),
-				new Cube(11, -18, 7),
-				new Cube(11, -19, 8),
-				new Cube(10, -19, 9),
-				new Cube(10, -20, 10)
-			];
-
-			var obstacles = [
-				new Cube(2, -4, 2),
-				new Cube(1, -4, 3),
-				new Cube(0, -2, 2)
-			];
-
-			//Blocking the start
-			return d3.set(obstacles.concat(top_border, left_border, right_border, bottom_border));
 		},
 
 		onMouseTileOver : function(cube) {
