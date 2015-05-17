@@ -163,9 +163,9 @@ define('controller/battlefield', [
 						var neighbor = Cube.neighbor(cube, dir);
 
 						if (!cost_so_far.has(neighbor) && !isBlocked(neighbor) && Cube.$length(neighbor) <= maxMagnitude) {
-							cost_so_far.set(neighbor, k+1);
+							cost_so_far.set(neighbor, k + 1);
 							came_from.set(neighbor, cube);
-							fringes[k+1].push(neighbor);
+							fringes[k + 1].push(neighbor);
 						}
 					}
 				});
@@ -224,6 +224,20 @@ define('controller/battlefield', [
 
 			//Blocking the start
 			return d3.set(obstacles.concat(top_border, left_border, right_border, bottom_border));
+		},
+
+		onMouseTileOver : function(cube) {
+			this.setDestinationPoint(cube);
+			this.view.redraw();
+		},
+
+		onMouseTileClick : function(cube) {
+			this.setStartingPoint(cube);
+			this.view.redraw();
+		},
+
+		destroy : function() {
+
 		}
 	});
 });

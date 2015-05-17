@@ -45,18 +45,14 @@ define('view/battlefield', [
 				var $el = $(e.currentTarget),
 					cube = this.getCubeFromSVGNode($el);
 
-				this.controller.setDestinationPoint(cube);
-				var bfs = this.getBFS();
-				this.createRouteBetweenPoints(bfs);
-				this.updateCssClasses(bfs);
+				this.controller.onMouseTileOver(cube);
 			}.bind(this));
 
 			this.$el.on('click', '.tile', function(e) {
 				var $el = $(e.currentTarget),
 					cube = this.getCubeFromSVGNode($el);
 
-				this.controller.setStartingPoint(cube);
-				this.redraw();
+				this.controller.onMouseTileClick(cube);
 			}.bind(this));
 		},
 
