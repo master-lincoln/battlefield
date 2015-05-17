@@ -26,8 +26,8 @@ define('view/battlefield', [
 			var controller = this.controller;
 			var diagram = this.diagram = this.createDiagram();
 
-			diagram.selected = this.controller.getObstacles();
-			diagram.addPath();
+			diagram.enablePath();
+			diagram.setObstacles(this.controller.getObstacles());
 
 			//Add distance labels
 			if (controller.areDistanceLabelsEnabled()) {
@@ -35,10 +35,32 @@ define('view/battlefield', [
 				diagram.addCubeCoordinates();
 			}
 
+			this._draw();
+
 			return diagram;
 		},
 
-		redraw : function () {
+		initializeUIListeners : function() {
+			this.$el.on('mouseover', '.tile', function(e) {
+				var $el = $(e.currentTarget),
+					cube = this.getCubeFromSVGNode($el);
+
+				this.controller.setDestinationPoint(cube);
+				var bfs = this.getBFS();
+				this.createRouteBetweenPoints(bfs);
+				this.updateCssClasses(bfs);
+			}.bind(this));
+
+			this.$el.on('click', '.tile', function(e) {
+				var $el = $(e.currentTarget),
+					cube = this.getCubeFromSVGNode($el);
+
+				this.controller.setStartingPoint(cube);
+				this.redraw();
+			}.bind(this));
+		},
+
+		_draw : function() {
 			var bfs = this.getBFS();
 
 			//Update CSS classes on hexes
@@ -48,14 +70,18 @@ define('view/battlefield', [
 			this.createRouteBetweenPoints(bfs);
 		},
 
+		redraw : function () {
+			this._draw();
+		},
+
 		getBFS : function() {
 			var controller = this.controller;
 
 			return controller.breadthFirstSearch(
 				controller.getStartingPoint(),
-				controller.getMaxMovement(),
+				controller.getUnitSpeed(),
 				controller.getMaxDistance(),
-				this.diagram.selected.has.bind(this.diagram.selected)
+				this.diagram.isBlocked
 			);
 		},
 
@@ -71,14 +97,14 @@ define('view/battlefield', [
 			this.diagram.setPath(path);
 		},
 
-		addDistanceLabels : function(bfs) {
+		/*addDistanceLabels : function(bfs) {
 			this.diagram.tiles.selectAll("text")
 				.text(function(d) {
 					return bfs.cost_so_far.has(d.cube) ?
 						bfs.cost_so_far.get(d.cube) :
 						"";
 				});
-		},
+		},*/
 
 		updateCssClasses : function(bfs) {
 			var nodes = this.diagram.nodes,
@@ -122,76 +148,25 @@ define('view/battlefield', [
 			return null;
 		},
 
-		initializeUIListeners : function() {
-			this.$el.on('mouseover', '.tile', function(e) {
-				var $el = $(e.currentTarget),
-					cube = this.getCubeFromSVGNode($el);
-
-				this.controller.setDestinationPoint(cube);
-				var bfs = this.getBFS();
-				this.createRouteBetweenPoints(bfs);
-				this.updateCssClasses(bfs);
-			}.bind(this));
-
-			this.$el.on('click', '.tile', function(e) {
-				var $el = $(e.currentTarget),
-					cube = this.getCubeFromSVGNode($el);
-
-				this.controller.setStartingPoint(cube);
-				this.redraw();
-			}.bind(this));
-		},
-
 		createDiagram : function() {
 			return this.createGridDiagram(
 				this.d3,
-				Grid.trapezoidalShape(0, this.controller.getHorizontalHexCount(), 0, this.controller.getVerticalHexCount(), Grid.evenRToCube)
+				Grid.trapezoidalShape(0, this.controller.getHorizontalHexCount(), 0, this.controller.getVerticalHexCount(), Grid.evenRToCube),
+				this.controller.getScale(),
+				true
 			);
 		},
 
-		/**
-		 * A grid diagram will be an object with
-		 * 1. nodes = { cube: Cube object, key: string, node: d3 selection of <g> containing polygon }
-		 * 2. grid = Grid object
-		 * 3. root = d3 selection of root <g> of diagram
-		 * 4. polygons = d3 selection of the hexagons inside the <g> per tile
-		 * 5. update = function(scale, orientation) to call any time orientation changes, including initialization
-		 * 6. onLayout = callback function that will be called before an update (to assign new cube coordinates)
-		 * - this will be called immediately on update
-		 * 7. onUpdate = callback function that will be called after an update
-		 * - this will be called after a delay, and only if there hasn't been another update
-		 * - since it may not be called, this function should only affect the visuals and not data
-		 *
-		 * @param svg
-		 * @param cubes
-		 * @returns {{}}
-		 */
-		createGridDiagram : function(svg, cubes) {
+		createGridDiagram : function(svg, cubes, scale, orientation) {
 			var diagram = {};
 			var controller = this.controller;
-			var hexagon_points = controller.makeHexagonShape(this.controller.getScale());
+			var hexagon_points = controller.makeHexagonShape(scale);
 
-			var nodes = diagram.nodes = cubes.map(function(cube) {
-				return {cube : cube};
-			});
-
-			diagram.root = svg.append('g');
-
-			for(var i = 0, l = nodes.length; i < l; i++) {
-				var cube = nodes[i].cube;
-				var tile = diagram.root.append('g').attr('class', "tile").attr('x', cube.x).attr('y', cube.y).attr('z', cube.z);
-				var polygon = tile.append('polygon').attr('points', hexagon_points);
-				var text = tile.append('text').attr('y', "0.4em");
-
-				nodes[i].tile = tile;
-				nodes[i].polygon = polygon;
-				nodes[i].text = text;
-			}
-
-			diagram.addPath = function() {
+			diagram.enablePath = function() {
 				diagram.pathLayer = this.root.append('path')
 					.attr('d', "M 0 0")
 					.attr('class', "path");
+
 				diagram.setPath = function(path) {
 					var d = [];
 					for (var i = 0; i < path.length; i++) {
@@ -202,7 +177,18 @@ define('view/battlefield', [
 				};
 			};
 
-			diagram.addCubeCoordinates = function(with_mouseover) {
+			/**
+			 * @param {d3 set} obstacles
+			 */
+			diagram.setObstacles = function(obstacles) {
+				this.selected = obstacles;
+			};
+
+			diagram.isBlocked = function(cube) {
+				return diagram.selected.has(cube);
+			};
+
+			diagram.addCubeCoordinates = function(/*with_mouseover*/) {
 				for(var i = 0, l = nodes.length; i < l; i++) {
 					var node = nodes[i];
 					var labels = [node.cube.x, node.cube.y, node.cube.z];
@@ -294,7 +280,39 @@ define('view/battlefield', [
 				}
 
 				return diagram;
-			}.bind(this);
+			};
+
+			/**
+			 * Nodes
+			 *
+			 * {
+			 *     cube    : null,
+			 *     tile    : null,
+			 *     polygon : null,
+			 *     text    : null
+			 * }
+			 *
+			 * @type {Array}
+			 */
+			var nodes = diagram.nodes = cubes.map(function(cube) {
+				return {cube : cube};
+			});
+
+			diagram.root = svg.append('g');
+
+			//Creating elements
+			for(var i = 0, l = nodes.length; i < l; i++) {
+				var cube = nodes[i].cube;
+				var tile = diagram.root.append('g').attr('class', "tile").attr('x', cube.x).attr('y', cube.y).attr('z', cube.z);
+				var polygon = tile.append('polygon').attr('points', hexagon_points);
+				var text = tile.append('text').attr('y', "0.4em");
+
+				nodes[i].tile = tile;
+				nodes[i].polygon = polygon;
+				nodes[i].text = text;
+			}
+
+			diagram.update(scale, orientation);
 
 			return diagram;
 		},

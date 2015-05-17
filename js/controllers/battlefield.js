@@ -17,10 +17,8 @@ define('controller/battlefield', [
 ) {
 	return BaseController.extend({
 		SCALE : 80,
-		MAX_DISTANCE : 20,
 		HOR_HEX_COUNT : 15,
 		VER_HEX_COUNT : 11,
-		EDITABLE_OBSTACLES : true,
 		SHOW_DISTANCE_LABELS : true,
 
 		cm_context : {
@@ -52,15 +50,9 @@ define('controller/battlefield', [
 			});*/
 
 
-			$(document).on('click', function() {
-				var orientation = true;
-				var diagram_movement_range = this.view.render();
-				diagram_movement_range.update(this.getScale(), orientation);
-
-				this.view.redraw();
-			}.bind(this));
-
-
+			//$(document).on('click', function() {
+				this.view.render();
+			//}.bind(this));
 		},
 
 		getScale : function() {
@@ -68,11 +60,10 @@ define('controller/battlefield', [
 		},
 
 		getMaxDistance : function() {
-			//return this.MAX_DISTANCE;
 			return Infinity;
 		},
 
-		getMaxMovement : function() {
+		getUnitSpeed : function() {
 			//return Infinity;
 			return 4;
 		},
@@ -83,10 +74,6 @@ define('controller/battlefield', [
 
 		getVerticalHexCount : function() {
 			return this.VER_HEX_COUNT - 1;
-		},
-
-		areObstaclesManuallyEditable : function() {
-			return this.EDITABLE_OBSTACLES;
 		},
 
 		areDistanceLabelsEnabled : function() {
@@ -158,10 +145,10 @@ define('controller/battlefield', [
 		 * @param start
 		 * @param maxMovement
 		 * @param maxMagnitude
-		 * @param blocked
+		 * @param isBlocked
 		 * @returns {{cost_so_far: (Array|*), came_from: (Array|*)}}
 		 */
-		breadthFirstSearch : function(start, maxMovement, maxMagnitude, blocked) {
+		breadthFirstSearch : function(start, maxMovement, maxMagnitude, isBlocked) {
 			var cost_so_far = d3.map();
 			var came_from = d3.map();
 			var fringes = [[start]];
@@ -170,11 +157,12 @@ define('controller/battlefield', [
 			came_from.set(start, null);
 
 			for (var k = 0; k < maxMovement && fringes[k].length > 0; k++) {
-				fringes[k+1] = [];
+				fringes[k + 1] = [];
 				fringes[k].forEach(function(cube) {
 					for (var dir = 0; dir < 6; dir++) {
 						var neighbor = Cube.neighbor(cube, dir);
-						if (!cost_so_far.has(neighbor) && !blocked(neighbor) && Cube.$length(neighbor) <= maxMagnitude) {
+
+						if (!cost_so_far.has(neighbor) && !isBlocked(neighbor) && Cube.$length(neighbor) <= maxMagnitude) {
 							cost_so_far.set(neighbor, k+1);
 							came_from.set(neighbor, cube);
 							fringes[k+1].push(neighbor);
