@@ -45,14 +45,7 @@ define('controller/battlefield', [
 				controller : this
 			});
 
-			/*this.publishEvent(eventsProvider.hex.clicked, {
-				lol : 1
-			});*/
-
-
-			//$(document).on('click', function() {
-				this.view.render();
-			//}.bind(this));
+			this.view.render();
 		},
 
 		getScale : function() {
@@ -110,41 +103,13 @@ define('controller/battlefield', [
 			return is_obstacle;
 		},
 
-		/**
-		 * (x, y) should be the center
-		 * scale should be the distance from corner to corner
-		 * orientation should be 0 (flat bottom hex) or 1 (flat side hex)
-		 */
-		hexToPolygon : function(scale, x, y, orientation) {
-			// NOTE: the article says to use angles 0..300 or 30..330 (e.g. I
-			// add 30 degrees for pointy top) but I instead use -30..270
-			// (e.g. I subtract 30 degrees for pointy top) because it better
-			// matches the animations I needed for my diagrams. They're
-			// equivalent.
-			var points = [];
-
-			for (var i = 0; i < 6; i++) {
-				var angle = 2 * Math.PI * (2 * i - orientation) / 12;
-
-				points.push(new ScreenCoordinate(
-					x + 0.5 * scale * Math.cos(angle),
-					y + 0.5 * scale * Math.sin(angle)
-				));
-			}
-
-			return points;
-		},
-
-		/**
-		 * The shape of a hexagon is adjusted by the scale; the rotation is handled elsewhere, using svg transforms
-		 *
-		 * @param scale
-		 * @returns {string}
-		 */
-		makeHexagonShape : function(scale) {
-			return this.hexToPolygon(scale, 0, 0, false).map(function(p) {
-				return p.x.toFixed(3) + "," + p.y.toFixed(3);
-			}).join(" ");
+		getBFS : function() {
+			return this.breadthFirstSearch(
+				this.getStartingPoint(),
+				this.getUnitSpeed(),
+				this.getMaxDistance(),
+				this.isHexBlocked.bind(this)
+			);
 		},
 
 		/**

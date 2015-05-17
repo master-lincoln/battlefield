@@ -27,10 +27,12 @@ requirejs.config({
 
 requirejs([
 	'controller/battlefield',
-	'collection/obstacles'
+	'collection/obstacles',
+	'collection/hexes'
 ], function(
 	BattlefieldController,
-	ObstaclesCollection
+	ObstaclesCollection,
+	HexesCollection
 ) {
 	function getObstacles() {
 		var top_border = [],
@@ -82,14 +84,13 @@ requirejs([
 	}
 
 	var obstacles = new ObstaclesCollection(getObstacles());
-
-
-
+	var hexes = new HexesCollection();
 
 	var bc = new BattlefieldController({
 		el : document.querySelector('#diagram-movement-range'),
 		collections : {
-			obstacles : obstacles
+			obstacles : obstacles,
+			hexes : hexes
 		}
 	});
 });
