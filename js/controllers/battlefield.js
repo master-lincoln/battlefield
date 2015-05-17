@@ -103,7 +103,7 @@ define('controller/battlefield', [
 		},
 
 		isHexBlocked : function(cube) {
-			var is_obstacle = this.getCollection('obstacles').hasObstacle(cube);
+			var is_obstacle = this.getCollection('obstacles').isObstacle(cube);
 
 			//Later we will check here whether unit is standing on this hex as well
 

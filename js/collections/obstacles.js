@@ -8,7 +8,7 @@ define('collection/obstacles', [
 	return Backbone.Collection.extend({
 		model : ObstacleModel,
 
-		hasObstacle : function(cube) {
+		isObstacle : function(cube) {
 			return this.findWhere({
 				x : cube.x,
 				y : cube.y,

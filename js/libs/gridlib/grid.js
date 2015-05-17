@@ -46,53 +46,53 @@ define('gridlib/grid', [
 	};
 
 	Grid.twoAxisToCube = function(hex) {
-		return new Cube(hex.q, -hex.r - hex.q,hex.r);
+		return new Cube(hex.q, -hex.r - hex.q, hex.r);
 	};
 
 	Grid.cubeToTwoAxis = function(cube) {
-		return new Hex(cube.x | 0,cube.z | 0);
+		return new Hex(cube.x | 0, cube.z | 0);
 	};
 
 	Grid.oddQToCube = function(hex) {
 		var x = hex.q;
 		var z = hex.r - (hex.q - (hex.q & 1) >> 1);
 
-		return new Cube(x,-x - z,z);
+		return new Cube(x, -x - z, z);
 	};
 
 	Grid.cubeToOddQ = function(cube) {
 		var x = cube.x | 0;
 		var z = cube.z | 0;
 
-		return new Hex(x,z + (x - (x & 1) >> 1));
+		return new Hex(x, z + (x - (x & 1) >> 1));
 	};
 
 	Grid.evenQToCube = function(hex) {
 		var x = hex.q;
 		var z = hex.r - (hex.q + (hex.q & 1) >> 1);
 
-		return new Cube(x,-x - z,z);
+		return new Cube(x, -x - z, z);
 	};
 
 	Grid.cubeToEvenQ = function(cube) {
 		var x = cube.x | 0;
 		var z = cube.z | 0;
 
-		return new Hex(x,z + (x + (x & 1) >> 1));
+		return new Hex(x, z + (x + (x & 1) >> 1));
 	};
 
 	Grid.oddRToCube = function(hex) {
 		var z = hex.r;
 		var x = hex.q - (hex.r - (hex.r & 1) >> 1);
 
-		return new Cube(x,-x - z,z);
+		return new Cube(x, -x - z,z);
 	};
 
 	Grid.cubeToOddR = function(cube) {
 		var x = cube.x | 0;
 		var z = cube.z | 0;
 
-		return new Hex(x + (z - (z & 1) >> 1),z);
+		return new Hex(x + (z - (z & 1) >> 1), z);
 	};
 
 	Grid.evenRToCube = function(hex) {

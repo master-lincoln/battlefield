@@ -251,7 +251,7 @@ define('view/battlefield', [
 
 				// NOTE: In Webkit I can use svg.node().clientWidth but in Gecko that returns 0 :(
 				diagram.translate = new ScreenCoordinate((parseFloat(svg.attr('width')) - bounds.minX - bounds.maxX)/2,
-					(parseFloat(svg.attr('height')) - bounds.minY - bounds.maxY)/2);
+					(parseFloat(svg.attr('height')) - bounds.minY - bounds.maxY) / 2);
 
 				diagram.root
 					.attr('transform', "translate(" + diagram.translate + ")");
