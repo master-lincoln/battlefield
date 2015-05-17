@@ -72,15 +72,7 @@ define('view/battlefield', [
 		},
 
 		createRouteBetweenPoints : function(bfs) {
-			var path = [];
-			var cube = this.controller.getDestinationPoint();
-
-			while (cube != null) {
-				path.push(cube);
-				cube = bfs.came_from.get(cube);
-			}
-
-			this.diagram.setPath(path);
+			this.diagram.setPath(this.controller.getPath(bfs));
 		},
 
 		/*addDistanceLabels : function(bfs) {
@@ -111,6 +103,10 @@ define('view/battlefield', [
 			);
 
 			return diagram;
+		},
+
+		animateMovement : function(path, callback) {
+			this.diagram.animateMovement(path, callback);
 		},
 
 		destroy : function() {

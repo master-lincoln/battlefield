@@ -84,11 +84,15 @@ define('controller/battlefield', [
 		setStartingPoint : function(cube) {
 			this.starting_point = cube;
 
-			this.view.redraw();
+			//Animate
+			this.view.animateMovement(this.getPath(this.getBFS()), function() {
+				this.view.redraw();
+			}.bind(this));
 		},
 
 		setDestinationPoint : function(cube) {
 			this.destination_point = cube;
+			this.view.redraw();
 		},
 
 		getDistanceLimit : function() {
@@ -150,14 +154,24 @@ define('controller/battlefield', [
 			};
 		},
 
+		getPath : function(bfs) {
+			var path = [];
+			var cube = this.getDestinationPoint();
+
+			while (cube != null) {
+				path.push(cube);
+				cube = bfs.came_from.get(cube);
+			}
+
+			return path;
+		},
+
 		onMouseTileOver : function(cube) {
 			this.setDestinationPoint(cube);
-			this.view.redraw();
 		},
 
 		onMouseTileClick : function(cube) {
 			this.setStartingPoint(cube);
-			this.view.redraw();
 		},
 
 		destroy : function() {

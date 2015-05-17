@@ -20,6 +20,10 @@ define('gridlib/diagram', [
 		this.initialize();
 	};
 
+	Diagram.prototype.animateMovement = function(path, callback) {
+		callback();
+	};
+
 	Diagram.prototype.initialize = function() {
 		var hexes = [],
 			cubes = this.cubes,
@@ -90,7 +94,7 @@ define('gridlib/diagram', [
 			var d = [];
 
 			for (var i = 0; i < path.length; i++) {
-				d.push(i == 0? 'M' : 'L');
+				d.push(i == 0 ? 'M' : 'L');
 				d.push(this.grid.hexToCenter(path[i]));
 			}
 
