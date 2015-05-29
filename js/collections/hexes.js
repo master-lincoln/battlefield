@@ -16,7 +16,7 @@ define('collection/hexes', [
 		addHexes : function(hexes, silent) {
 			this.add(hexes, {
 				silent : silent || false
-			})
+			});
 		},
 
 		getHexes : function() {

@@ -28,6 +28,7 @@ define('controller/battlefield', [
 
 		starting_point : null,
 		destination_point : null,
+		active_unit : null,
 
 		initialize : function() {
 			BaseController.prototype.initialize.apply(this, arguments);
@@ -35,6 +36,9 @@ define('controller/battlefield', [
 			/*this.observeEvent(eventsProvider.hex.clicked, function(e, data) {
 				console.log('events', arguments);
 			});*/
+
+
+			this.active_unit = this.getCollection('battlefield_units').getFirstUnit();
 
 			this.initializeView();
 		},
@@ -78,16 +82,11 @@ define('controller/battlefield', [
 		},
 
 		getStartingPoint : function() {
-			return this.starting_point || new Cube(3, -4, 1);
+			return this.active_unit.getPosition();
 		},
 
 		setStartingPoint : function(cube) {
-			this.starting_point = cube;
-
-			//Animate
-			this.view.animateMovement(this.getPath(this.getBFS()), function() {
-				this.view.redraw();
-			}.bind(this));
+			this.active_unit.moveTo(cube);
 		},
 
 		setDestinationPoint : function(cube) {
