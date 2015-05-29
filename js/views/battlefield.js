@@ -91,10 +91,6 @@ define('view/battlefield', [
 			return this.controller.getCollection('hexes').getHex(x, y, z).getCube();
 		},
 
-		animateMovement : function(path, callback) {
-			this.diagram.animateMovement(path, callback);
-		},
-
 		destroy : function() {
 
 		}

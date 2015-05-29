@@ -7,6 +7,45 @@ define('gridlib/diagram', [
 ) {
 	'use strict';
 
+	/**
+	 * (x, y) should be the center
+	 * scale should be the distance from corner to corner
+	 * orientation should be 0 (flat bottom hex) or 1 (flat side hex)
+	 */
+	var hexToPolygon = function hexToPolygon(scale, x, y, orientation) {
+		// NOTE: the article says to use angles 0..300 or 30..330 (e.g. I
+		// add 30 degrees for pointy top) but I instead use -30..270
+		// (e.g. I subtract 30 degrees for pointy top) because it better
+		// matches the animations I needed for my diagrams. They're
+		// equivalent.
+		var points = [];
+
+		for (var i = 0; i < 6; i++) {
+			var angle = 2 * Math.PI * (2 * i - orientation) / 12;
+
+			points.push(new ScreenCoordinate(
+				x + 0.5 * scale * Math.cos(angle),
+				y + 0.5 * scale * Math.sin(angle)
+			));
+		}
+
+		return points;
+	};
+
+	/**
+	 * The shape of a hexagon is adjusted by the scale; the rotation is handled elsewhere, using svg transforms
+	 *
+	 * @param scale
+	 * @returns {string}
+	 */
+	var makeHexagonShape = function makeHexagonShape(scale) {
+		return hexToPolygon(scale, 0, 0, false).map(function(screen_coordinate) {
+			return screen_coordinate.x.toFixed(3) + "," + screen_coordinate.y.toFixed(3);
+		}).join(" ");
+	};
+
+
+
 	var Diagram = function(controller, svg, scale, hexes_collection, shape) {
 		this.controller = controller;
 		this.svg = svg;
@@ -20,14 +59,10 @@ define('gridlib/diagram', [
 		this.initialize();
 	};
 
-	Diagram.prototype.animateMovement = function(path, callback) {
-		callback();
-	};
-
 	Diagram.prototype.initialize = function() {
 		var hexes = [],
 			cubes = this.cubes,
-			hexagon_points = this.makeHexagonShape(this.scale);
+			hexagon_points = makeHexagonShape(this.scale);
 
 		for(var i = 0, l = cubes.length; i < l; i++) {
 			var cube = cubes[i];
@@ -46,43 +81,6 @@ define('gridlib/diagram', [
 		this.hexes_collection.addHexes(hexes, true);
 
 		this.update(this.scale, true);
-	};
-
-	/**
-	 * The shape of a hexagon is adjusted by the scale; the rotation is handled elsewhere, using svg transforms
-	 *
-	 * @param scale
-	 * @returns {string}
-	 */
-	Diagram.prototype.makeHexagonShape = function(scale) {
-		return this.hexToPolygon(scale, 0, 0, false).map(function(screen_coordinate) {
-			return screen_coordinate.x.toFixed(3) + "," + screen_coordinate.y.toFixed(3);
-		}).join(" ");
-	};
-
-	/**
-	 * (x, y) should be the center
-	 * scale should be the distance from corner to corner
-	 * orientation should be 0 (flat bottom hex) or 1 (flat side hex)
-	 */
-	Diagram.prototype.hexToPolygon = function(scale, x, y, orientation) {
-		// NOTE: the article says to use angles 0..300 or 30..330 (e.g. I
-		// add 30 degrees for pointy top) but I instead use -30..270
-		// (e.g. I subtract 30 degrees for pointy top) because it better
-		// matches the animations I needed for my diagrams. They're
-		// equivalent.
-		var points = [];
-
-		for (var i = 0; i < 6; i++) {
-			var angle = 2 * Math.PI * (2 * i - orientation) / 12;
-
-			points.push(new ScreenCoordinate(
-				x + 0.5 * scale * Math.cos(angle),
-				y + 0.5 * scale * Math.sin(angle)
-			));
-		}
-
-		return points;
 	};
 
 	Diagram.prototype.enablePath = function() {
@@ -178,43 +176,6 @@ define('gridlib/diagram', [
 				'goal' : cube.equals(destination_point)
 			});
 		}
-	};
-
-	Diagram.prototype.addHexCoordinates = function(converter, with_mouseover) {
-		/*diagram.nodes.forEach(function (n) {
-			n.hex = converter(n.cube);
-		});
-
-		diagram.tiles.append('text')
-			.attr('y', "0.4em")
-			.each(function(d) {
-				var selection = d3.select(this);
-				selection.append('tspan').attr('class', "q").text(d.hex.q);
-				selection.append('tspan').text(", ");
-				selection.append('tspan').attr('class', "r").text(d.hex.r);
-			});
-
-		function setSelection(hex) {
-			diagram.tiles
-				.classed('q-axis-same', function(other) {
-					return hex.q == other.hex.q;
-				})
-				.classed('r-axis-same', function(other) {
-					return hex.r == other.hex.r;
-				});
-		}
-
-		if (with_mouseover) {
-			diagram.tiles
-				.on('mouseover', function(d) {
-					setSelection(d.hex);
-				})
-				.on('touchstart', function(d) {
-					setSelection(d.hex);
-				});
-		}
-
-		return diagram;*/
 	};
 
 	return Diagram;

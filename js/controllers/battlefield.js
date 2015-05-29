@@ -6,7 +6,8 @@ define('controller/battlefield', [
 	'gridlib/grid',
 	'gridlib/cube',
 	'gridlib/diagram',
-	'provider/events'
+	'provider/events',
+	'controller/battlefield_ground'
 ], function(
 	BaseController,
 	d3,
@@ -15,7 +16,8 @@ define('controller/battlefield', [
 	Grid,
 	Cube,
 	Diagram,
-	eventsProvider
+	eventsProvider,
+	BattlefieldGroundController
 ) {
 	return BaseController.extend({
 		SCALE : 80,
@@ -39,6 +41,7 @@ define('controller/battlefield', [
 
 			this.map = options.map;
 			this.active_unit = this.getCollection('battlefield_units').getFirstUnit();
+			this.battlefield_ground = new BattlefieldGroundController({});
 
 			this.initializeView();
 		},
