@@ -8,11 +8,11 @@ define('collection/battlefield_units', [
 	return Backbone.Collection.extend({
 		model : BattlefieldUnitModel,
 
-		getFirstUnit : function() {
+		getFirstUnit : function getFirstUnit() {
 			return this.at(0);
 		},
 
-		getUnit : function(hex) {
+		getUnit : function getUnit(hex) {
 			var cube = hex.getCube();
 
 			return this.find(function(unit) {
@@ -22,11 +22,11 @@ define('collection/battlefield_units', [
 			});
 		},
 
-		isUnit : function(hex) {
+		isUnit : function isUnit(hex) {
 			return this.getUnit(hex) !== undefined;
 		},
 
-		onUnitMovement : function(obj, callback) {
+		onUnitMovement : function onUnitMovement(obj, callback) {
 			obj.listenTo(this, 'change:position', callback);
 		}
 	});

@@ -32,14 +32,14 @@ requirejs([
 	'collection/obstacles',
 	'collection/hexes',
 	'collection/battlefield_units',
-	'model/battlefield_cursor',
+	'model/battlefield',
 	'map/default'
 ], function(
 	BattlefieldController,
 	ObstaclesCollection,
 	HexesCollection,
 	BattlefieldUnitsCollection,
-	BattlefieldCursor,
+	Battlefield,
 	map
 ) {
 
@@ -54,7 +54,7 @@ requirejs([
 	var obstacles = new ObstaclesCollection(map.obstacles);
 	var hexes = new HexesCollection();
 	var battlefield_units = new BattlefieldUnitsCollection(getBattlefieldUnits());
-	var battlefield_cursor = new BattlefieldCursor();
+	var battlefield = new Battlefield();
 
 	var bc = new BattlefieldController({
 		el : document.querySelector('#diagram-movement-range'),
@@ -65,7 +65,7 @@ requirejs([
 		},
 
 		models : {
-			battlefield_cursor : battlefield_cursor
+			battlefield : battlefield
 		},
 		map : map
 	});

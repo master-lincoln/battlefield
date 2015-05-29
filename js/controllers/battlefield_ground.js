@@ -21,13 +21,13 @@ define('controller/battlefield_ground', [
 
 		initializeEvents : function() {
 			var battlefield_units = this.getCollection('battlefield_units'),
-				battlefield_cursor = this.getModel('battlefield_cursor');
+				battlefield = this.getModel('battlefield');
 
 			battlefield_units.onUnitMovement(this, function(model) {
 				this.view.rerender();
 			}.bind(this));
 
-			battlefield_cursor.onPositionChange(this, function(model) {
+			battlefield.onCursorPositionChange(this, function(model) {
 				this.view.rerender();
 			}.bind(this))
 		},

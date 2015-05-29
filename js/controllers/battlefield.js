@@ -33,7 +33,7 @@ define('controller/battlefield', [
 			});*/
 
 			this.map = options.map;
-			this.active_unit = this.getCollection('battlefield_units').getFirstUnit();
+			this.setActiveUnit(this.getCollection('battlefield_units').getFirstUnit());
 
 			this.initializeView();
 			this.initializeBattlefieldGround();
@@ -55,6 +55,14 @@ define('controller/battlefield', [
 			});
 		},
 
+		setActiveUnit : function(battlefield_unit) {
+			this.getModel('battlefield').setActiveUnit(battlefield_unit);
+		},
+
+		getActiveUnit : function() {
+			return this.getModel('battlefield').getActiveUnit();
+		},
+
 		getMapShape : function() {
 			return this.map.shape;
 		},
@@ -68,7 +76,7 @@ define('controller/battlefield', [
 		},
 
 		getUnitSpeed : function() {
-			return this.active_unit.getSpeed();
+			return this.getActiveUnit().getSpeed();
 		},
 
 		areHexLabelsEnabled : function() {
@@ -80,23 +88,23 @@ define('controller/battlefield', [
 		},
 
 		getStartingPoint : function() {
-			return this.active_unit.getPosition();
+			return this.getActiveUnit().getPosition();
 		},
 
 		moveActiveUnitTo : function(hex) {
-			this.active_unit.moveTo(hex.getCube());
+			this.getActiveUnit().moveTo(hex.getCube());
 		},
 
 		setStartingPoint : function(hex) {
-			this.active_unit = this.getCollection('battlefield_units').getUnit(hex);
+			this.setActiveUnit(this.getCollection('battlefield_units').getUnit(hex));
 		},
 
 		getDestinationPoint : function() {
-			return this.getModel('battlefield_cursor').getPosition();
+			return this.getModel('battlefield').getCursorPosition();
 		},
 
 		setDestinationPoint : function(hex) {
-			this.getModel('battlefield_cursor').moveTo(hex.getCube());
+			this.getModel('battlefield').moveCursorTo(hex.getCube());
 		},
 
 		destroy : function() {
