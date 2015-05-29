@@ -59,6 +59,7 @@ requirejs([
 			obstacles : obstacles,
 			hexes : hexes,
 			battlefield_units : battlefield_units
-		}
+		},
+		map : map
 	});
 });

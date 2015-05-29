@@ -7,12 +7,12 @@ define('gridlib/diagram', [
 ) {
 	'use strict';
 
-	var Diagram = function(controller, svg, scale, hexes_collection, cubes) {
+	var Diagram = function(controller, svg, scale, hexes_collection, shape) {
 		this.controller = controller;
 		this.svg = svg;
 		this.scale = scale;
 		this.root = svg.append('g');
-		this.cubes = cubes;
+		this.cubes = shape;
 		this.orientation = true;
 
 		this.hexes_collection = hexes_collection;

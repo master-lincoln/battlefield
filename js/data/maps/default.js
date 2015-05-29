@@ -1,8 +1,11 @@
 define('map/default', [
-
+	'gridlib/grid'
 ], function(
-
+	Grid
 ) {
+	var HOR_HEX_COUNT = 15,
+		VER_HEX_COUNT = 11;
+
 	function getObstacles() {
 		var top_border = [],
 			bottom_border = [];
@@ -53,6 +56,7 @@ define('map/default', [
 	}
 
 	return {
-		obstacles : getObstacles()
+		obstacles : getObstacles(),
+		shape : Grid.trapezoidalShape(0, HOR_HEX_COUNT - 1, 0, VER_HEX_COUNT - 1, Grid.evenRToCube)
 	};
 });

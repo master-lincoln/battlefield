@@ -10,7 +10,7 @@ define('controller/battlefield', [
 ], function(
 	BaseController,
 	d3,
-	BattlefiledView,
+	BattlefieldView,
 	ScreenCoordinate,
 	Grid,
 	Cube,
@@ -19,8 +19,6 @@ define('controller/battlefield', [
 ) {
 	return BaseController.extend({
 		SCALE : 80,
-		HOR_HEX_COUNT : 15,
-		VER_HEX_COUNT : 11,
 		SHOW_DISTANCE_LABELS : true,
 
 		cm_context : {
@@ -32,21 +30,21 @@ define('controller/battlefield', [
 		destination_point : null,
 		active_unit : null,
 
-		initialize : function() {
+		initialize : function(options) {
 			BaseController.prototype.initialize.apply(this, arguments);
 
 			/*this.observeEvent(eventsProvider.hex.clicked, function(e, data) {
 				console.log('events', arguments);
 			});*/
 
-
+			this.map = options.map;
 			this.active_unit = this.getCollection('battlefield_units').getFirstUnit();
 
 			this.initializeView();
 		},
 
 		initializeView : function() {
-			this.view = new BattlefiledView({
+			this.view = new BattlefieldView({
 				el : this.$el,
 				controller : this,
 				diagram : this.createDiagram()
@@ -66,14 +64,6 @@ define('controller/battlefield', [
 		getUnitSpeed : function() {
 			//return Infinity;
 			return 4;
-		},
-
-		getHorizontalHexCount : function() {
-			return this.HOR_HEX_COUNT - 1;
-		},
-
-		getVerticalHexCount : function() {
-			return this.VER_HEX_COUNT - 1;
 		},
 
 		areDistanceLabelsEnabled : function() {
@@ -170,13 +160,12 @@ define('controller/battlefield', [
 		},
 
 		createDiagram : function() {
-			//@todo move it to controller
 			var diagram = new Diagram(
 				this,
 				d3.select(this.el),
 				this.getScale(),
 				this.getCollection('hexes'),
-				Grid.trapezoidalShape(0, this.getHorizontalHexCount(), 0, this.getVerticalHexCount(), Grid.evenRToCube)
+				this.map.shape
 			);
 
 			return diagram;
