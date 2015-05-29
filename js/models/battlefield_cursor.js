@@ -1,4 +1,4 @@
-define('model/battlefield_unit', [
+define('model/battlefield_cursor', [
 	'backbone',
 	'gridlib/cube'
 ], function(
@@ -17,10 +17,6 @@ define('model/battlefield_unit', [
 
 		moveTo : function(cube) {
 			this.set('position', {x : cube.x, y : cube.y, z : cube.z});
-		},
-
-		getSpeed : function() {
-			return 5;
 		}
 	})
 });

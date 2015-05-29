@@ -10,6 +10,10 @@ define('collection/battlefield_units', [
 
 		getFirstUnit : function() {
 			return this.at(0);
+		},
+
+		onUnitMovement : function(obj, callback) {
+			obj.listenTo(this, 'change:position', callback);
 		}
 	});
 });

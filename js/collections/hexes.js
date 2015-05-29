@@ -17,6 +17,8 @@ define('collection/hexes', [
 			this.add(hexes, {
 				silent : silent || false
 			});
+
+			return this.models;
 		},
 
 		getHexes : function() {

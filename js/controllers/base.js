@@ -15,6 +15,27 @@ define('controller/base', [
 
 			this.models = options.models || {};
 			this.collections = options.collections || {};
+
+			this.linkDataFromParentController();
+		},
+
+		linkDataFromParentController : function() {
+			if (!this.parent_controller) {
+				return;
+			}
+
+			['models', 'collections'].forEach(function(data_type) {
+				var data = this.parent_controller[data_type];
+
+				for(var key in data) {
+					if (data.hasOwnProperty(key)) {
+						//take only if does not exist in the controller
+						if (!this[data_type][key]) {
+							this[data_type][key] = data[key];
+						}
+					}
+				}
+			}.bind(this));
 		},
 
 		getCollection : function(name) {

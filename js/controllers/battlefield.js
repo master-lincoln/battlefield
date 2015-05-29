@@ -15,7 +15,8 @@ define('controller/battlefield', [
 ) {
 	return BaseController.extend({
 		SCALE : 80,
-		SHOW_DISTANCE_LABELS : true,
+		HEX_LABELS_ENABLED : true,
+		MOVEMENT_ROUTE_ENABLED : true,
 
 		cm_context : {
 			main : 'battlefield',
@@ -53,7 +54,6 @@ define('controller/battlefield', [
 			this.battlefield_ground = new BattlefieldGroundController({
 				parent_controller : this,
 				el : this.$el,
-				d3 : d3.select(this.el),
 				shape : this.map.shape
 			});
 		},
@@ -67,16 +67,19 @@ define('controller/battlefield', [
 		},
 
 		getUnitSpeed : function() {
-			//return Infinity;
-			return 4;
+			return this.active_unit.getSpeed();
 		},
 
-		areDistanceLabelsEnabled : function() {
-			return this.SHOW_DISTANCE_LABELS;
+		areHexLabelsEnabled : function() {
+			return this.HEX_LABELS_ENABLED;
+		},
+
+		isMovementRouteEnabled : function() {
+			return this.MOVEMENT_ROUTE_ENABLED;
 		},
 
 		getDestinationPoint : function() {
-			return this.destination_point || new Cube(0, -4, 4);
+			return this.destination_point;
 		},
 
 		getStartingPoint : function() {
@@ -85,16 +88,11 @@ define('controller/battlefield', [
 
 		setStartingPoint : function(hex) {
 			this.active_unit.moveTo(hex.getCube());
-			this.battlefield_ground.view.redraw();
 		},
 
 		setDestinationPoint : function(hex) {
 			this.destination_point = hex.getCube();
-			this.battlefield_ground.view.redraw();
-		},
-
-		getDistanceLimit : function() {
-			return 4;
+			this.battlefield_ground.view.rerender();
 		},
 
 		destroy : function() {

@@ -13,7 +13,20 @@ define('view/battlefield_ground', [
 		initialize : function(options) {
 			BaseView.prototype.initialize.apply(this, arguments);
 
+			this.orientation = true;//This will not change so I keep it here
+			this.$d3 = d3.select(this.el);
+			this.$root = this.$d3.append('g');
+
 			this.initializeUIListeners();
+			this.createGroundCells();
+		},
+
+		render : function() {
+			this._draw();
+		},
+
+		rerender : function () {
+			this._draw();
 		},
 
 		initializeUIListeners : function() {
@@ -32,28 +45,110 @@ define('view/battlefield_ground', [
 			}.bind(this));
 		},
 
-		render : function() {
-			this._draw();
+		createGroundCells : function() {
+			var plainHexes = [],
+				scale = this.controller.getScale(),
+				cubes = this.controller.cubes,
+				hexagon_points = this.controller.getHexagonShape(scale);
 
-			return this.diagram;
+			for(var i = 0, l = cubes.length; i < l; i++) {
+				var cube = cubes[i];
+				var tile = this.$root.append('g').attr('class', "tile").attr('x', cube.x).attr('y', cube.y).attr('z', cube.z);
+				var polygon = tile.append('polygon').attr('points', hexagon_points);
+				var label = tile.append('text').attr('y', "0.4em");
+
+				plainHexes.push({
+					cube : cube,
+					tile : tile,
+					polygon : polygon,
+					label : label
+				});
+			}
+
+			var hexes = this.controller.addHexes(plainHexes, true);
+
+			var grid = this.grid = new Grid(scale, this.orientation, hexes.map(function(hex) {
+				return hex.getCube();
+			}));
+
+			var bounds = grid.bounds();
+
+			// NOTE: In Webkit I can use svg.node().clientWidth but in Gecko that returns 0 :(
+			var translate = new ScreenCoordinate(
+				(parseFloat(this.$d3.attr('width')) - bounds.minX - bounds.maxX) / 2,
+				(parseFloat(this.$d3.attr('height')) - bounds.minY - bounds.maxY) / 2
+			);
+
+			this.$root.attr('transform', "translate(" + translate + ")");
+
+			for(var i = 0, l = hexes.length; i < l; i++) {
+				var hex = hexes[i];
+				var center = grid.hexToCenter(hex.getCube());
+
+				hex.getTile().attr('transform', "translate(" + center.x + "," + center.y + ")");
+				hex.getPolygon().attr('transform', "rotate(" + (this.orientation * -30) + ")");
+			}
+		},
+
+		enablePath : function() {
+			this.pathLayer = this.$root.append('path')
+				.attr('d', "M 0 0")
+				.attr('class', "path");
+
+			this.setPath = function(path) {
+				var d = [];
+
+				for (var i = 0; i < path.length; i++) {
+					d.push(i == 0 ? 'M' : 'L');
+					d.push(this.grid.hexToCenter(path[i]));
+				}
+
+				this.pathLayer.attr('d', d.join(" "));
+			};
+		},
+
+		addCubeCoordinates : function(hexes) {
+			for(var i = 0, l = hexes.length; i < l; i++) {
+				var hex = hexes[i];
+				var cube = hex.getCube();
+				var label = hex.getLabel();
+				var labels = [cube.x, cube.y, cube.z];
+
+				if (labels[0] == 0 && labels[1] == 0 && labels[2] == 0) {
+					// Special case: label the origin with x/y/z so that you can tell where things to
+					labels = ['x', 'y', 'z'];
+				}
+
+				label.append('tspan').attr('class', "q").text(labels[0] + ', ');
+				label.append('tspan').attr('class', "s").text(labels[1] + ', ');
+				label.append('tspan').attr('class', "r").text(labels[2]);
+			}
 		},
 
 		_draw : function() {
 			var bfs = this.controller.getBFS();
 
 			//Update CSS classes on hexes
-			this.controller.updateCssClasses(bfs);
+			this.updateCssClasses(bfs);
 
 			// Reconstruct path to mouse over position
-			this.createRouteBetweenPoints(bfs);
+			if (this.controller.isMovementRouteEnabled()) {
+				this.createRouteBetweenPoints(bfs);
+			}
 		},
 
-		redraw : function () {
-			this._draw();
+		updateCssClasses : function(bfs) {
+			var hexes = this.controller.getHexes();
+
+			for (var i = 0, l = hexes.length; i < l; i++) {
+				var hex = hexes[i];
+
+				hex.getTile().classed(this.controller.getHexStatuses(bfs, hex));
+			}
 		},
 
 		createRouteBetweenPoints : function(bfs) {
-			this.controller.setPath(this.controller.getPath(bfs));
+			this.setPath(this.controller.getPath(bfs));
 		},
 
 		/*addDistanceLabels : function(bfs) {
