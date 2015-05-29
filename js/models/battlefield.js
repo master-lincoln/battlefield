@@ -20,8 +20,20 @@ define('model/battlefield', [
 			this.set('cursor_position', {x : cube.x, y : cube.y, z : cube.z});
 		},
 
+		setActiveUnit : function(battlefield_unit) {
+			this.set('active_unit', battlefield_unit);
+		},
+
+		getActiveUnit : function() {
+			return this.get('active_unit');
+		},
+
 		onCursorPositionChange : function(obj, callback) {
 			obj.listenTo(this, 'change:cursor_position', callback);
+		},
+
+		onActiveUnitChange : function(obj, callback) {
+			obj.listenTo(this, 'change:active_unit', callback);
 		}
 	})
 });

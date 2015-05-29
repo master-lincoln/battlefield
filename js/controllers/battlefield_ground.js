@@ -29,7 +29,11 @@ define('controller/battlefield_ground', [
 
 			battlefield.onCursorPositionChange(this, function(model) {
 				this.view.rerender();
-			}.bind(this))
+			}.bind(this));
+
+			battlefield.onActiveUnitChange(this, function(model) {
+				this.view.rerender();
+			}.bind(this));
 		},
 
 		initializeView : function() {
