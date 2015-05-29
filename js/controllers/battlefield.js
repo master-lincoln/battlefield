@@ -5,6 +5,7 @@ define('controller/battlefield', [
 	'gridlib/screen_coordinate',
 	'gridlib/grid',
 	'gridlib/cube',
+	'gridlib/diagram',
 	'provider/events'
 ], function(
 	BaseController,
@@ -13,6 +14,7 @@ define('controller/battlefield', [
 	ScreenCoordinate,
 	Grid,
 	Cube,
+	Diagram,
 	eventsProvider
 ) {
 	return BaseController.extend({
@@ -46,7 +48,8 @@ define('controller/battlefield', [
 		initializeView : function() {
 			this.view = new BattlefiledView({
 				el : this.$el,
-				controller : this
+				controller : this,
+				diagram : this.createDiagram()
 			});
 
 			this.view.render();
@@ -87,6 +90,7 @@ define('controller/battlefield', [
 
 		setStartingPoint : function(cube) {
 			this.active_unit.moveTo(cube);
+			this.view.redraw();
 		},
 
 		setDestinationPoint : function(cube) {
@@ -163,6 +167,19 @@ define('controller/battlefield', [
 			}
 
 			return path;
+		},
+
+		createDiagram : function() {
+			//@todo move it to controller
+			var diagram = new Diagram(
+				this,
+				d3.select(this.el),
+				this.getScale(),
+				this.getCollection('hexes'),
+				Grid.trapezoidalShape(0, this.getHorizontalHexCount(), 0, this.getVerticalHexCount(), Grid.evenRToCube)
+			);
+
+			return diagram;
 		},
 
 		onMouseTileOver : function(cube) {
