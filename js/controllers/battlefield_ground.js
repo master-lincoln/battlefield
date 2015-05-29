@@ -15,8 +15,6 @@ define('controller/battlefield_ground', [
 		initialize : function(options) {
 			BaseController.prototype.initialize.apply(this, arguments);
 
-			this.cubes = options.shape;
-
 			this.initializeView();
 			this.initializeEvents();
 		},
@@ -175,6 +173,10 @@ define('controller/battlefield_ground', [
 
 		getScale : function() {
 			return this.parent_controller.getScale();
+		},
+
+		getMapShape : function() {
+			return this.parent_controller.getMapShape();
 		},
 
 		getHexStatuses : function(bfs, hex) {

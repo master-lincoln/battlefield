@@ -23,8 +23,6 @@ define('controller/battlefield', [
 			sub : 'main'
 		},
 
-		starting_point : null,
-		destination_point : null,
 		active_unit : null,
 
 		initialize : function(options) {
@@ -53,9 +51,12 @@ define('controller/battlefield', [
 		initializeBattlefieldGround : function() {
 			this.battlefield_ground = new BattlefieldGroundController({
 				parent_controller : this,
-				el : this.$el,
-				shape : this.map.shape
+				el : this.$el
 			});
+		},
+
+		getMapShape : function() {
+			return this.map.shape;
 		},
 
 		getScale : function() {

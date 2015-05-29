@@ -48,7 +48,7 @@ define('view/battlefield_ground', [
 		createGroundCells : function() {
 			var plainHexes = [],
 				scale = this.controller.getScale(),
-				cubes = this.controller.cubes,
+				cubes = this.controller.getMapShape(),
 				hexagon_points = this.controller.getHexagonShape(scale);
 
 			for(var i = 0, l = cubes.length; i < l; i++) {
