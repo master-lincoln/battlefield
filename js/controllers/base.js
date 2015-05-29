@@ -6,10 +6,13 @@ define('controller/base', [
 	app
 ) {
 	return Backbone.View.extend({
+		parent_controller : null,//parent controller
 		models : null,
 		collections : null,
 
 		initialize : function(options) {
+			this.parent_controller = options.parent_controller;
+
 			this.models = options.models || {};
 			this.collections = options.collections || {};
 		},

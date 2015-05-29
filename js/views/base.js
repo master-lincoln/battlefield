@@ -15,6 +15,8 @@ define('view/base', [
 		},
 
 		_destroy : function() {
+			this.$el.off();
+
 			this.destroy();
 		}
 	});
