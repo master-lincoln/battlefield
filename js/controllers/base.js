@@ -42,6 +42,10 @@ define('controller/base', [
 			return this.collections[name];
 		},
 
+		getModel : function(name) {
+			return this.models[name];
+		},
+
 		/**
 		 * Returns component manager context.
 		 *

@@ -78,10 +78,6 @@ define('controller/battlefield', [
 			return this.MOVEMENT_ROUTE_ENABLED;
 		},
 
-		getDestinationPoint : function() {
-			return this.destination_point;
-		},
-
 		getStartingPoint : function() {
 			return this.active_unit.getPosition();
 		},
@@ -90,9 +86,12 @@ define('controller/battlefield', [
 			this.active_unit.moveTo(hex.getCube());
 		},
 
+		getDestinationPoint : function() {
+			return this.getModel('battlefield_cursor').getPosition();
+		},
+
 		setDestinationPoint : function(hex) {
-			this.destination_point = hex.getCube();
-			this.battlefield_ground.view.rerender();
+			this.getModel('battlefield_cursor').moveTo(hex.getCube());
 		},
 
 		destroy : function() {

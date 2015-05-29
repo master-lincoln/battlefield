@@ -22,11 +22,16 @@ define('controller/battlefield_ground', [
 		},
 
 		initializeEvents : function() {
-			var battlefield_units = this.getCollection('battlefield_units');
+			var battlefield_units = this.getCollection('battlefield_units'),
+				battlefield_cursor = this.getModel('battlefield_cursor');
 
 			battlefield_units.onUnitMovement(this, function(model) {
 				this.view.rerender();
 			}.bind(this));
+
+			battlefield_cursor.onPositionChange(this, function(model) {
+				this.view.rerender();
+			}.bind(this))
 		},
 
 		initializeView : function() {
@@ -105,27 +110,27 @@ define('controller/battlefield_ground', [
 		/**
 		 * @see http://www.redblobgames.com/pathfinding/a-star/introduction.html
 		 *
-		 * @param start
-		 * @param maxMovement
-		 * @param maxMagnitude
+		 * @param starting_point
+		 * @param max_movement
+		 * @param max_magnitude
 		 * @param isBlocked
 		 * @returns {{cost_so_far: (Array|*), came_from: (Array|*)}}
 		 */
-		breadthFirstSearch : function(start, maxMovement, maxMagnitude, isBlocked) {
+		breadthFirstSearch : function(starting_point, max_movement, max_magnitude, isBlocked) {
 			var cost_so_far = d3.map();
 			var came_from = d3.map();
-			var fringes = [[start]];
+			var fringes = [[starting_point]];
 
-			cost_so_far.set(start, 0);
-			came_from.set(start, null);
+			cost_so_far.set(starting_point, 0);
+			came_from.set(starting_point, null);
 
-			for (var k = 0; k < maxMovement && fringes[k].length > 0; k++) {
+			for (var k = 0; k < max_movement && fringes[k].length > 0; k++) {
 				fringes[k + 1] = [];
 				fringes[k].forEach(function(cube) {
 					for (var dir = 0; dir < 6; dir++) {
 						var neighbor = Cube.neighbor(cube, dir);
 
-						if (!cost_so_far.has(neighbor) && !isBlocked(neighbor) && Cube.$length(neighbor) <= maxMagnitude) {
+						if (!cost_so_far.has(neighbor) && !isBlocked(neighbor) && Cube.$length(neighbor) <= max_magnitude) {
 							cost_so_far.set(neighbor, k + 1);
 							came_from.set(neighbor, cube);
 							fringes[k + 1].push(neighbor);

@@ -7,16 +7,20 @@ define('model/battlefield_cursor', [
 ) {
 	return Backbone.Model.extend({
 		defaults : {
-			position : {x : 0, y : 0, z : 0}
+			position : {x : null, y : null, z : null}
 		},
 
 		getPosition : function() {
 			var position = this.get('position');
-			return new Cube(position.x, position.y, position.z);
+			return position.x === null && position.y === null && position.z === null ? null : new Cube(position.x, position.y, position.z);
 		},
 
 		moveTo : function(cube) {
 			this.set('position', {x : cube.x, y : cube.y, z : cube.z});
+		},
+
+		onPositionChange : function(obj, callback) {
+			obj.listenTo(this, 'change:position', callback);
 		}
 	})
 });
