@@ -83,8 +83,12 @@ define('controller/battlefield', [
 			return this.active_unit.getPosition();
 		},
 
-		setStartingPoint : function(hex) {
+		moveActiveUnitTo : function(hex) {
 			this.active_unit.moveTo(hex.getCube());
+		},
+
+		setStartingPoint : function(hex) {
+			this.active_unit = this.getCollection('battlefield_units').getUnit(hex);
 		},
 
 		getDestinationPoint : function() {

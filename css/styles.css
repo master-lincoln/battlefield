@@ -91,6 +91,10 @@ text {
 	fill: hsl(60, 100%, 50%);
 }
 
+#diagram-movement-range .start.selected polygon {
+	fill: hsl(355, 92%, 53%);
+}
+
 #diagram-movement-range .blocked polygon {
 	fill: hsl(0, 20%, 70%);
 }

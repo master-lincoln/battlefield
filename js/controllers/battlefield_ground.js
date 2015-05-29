@@ -188,9 +188,14 @@ define('controller/battlefield_ground', [
 			return {
 				blocked : this.isHexBlocked(cube),
 				shadow : !bfs.cost_so_far.has(cube) || bfs.cost_so_far.get(cube) > unit_speed,
-				start : cube.x === starting_point.x && cube.y === starting_point.y && cube.z === starting_point.z,
-				goal : destination_point ? cube.equals(destination_point) : false
+				start : this.hasUnitStanding(hex),
+				goal : destination_point ? cube.equals(destination_point) : false,
+				selected : cube.x === starting_point.x && cube.y === starting_point.y && cube.z === starting_point.z
 			};
+		},
+
+		hasUnitStanding : function(hex) {
+			return this.getCollection('battlefield_units').isUnit(hex);
 		},
 
 		onMouseTileOver : function(hex) {
@@ -198,7 +203,12 @@ define('controller/battlefield_ground', [
 		},
 
 		onMouseTileClick : function(hex) {
-			this.parent_controller.setStartingPoint(hex);
+			if (this.hasUnitStanding(hex)) {
+				this.parent_controller.setStartingPoint(hex);
+			}
+			else {
+				this.parent_controller.moveActiveUnitTo(hex);
+			}
 		},
 
 		destroy : function() {
