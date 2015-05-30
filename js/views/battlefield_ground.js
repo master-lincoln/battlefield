@@ -126,10 +126,8 @@ define('view/battlefield_ground', [
 		},
 
 		_draw : function() {
-			var bfs = this.controller.getBFS();
-
 			//Update CSS classes on hexes
-			this.updateCssClasses(bfs);
+			this.updateCssClasses();
 
 			// Reconstruct path to mouse over position
 			if (this.controller.isMovementRouteEnabled()) {
@@ -137,8 +135,9 @@ define('view/battlefield_ground', [
 			}
 		},
 
-		updateCssClasses : function(bfs) {
-			var hexes = this.controller.getHexes();
+		updateCssClasses : function() {
+			var hexes = this.controller.getHexes(),
+				bfs = this.controller.getBFS();
 
 			for (var i = 0, l = hexes.length; i < l; i++) {
 				var hex = hexes[i];
