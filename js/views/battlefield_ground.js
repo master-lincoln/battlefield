@@ -189,16 +189,16 @@ define('view/battlefield_ground', [
 				return d.join(" ");
 			}.bind(this);
 
-			var path = this.controller.getPath(to, from);
+			var path = this.controller.getPath(from, to);
 
 			var clone = tile[0][0].cloneNode(true);
 			var animate = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
 
 			animate.setAttribute('repeatCount','1');
-			animate.setAttribute('dur','3s');
+			animate.setAttribute('dur', (path.length * 0.3) +'s');
 			animate.setAttribute('fill','freeze');
 			animate.setAttribute('begin','indefinite');
-			animate.setAttribute('path', getPath(path));
+			animate.setAttribute('path', getPath(path.reverse()));
 			animate.addEventListener('endEvent', animationEnd, false);
 
 			clone.setAttribute('transform', "translate(0,0)");
