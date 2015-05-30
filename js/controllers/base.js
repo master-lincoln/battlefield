@@ -9,12 +9,14 @@ define('controller/base', [
 		parent_controller : null,//parent controller
 		models : null,
 		collections : null,
+		controllers : null,
 
 		initialize : function(options) {
 			this.parent_controller = options.parent_controller;
 
 			this.models = options.models || {};
 			this.collections = options.collections || {};
+			this.controllers = options.controllers || {};
 
 			this.linkDataFromParentController();
 		},
@@ -36,6 +38,14 @@ define('controller/base', [
 					}
 				}
 			}.bind(this));
+		},
+
+		registerController : function(name, obj) {
+			this.controllers[name] = obj;
+		},
+
+		getController : function(name) {
+			return this.controllers[name];
 		},
 
 		getCollection : function(name) {
@@ -122,6 +132,13 @@ define('controller/base', [
 
 		_destroy : function() {
 			this.stopListening();
+
+			//Destroy all sub controllers
+			for(var controller_name in this.controllers) {
+				if(this.controllers.hasOwnProperty(controller_name)) {
+					this.controllers[controller_name]._destroy();
+				}
+			}
 
 			//Unsubscribe all observed events
 			this.stopObservingEvents();

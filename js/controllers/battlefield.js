@@ -49,10 +49,10 @@ define('controller/battlefield', [
 		},
 
 		initializeBattlefieldGround : function() {
-			this.battlefield_ground = new BattlefieldGroundController({
+			this.registerController('battlefield_ground', new BattlefieldGroundController({
 				parent_controller : this,
 				el : this.$el
-			});
+			}));
 		},
 
 		setActiveUnit : function(battlefield_unit) {
