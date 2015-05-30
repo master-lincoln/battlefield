@@ -216,6 +216,8 @@ define('view/battlefield_ground', [
 
 			function animationEnd() {
 				callback();
+
+				clone.parentNode.removeChild(clone);
 			}
 		},
 
