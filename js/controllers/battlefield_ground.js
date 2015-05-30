@@ -18,6 +18,9 @@ define('controller/battlefield_ground', [
 		initialize : function(options) {
 			BaseController.prototype.initialize.apply(this, arguments);
 
+			this.$d3 = d3.select(this.el);
+			this.$root = this.$d3.append('g');
+
 			this.initializeView();
 			this.initializeAnimationController();
 			this.initializeEvents();
@@ -28,7 +31,7 @@ define('controller/battlefield_ground', [
 				battlefield = this.getModel('battlefield');
 
 			battlefield_units.onUnitMovement(this, function(unit) {
-				this.getController('unit_movement_animation').animate(unit, function() {
+				this.view.animate(unit, function() {
 					this.view.rerender();
 				}.bind(this));
 			}.bind(this));
@@ -45,6 +48,8 @@ define('controller/battlefield_ground', [
 		initializeView : function() {
 			this.view = new BattlefieldGroundView({
 				el : this.$el,
+				$d3 : this.$d3,
+				$root : this.$root,
 				controller : this
 			});
 
@@ -64,6 +69,8 @@ define('controller/battlefield_ground', [
 		initializeAnimationController : function() {
 			this.registerController('unit_movement_animation', new UnitMovementAnimationController({
 				el : this.$el,
+				$d3 : this.$d3,
+				$root : this.$root,
 				parent_controller : this
 			}));
 		},
@@ -115,7 +122,7 @@ define('controller/battlefield_ground', [
 
 		getBFS : function(from) {
 			return this.breadthFirstSearch(
-				from || this.parent_controller.getStartingPoint(),
+				from,
 				this.parent_controller.getUnitSpeed(),
 				this.parent_controller.getMaxDistance(),
 				this.isHexBlocked.bind(this)

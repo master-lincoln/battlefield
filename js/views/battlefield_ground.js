@@ -14,8 +14,8 @@ define('view/battlefield_ground', [
 			BaseView.prototype.initialize.apply(this, arguments);
 
 			this.orientation = true;//This will not change so I keep it here
-			this.$d3 = d3.select(this.el);
-			this.$root = this.$d3.append('g');
+			this.$d3 = options.$d3;
+			this.$root = options.$root;
 
 			this.initializeUIListeners();
 			this.createGroundCells();
@@ -137,7 +137,7 @@ define('view/battlefield_ground', [
 
 		updateCssClasses : function() {
 			var hexes = this.controller.getHexes(),
-				bfs = this.controller.getBFS();
+				bfs = this.controller.getBFS(this.controller.parent_controller.getStartingPoint());
 
 			for (var i = 0, l = hexes.length; i < l; i++) {
 				var hex = hexes[i];
@@ -165,6 +165,58 @@ define('view/battlefield_ground', [
 				z = $el.attr('z') | 0;
 
 			return this.controller.getHex(x, y, z);
+		},
+
+		animate : function(unit, callback) {
+			var from = unit.getPreviousPosition(),
+				to = unit.getPosition();
+			var hex = this.controller.getHex(from.x, from.y, from.z);
+
+			var tile = hex.getTile();
+			//console.log(tile);
+
+			//var clone = d3.select(tile[0][0].cloneNode(true));
+
+
+			var getPath = function(path) {
+				var d = [];
+
+				for (var i = 0; i < path.length; i++) {
+					d.push(i == 0 ? 'M' : 'L');
+					d.push(this.grid.hexToCenter(path[i]));
+				}
+
+				return d.join(" ");
+			}.bind(this);
+
+			var path = this.controller.getPath(to, from);
+
+			var clone = tile[0][0].cloneNode(true);
+			var animate = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
+
+			animate.setAttribute('repeatCount','1');
+			animate.setAttribute('dur','3s');
+			animate.setAttribute('fill','freeze');
+			animate.setAttribute('begin','indefinite');
+			animate.setAttribute('path', getPath(path));
+			animate.addEventListener('endEvent', animationEnd, false);
+
+			clone.setAttribute('transform', "translate(0,0)");
+			clone.appendChild(animate);
+			this.$root[0][0].appendChild(clone);
+
+
+
+			animate.beginElement();
+
+			/*svgChild.firstChild.setAttribute('from','100');
+			 svgChild.firstChild.setAttribute('to','200');
+			 svgChild.firstChild.beginElement()*/
+
+
+			function animationEnd() {
+				callback();
+			}
 		},
 
 		destroy : function() {

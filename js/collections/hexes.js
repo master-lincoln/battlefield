@@ -26,6 +26,7 @@ define('collection/hexes', [
 		},
 
 		getHex : function(x, y, z) {
+			//When used Cube instead of x,y,z I could feel drop of performance
 			var hexes = this.getHexes();
 
 			for(var i = 0, l = hexes.length; i < l; i++) {

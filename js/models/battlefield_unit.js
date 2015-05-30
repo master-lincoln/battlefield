@@ -16,7 +16,9 @@ define('model/battlefield_unit', [
 		},
 
 		getPreviousPosition : function() {
-			return this._previousAttributes.position;
+			var position = this._previousAttributes.position;
+
+			return new Cube(position.x, position.y, position.z);
 		},
 
 		moveTo : function(cube) {
