@@ -1,21 +1,25 @@
 define('controller/battlefield_ground', [
 	'controller/base',
+	'controller/battlefield/unit_movement_animation',
 	'view/battlefield_ground',
 	'gridlib/screen_coordinate',
 	'gridlib/grid',
 	'gridlib/cube'
 ], function(
 	BaseController,
+	UnitMovementAnimationController,
 	BattlefieldGroundView,
 	ScreenCoordinate,
 	Grid,
 	Cube
 ) {
 	return BaseController.extend({
+
 		initialize : function(options) {
 			BaseController.prototype.initialize.apply(this, arguments);
 
 			this.initializeView();
+			this.initializeAnimationController();
 			this.initializeEvents();
 		},
 
@@ -23,8 +27,10 @@ define('controller/battlefield_ground', [
 			var battlefield_units = this.getCollection('battlefield_units'),
 				battlefield = this.getModel('battlefield');
 
-			battlefield_units.onUnitMovement(this, function(model) {
-				this.view.rerender();
+			battlefield_units.onUnitMovement(this, function(unit) {
+				this.getController('unit_movement_animation').animate(unit, function() {
+					this.view.rerender();
+				}.bind(this));
 			}.bind(this));
 
 			battlefield.onCursorPositionChange(this, function(model) {
@@ -53,6 +59,13 @@ define('controller/battlefield_ground', [
 			}
 
 			this.view.render();
+		},
+
+		initializeAnimationController : function() {
+			this.registerController('unit_movement_animation', new UnitMovementAnimationController({
+				el : this.$el,
+				parent_controller : this
+			}));
 		},
 
 		/**
@@ -149,11 +162,11 @@ define('controller/battlefield_ground', [
 
 		getPath : function(bfs) {
 			var path = [];
-			var cube = this.parent_controller.getDestinationPoint();
+			var to = this.parent_controller.getDestinationPoint();
 
-			while (cube != null) {
-				path.push(cube);
-				cube = bfs.came_from.get(cube);
+			while (to != null) {
+				path.push(to);
+				to = bfs.came_from.get(to);
 			}
 
 			return path;
@@ -200,6 +213,13 @@ define('controller/battlefield_ground', [
 
 		hasUnitStanding : function(hex) {
 			return this.getCollection('battlefield_units').isUnit(hex);
+		},
+
+		createRouteBetweenPoints : function(bfs) {
+			var //from = this.parent_controller.getStartingPoint(),
+				to = this.parent_controller.getDestinationPoint();
+
+			this.view.setPath(this.getPath(bfs/*, to*/));
 		},
 
 		onMouseTileOver : function(hex) {

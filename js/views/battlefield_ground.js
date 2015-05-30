@@ -148,7 +148,7 @@ define('view/battlefield_ground', [
 		},
 
 		createRouteBetweenPoints : function(bfs) {
-			this.setPath(this.controller.getPath(bfs));
+			this.controller.createRouteBetweenPoints(bfs);
 		},
 
 		/*addDistanceLabels : function(bfs) {
