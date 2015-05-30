@@ -113,9 +113,9 @@ define('controller/battlefield_ground', [
 			return is_obstacle;
 		},
 
-		getBFS : function() {
+		getBFS : function(from) {
 			return this.breadthFirstSearch(
-				this.parent_controller.getStartingPoint(),
+				from || this.parent_controller.getStartingPoint(),
 				this.parent_controller.getUnitSpeed(),
 				this.parent_controller.getMaxDistance(),
 				this.isHexBlocked.bind(this)
@@ -160,9 +160,9 @@ define('controller/battlefield_ground', [
 			};
 		},
 
-		getPath : function(bfs) {
-			var path = [];
-			var to = this.parent_controller.getDestinationPoint();
+		getPath : function(from, to) {
+			var path = [],
+				bfs = this.getBFS(from);
 
 			while (to != null) {
 				path.push(to);
@@ -215,11 +215,11 @@ define('controller/battlefield_ground', [
 			return this.getCollection('battlefield_units').isUnit(hex);
 		},
 
-		createRouteBetweenPoints : function(bfs) {
-			var //from = this.parent_controller.getStartingPoint(),
+		createRouteBetweenPoints : function() {
+			var from = this.parent_controller.getStartingPoint(),
 				to = this.parent_controller.getDestinationPoint();
 
-			this.view.setPath(this.getPath(bfs/*, to*/));
+			this.view.setPath(this.getPath(from, to));
 		},
 
 		onMouseTileOver : function(hex) {

@@ -133,7 +133,7 @@ define('view/battlefield_ground', [
 
 			// Reconstruct path to mouse over position
 			if (this.controller.isMovementRouteEnabled()) {
-				this.createRouteBetweenPoints(bfs);
+				this.createRouteBetweenPoints();
 			}
 		},
 
@@ -147,8 +147,8 @@ define('view/battlefield_ground', [
 			}
 		},
 
-		createRouteBetweenPoints : function(bfs) {
-			this.controller.createRouteBetweenPoints(bfs);
+		createRouteBetweenPoints : function() {
+			this.controller.createRouteBetweenPoints();
 		},
 
 		/*addDistanceLabels : function(bfs) {
