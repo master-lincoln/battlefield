@@ -1,113 +1,92 @@
-html, body {
-	margin: 0;
-	padding: 0
-}
-
+html,
 body {
-	font-family: "Source Sans Pro", "Open Sans", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "Tahoma", sans-serif;
-	font-size: 14px;
-	line-height: 1.5;
+  margin: 0;
+  padding: 0;
 }
-
+body {
+  font-family: "Source Sans Pro", "Open Sans", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "Tahoma", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
 #diagram-movement-range {
-	margin: 0 auto;
-	position: relative;
-	display: block;
+  margin: 0 auto;
+  position: relative;
+  display: block;
 }
-
 #limit-movement-range {
-	position: relative;
-	display: block;
+  position: relative;
+  display: block;
 }
-
 svg {
-	overflow: hidden
-	pointer-events: visiblePainted;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	user-select: none;
+  overflow: hidden;
+  pointer-events: visiblePainted;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }
-
 svg > * {
-	pointer-events: none;
+  pointer-events: none;
 }
-
 text {
-	font-size: 14px;
-	text-anchor: middle;
+  font-size: 14px;
+  text-anchor: middle;
 }
-
 .tile polygon {
-	pointer-events: visiblePainted;
-	fill: hsl(60, 10%, 95%);
-	stroke: hsl(0, 0%, 70%);
-	stroke-width: 0.5;
+  pointer-events: visiblePainted;
+  fill: #f4f4f1;
+  stroke: #b3b3b3;
+  stroke-width: 0.5;
 }
-
 .tile.q-axis-same polygon {
-	fill: hsl(90, 20%, 87%);
+  fill: #dee4d7;
 }
-
 .tile.r-axis-same polygon {
-	fill: hsl(200, 15%, 90%);
+  fill: #e2e7e9;
 }
-
 .tile.s-axis-same polygon {
-	fill: hsl(300, 10%, 90%);
+  fill: #e8e3e8;
 }
-
 .tile.q-axis-same.r-axis-same polygon {
-	fill: hsl(160, 20%, 80%);
+  fill: #c2d6cf;
 }
-
 .tile.q-axis-same tspan.q {
-	fill: hsl(90, 100%, 35%);
-	font-weight: bold;
+  fill: #59b300;
+  font-weight: bold;
 }
-
 .tile.r-axis-same tspan.r {
-	fill: hsl(200, 100%, 45%);
-	font-weight: bold;
+  fill: #0099e6;
+  font-weight: bold;
 }
-
 .tile.s-axis-same tspan.s {
-	fill: hsl(300, 80%, 50%);
-	font-weight: bold;
+  fill: #e619e5;
+  font-weight: bold;
 }
-
 #diagram-movement-range .shadow polygon {
-	fill: hsl(60, 10%, 90%);
+  fill: #e8e8e3;
 }
-
 #diagram-movement-range .goal polygon {
-	fill: hsl(200, 50%, 70%);
+  fill: #8cbfd9;
 }
-
 #diagram-movement-range .goal.shadow polygon {
-	fill: hsl(200, 30%, 70%);
+  fill: #9cbac9;
 }
-
 #diagram-movement-range .start polygon {
-	fill: hsl(60, 100%, 50%);
+  fill: #ffff00;
 }
-
 #diagram-movement-range .start.selected polygon {
-	fill: hsl(355, 92%, 53%);
+  fill: #f5192b;
 }
-
 #diagram-movement-range .blocked polygon {
-	fill: hsl(0, 20%, 70%);
+  fill: #c2a3a3;
 }
-
 #diagram-movement-range .shadow text {
-	fill: hsl(60, 10%, 70%);
+  fill: #babaab;
 }
-
 #diagram-movement-range path.path {
-	fill: none;
-	stroke: hsl(60, 20%, 70%);
-	stroke-width: 20px;
-	stroke-opacity: 0.3;
-	stroke-linecap: round;
-	stroke-linejoin: round;
+  fill: none;
+  stroke: #c2c2a3;
+  stroke-width: 20px;
+  stroke-opacity: 0.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }

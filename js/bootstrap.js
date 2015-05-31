@@ -13,6 +13,7 @@ requirejs.config({
 		manager : 'managers',
 		model : 'models',
 		collection : 'collections',
+		enum : 'enums',
 
 		map : 'data/maps'
 	},
