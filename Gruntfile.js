@@ -9,14 +9,14 @@ module.exports = function(grunt) {
 
 				},
 				files: {
-					"css/battlefield/terrain.css": "less/battlefield/terrain.less",
-					"css/styles.css" : "less/styles.less"
+					"public/css/battlefield/terrain.css": "assets/less/battlefield/terrain.less",
+					"public/css/styles.css" : "assets/less/styles.less"
 				}
 			}
 		},
 		watch: {
 			less: {
-				files: ['less/**/*.less'],
+				files: ['assets/less/**/*.less'],
 				tasks: ['less:development'],
 				options: {
 
