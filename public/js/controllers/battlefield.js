@@ -14,7 +14,7 @@ define('controller/battlefield', [
 	BattlefieldGroundController
 ) {
 	return BaseController.extend({
-		SCALE : 80,
+		SCALE : 50,
 		HEX_LABELS_ENABLED : true,
 		MOVEMENT_ROUTE_ENABLED : true,
 
