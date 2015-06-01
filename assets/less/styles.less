@@ -15,99 +15,72 @@ body {
 	display: block;
 }
 
-#limit-movement-range {
-	position: relative;
-	display: block;
-}
-
-svg {
+.battlefield {
 	overflow: hidden;
 	pointer-events: visiblePainted;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	user-select: none;
-}
 
-svg > * {
-	pointer-events: none;
-}
+	& > * {
+		pointer-events: none;
+	}
 
-text {
-	font-size: 14px;
-	text-anchor: middle;
-}
+	.tile {
+		polygon {
+			pointer-events: visiblePainted;
+			fill: rgba(0, 0, 0, 0.5);
+			stroke: #678a00;
+			stroke-width: 1.3;
+		}
 
-.tile polygon {
-	pointer-events: visiblePainted;
-	fill: hsl(60, 10%, 95%);
-	stroke: hsl(0, 0%, 70%);
-	stroke-width: 0.5;
-}
+		text {
+			fill:white;
+			font-size: 8px;
+			text-anchor: middle;
+		}
 
-.tile.q-axis-same polygon {
-	fill: hsl(90, 20%, 87%);
-}
+		&.shadow {
+			polygon {
+				fill: transparent;
+			}
 
-.tile.r-axis-same polygon {
-	fill: hsl(200, 15%, 90%);
-}
+			text {
+				fill: hsl(60, 10%, 70%);
+			}
+		}
 
-.tile.s-axis-same polygon {
-	fill: hsl(300, 10%, 90%);
-}
+		&.goal {
+			polygon {
+				fill: hsl(200, 50%, 70%);
+			}
 
-.tile.q-axis-same.r-axis-same polygon {
-	fill: hsl(160, 20%, 80%);
-}
+			&.shadow polygon {
+				fill: hsl(200, 30%, 70%);
+			}
+		}
 
-.tile.q-axis-same tspan.q {
-	fill: hsl(90, 100%, 35%);
-	font-weight: bold;
-}
+		&.start  {
+			polygon {
+				fill: hsl(60, 100%, 50%);
+			}
 
-.tile.r-axis-same tspan.r {
-	fill: hsl(200, 100%, 45%);
-	font-weight: bold;
-}
+			&.selected polygon {
+				fill: hsl(355, 92%, 53%);
+			}
+		}
 
-.tile.s-axis-same tspan.s {
-	fill: hsl(300, 80%, 50%);
-	font-weight: bold;
-}
+		&.blocked polygon {
+			fill: hsl(0, 20%, 70%);
+		}
+	}
 
-#diagram-movement-range .shadow polygon {
-	fill: hsl(60, 10%, 90%);
-}
-
-#diagram-movement-range .goal polygon {
-	fill: hsl(200, 50%, 70%);
-}
-
-#diagram-movement-range .goal.shadow polygon {
-	fill: hsl(200, 30%, 70%);
-}
-
-#diagram-movement-range .start polygon {
-	fill: hsl(60, 100%, 50%);
-}
-
-#diagram-movement-range .start.selected polygon {
-	fill: hsl(355, 92%, 53%);
-}
-
-#diagram-movement-range .blocked polygon {
-	fill: hsl(0, 20%, 70%);
-}
-
-#diagram-movement-range .shadow text {
-	fill: hsl(60, 10%, 70%);
-}
-
-#diagram-movement-range path.path {
-	fill: none;
-	stroke: hsl(60, 20%, 70%);
-	stroke-width: 20px;
-	stroke-opacity: 0.3;
-	stroke-linecap: round;
-	stroke-linejoin: round;
+	.path {
+		fill: none;
+		stroke: hsl(60, 20%, 70%);
+		stroke-width: 20px;
+		stroke-opacity: 0.3;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
 }

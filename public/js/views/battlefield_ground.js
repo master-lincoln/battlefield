@@ -74,12 +74,12 @@ define('view/battlefield_ground', [
 			var bounds = grid.bounds();
 
 			// NOTE: In Webkit I can use svg.node().clientWidth but in Gecko that returns 0 :(
-			var translate = new ScreenCoordinate(
+			/*var translate = new ScreenCoordinate(
 				(parseFloat(this.$d3.attr('width')) - bounds.minX - bounds.maxX) / 2,
 				(parseFloat(this.$d3.attr('height')) - bounds.minY - bounds.maxY) / 2
-			);
+			);*/
 
-			this.$root.attr('transform', "translate(" + translate + ")");
+			this.$root.attr('transform', "translate(103,122)");
 
 			for(var i = 0, l = hexes.length; i < l; i++) {
 				var hex = hexes[i];
