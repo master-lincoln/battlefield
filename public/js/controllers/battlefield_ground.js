@@ -102,10 +102,11 @@ define('controller/battlefield_ground', [
 
 		isHexBlocked : function(cube) {
 			var is_obstacle = this.parent_controller.getCollection('obstacles').isObstacle(cube);
+			//var has_unit_standing = this.hasUnitStanding(this.getHex(cube));
 
 			//Later we will check here whether unit is standing on this hex as well
 
-			return is_obstacle;
+			return is_obstacle /*|| has_unit_standing*/;
 		},
 
 		getBFS : function(from) {
@@ -167,7 +168,15 @@ define('controller/battlefield_ground', [
 			return path;
 		},
 
-		getHex : function(x, y, z) {
+		getHex : function(p1, p2, p3) {
+			var x, y, z;
+
+			if (p1 instanceof Cube) {
+				x = p1.x; y = p1.y; z = p1.z;
+			} else {
+				x = p1; y = p2; z = p3;
+			}
+
 			return this.getCollection('hexes').getHex(x, y, z);
 		},
 
@@ -199,11 +208,15 @@ define('controller/battlefield_ground', [
 
 			return {
 				blocked : this.isHexBlocked(cube),
-				shadow : !bfs.cost_so_far.has(cube) || bfs.cost_so_far.get(cube) > unit_speed,
+				inactive : !bfs.cost_so_far.has(cube) || bfs.cost_so_far.get(cube) > unit_speed,
 				start : this.hasUnitStanding(hex),
 				goal : destination_point ? cube.equals(destination_point) : false,
 				selected : cube.x === starting_point.x && cube.y === starting_point.y && cube.z === starting_point.z
 			};
+		},
+
+		getUnits : function() {
+			return this.getCollection('battlefield_units').getUnits();
 		},
 
 		hasUnitStanding : function(hex) {

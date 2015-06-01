@@ -19,6 +19,7 @@ define('view/battlefield_ground', [
 
 			this.initializeUIListeners();
 			this.createGroundCells();
+			this.loadUnits();
 		},
 
 		render : function() {
@@ -53,7 +54,12 @@ define('view/battlefield_ground', [
 
 			for(var i = 0, l = cubes.length; i < l; i++) {
 				var cube = cubes[i];
-				var tile = this.$root.append('g').attr('class', "tile").attr('x', cube.x).attr('y', cube.y).attr('z', cube.z);
+				var tile = this.$root.append('g')
+					.attr('class', "tile")
+					.attr('x', cube.x)
+					.attr('y', cube.y)
+					.attr('z', cube.z)
+					.attr('enable-background', 'new');
 				var polygon = tile.append('polygon').attr('points', hexagon_points);
 				var label = tile.append('text').attr('y', "0.4em");
 
@@ -88,6 +94,25 @@ define('view/battlefield_ground', [
 				hex.getTile().attr('transform', "translate(" + center.x + "," + center.y + ")");
 				hex.getPolygon().attr('transform', "rotate(" + (this.orientation * -30) + ")");
 			}
+		},
+
+		loadUnits : function() {
+			var units = this.controller.getUnits();
+
+			for(var i = 0; i < units.length; i++) {
+				var position = units[i].getPosition();
+				var hex = this.controller.getHex(position);
+
+				hex.getTile().append('rect')
+					.attr('class', 'battlefield_unit ' + units[i].getType())
+					.attr('transform', 'translate(-50, -50)')
+					.attr('width', 100)
+					.attr('height', 100);
+
+				console.log(position, hex);
+			}
+
+
 		},
 
 		enablePath : function() {

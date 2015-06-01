@@ -12,6 +12,10 @@ define('collection/battlefield_units', [
 			return this.at(0);
 		},
 
+		getUnits : function() {
+			return this.models;
+		},
+
 		getUnit : function getUnit(hex) {
 			var cube = hex.getCube();
 

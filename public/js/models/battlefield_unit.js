@@ -7,7 +7,12 @@ define('model/battlefield_unit', [
 ) {
 	return Backbone.Model.extend({
 		defaults : {
+			type : '',
 			position : {x : 0, y : 0, z : 0}
+		},
+
+		getType : function() {
+			return this.get('type');
 		},
 
 		getPosition : function() {

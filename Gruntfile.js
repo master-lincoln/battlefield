@@ -12,6 +12,11 @@ module.exports = function(grunt) {
 					"public/css/battlefield/terrain.css": "assets/less/battlefield/terrain.less",
 					"public/css/battlefield/layout.css": "assets/less/battlefield/layout.less",
 					"public/css/battlefield/bar_buttons.css": "assets/less/battlefield/bar_buttons.less",
+
+					"public/css/units/battlefield/keyframes.css": "assets/less/units/battlefield/keyframes.less",
+					"public/css/units/battlefield/animations.css": "assets/less/units/battlefield/animations.less",
+					"public/css/units/battlefield/stronghold.css": "assets/less/units/battlefield/stronghold.less",
+
 					"public/css/styles.css" : "assets/less/styles.less"
 				}
 			}
