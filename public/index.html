@@ -6,10 +6,28 @@
 
 		<link href="css/styles.css" rel="stylesheet">
         <link href="css/battlefield/terrain.css" rel="stylesheet">
+        <link href="css/battlefield/layout.css" rel="stylesheet">
+        <link href="css/battlefield/bar_buttons.css" rel="stylesheet">
 
 		<script data-main="js/bootstrap" src="js/libs/require-min.js"></script>
 	</head>
 	<body>
-		<svg id="diagram-movement-range" class="battlefield grass" width="800" height="556"></svg>
+		<div class="battlefield grass">
+            <div class="terrain grass">
+                <svg id="diagram-movement-range" width="800" height="556"></svg>
+            </div>
+            <div class="bar">
+                <div class="battlefield_button settings"></div>
+                <div class="battlefield_button surrender"></div>
+                <div class="battlefield_button retreat"></div>
+                <div class="battlefield_button autocombat"></div>
+
+                <div class="battlefield_button spellbook"></div>
+                <div class="battlefield_button wait"></div>
+                <div class="battlefield_button defend"></div>
+            </div>
+        </div>
+
+
 	</body>
 </html>

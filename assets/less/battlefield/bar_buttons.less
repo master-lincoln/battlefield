@@ -1,0 +1,58 @@
+.battlefield_button {
+	background-image: url("../../images/battlefield/bottom_bar/buttons/sprite.jpg");
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	width:48px;
+	height:36px;
+	display: inline-block;
+	position: relative;
+
+	&.autocombat {
+		background-position: 0 -72px;
+		&.hover, &:hover {background-position: 0 -36px;}
+		&.pressed, &:active {background-position: 0 -108px;}
+		&.disabled {background-position: 0 0;}
+	}
+
+	&.defend {
+		background-position: -48px -72px;
+		&.hover, &:hover {background-position: -48px -36px;}
+		&.pressed, &:active {background-position: -48px -108px;}
+		&.disabled {background-position: -48px 0;}
+	}
+
+	&.retreat {
+		background-position: -96px -72px;
+		&.hover, &:hover {background-position: -96px -36px;}
+		&.pressed, &:active {background-position: -96px -108px;}
+		&.disabled {background-position: -96px 0;}
+	}
+
+	&.settings {
+		background-position: -144px -72px;
+		&.hover, &:hover {background-position: -144px -36px;}
+		&.pressed, &:active {background-position: -144px -108px;}
+		&.disabled {background-position: -144px 0;}
+	}
+
+	&.spellbook {
+		background-position: -192px -72px;
+		&.hover, &:hover {background-position: -192px -36px;}
+		&.pressed, &:active {background-position: -192px -108px;}
+		&.disabled {background-position: -192px 0;}
+	}
+
+	&.surrender {
+		background-position: -240px -72px;
+		&.hover, &:hover {background-position: -240px -36px;}
+		&.pressed, &:active {background-position: -240px -108px;}
+		&.disabled {background-position: -240px 0;}
+	}
+
+	&.wait {
+		background-position: -288px -72px;
+		&.hover, &:hover {background-position: -288px -36px;}
+		&.pressed, &:active {background-position: -288px -108px;}
+		&.disabled {background-position: -288px 0;}
+	}
+}

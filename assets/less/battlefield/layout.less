@@ -1,0 +1,105 @@
+.battlefield {
+	width: 800px;
+	height: 600px;
+	position: relative;
+	margin: 0 auto;
+
+	.terrain {
+		width: 800px;
+		height: 556px;
+		position: relative;
+	}
+
+	.bar {
+		width:800px;
+		height:44px;
+		background: url("../../images/battlefield/bottom_bar/background.jpg") no-repeat 0 0;
+		position: relative;
+
+		.battlefield_button {
+			position: absolute;
+			top:5px;
+
+			&.settings {left:3px;}
+			&.surrender {left:54px;}
+			&.retreat {left:105px;}
+			&.autocombat {left:156px;}
+
+			&.spellbook {left:645px;}
+			&.wait {left:696px;}
+			&.defend {left:747px;}
+		}
+	}
+
+	svg {
+		overflow: hidden;
+		pointer-events: visiblePainted;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		user-select: none;
+
+		& > * {
+			pointer-events: none;
+		}
+	}
+
+	.tile {
+		polygon {
+			pointer-events: visiblePainted;
+			fill: rgba(0, 0, 0, 0.4);
+			stroke: #678a00;
+			stroke-width: 1.3;
+		}
+
+		text {
+			fill:white;
+			font-size: 8px;
+			text-anchor: middle;
+		}
+
+		&.shadow {
+			polygon {
+				fill: transparent;
+			}
+
+			text {
+				fill: hsl(60, 10%, 70%);
+			}
+		}
+
+		&.goal {
+			polygon {
+				fill: rgba(0, 0, 0, 0.7);
+			}
+
+			&.shadow  {
+				polygon {
+					fill: rgba(0, 0, 0, 0.4);
+				}
+			}
+		}
+
+		&.start  {
+			polygon {
+				fill: hsl(60, 100%, 50%);
+			}
+
+			&.selected polygon {
+				fill: hsl(355, 92%, 53%);
+			}
+		}
+
+		&.blocked polygon {
+			fill: hsl(0, 20%, 70%);
+		}
+	}
+
+	.path {
+		fill: none;
+		stroke: hsl(60, 20%, 70%);
+		stroke-width: 20px;
+		stroke-opacity: 0.3;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+}
