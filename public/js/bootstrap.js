@@ -58,7 +58,7 @@ requirejs([
 	var battlefield = new Battlefield();
 
 	var bc = new BattlefieldController({
-		el : document.querySelector('#diagram-movement-range'),
+		el : document.querySelector('#battlefield'),
 		collections : {
 			obstacles : obstacles,
 			hexes : hexes,

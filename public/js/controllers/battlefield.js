@@ -51,7 +51,7 @@ define('controller/battlefield', [
 		initializeBattlefieldGround : function() {
 			this.registerController('battlefield_ground', new BattlefieldGroundController({
 				parent_controller : this,
-				el : this.$el
+				el : this.$el.find('svg')
 			}));
 		},
 
