@@ -1,13 +1,11 @@
 define('controller/battlefield_ground', [
 	'controller/base',
-	'controller/battlefield/unit_movement_animation',
 	'view/battlefield_ground',
 	'gridlib/screen_coordinate',
 	'gridlib/grid',
 	'gridlib/cube'
 ], function(
 	BaseController,
-	UnitMovementAnimationController,
 	BattlefieldGroundView,
 	ScreenCoordinate,
 	Grid,
@@ -22,7 +20,6 @@ define('controller/battlefield_ground', [
 			this.$root = this.$d3.append('g');
 
 			this.initializeView();
-			this.initializeAnimationController();
 			this.initializeEvents();
 		},
 
@@ -64,15 +61,6 @@ define('controller/battlefield_ground', [
 			}
 
 			this.view.render();
-		},
-
-		initializeAnimationController : function() {
-			this.registerController('unit_movement_animation', new UnitMovementAnimationController({
-				el : this.$el,
-				$d3 : this.$d3,
-				$root : this.$root,
-				parent_controller : this
-			}));
 		},
 
 		/**

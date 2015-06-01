@@ -1,0 +1,25 @@
+.battlefield {
+	.unit {
+		width:100px;
+		height:100px;
+		position: absolute;
+	}
+
+	.unit:after {
+		content:'';
+		position: absolute;
+		width:450px;
+		height:400px;
+		left:50%;
+		top:50%;
+		margin-left: -225px;
+		margin-top: -215px;
+	}
+
+	.unit.ancient_behemoth:after {
+		background: url("../images/units/stronghold/battle/ancient_behemoth.png") no-repeat -7650px 0;
+	}
+}
+
+@import "units_animations_keyframes.less";
+@import "units_animations.less";
