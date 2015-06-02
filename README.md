@@ -1,4 +1,4 @@
-# Instalation
+# Installation
 
 - npm install
 - grunt less
