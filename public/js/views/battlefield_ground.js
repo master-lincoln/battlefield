@@ -58,8 +58,7 @@ define('view/battlefield_ground', [
 					.attr('class', "tile")
 					.attr('x', cube.x)
 					.attr('y', cube.y)
-					.attr('z', cube.z)
-					.attr('enable-background', 'new');
+					.attr('z', cube.z);
 				var polygon = tile.append('polygon').attr('points', hexagon_points);
 				var label = tile.append('text').attr('y', "0.4em");
 
@@ -102,14 +101,36 @@ define('view/battlefield_ground', [
 			for(var i = 0; i < units.length; i++) {
 				var position = units[i].getPosition();
 				var hex = this.controller.getHex(position);
+				var cube = hex.getCube();
 
-				hex.getTile().append('rect')
-					.attr('class', 'battlefield_unit ' + units[i].getType())
-					.attr('transform', 'translate(-50, -50)')
+
+				var foregin = hex.getTile().append('foreignObject')
+					//.attr('requiredExtensions', 'http://www.w3.org/1999/xhtml')
+					//.attr('xmlns', 'http://www.w3.org/1999/xhtml')
 					.attr('width', 100)
-					.attr('height', 100);
+					.attr('height', 100)
+					.attr('x', -50)
+					.attr('y', -50)
+					//.attr('transform', 'translate(' + 100 + ', ' + 100 + ')')
+					.style("background-color", "red")
 
-				console.log(position, hex);
+					//var body = foregin.append('body').attr('xmlns', 'http://www.w3.org/1999/xhtml')
+
+
+
+					foregin.append("xhtml:div")
+						//.attr('xmlns', 'http://www.w3.org/1999/xhtml')
+						.attr('class', 'battlefield_unit ' + units[i].getType())
+						//.attr('transform', 'translate(150, 150)')
+
+					//.attr('width', 100)
+					//.attr('height', 100)
+					//.attr('fill', 'url(#Triangle)');
+
+				//console.log(position, hex);
+
+				//console.log(this.$el.find('#foregin_object'));
+				//hex.getTile().append(body)
 			}
 
 
