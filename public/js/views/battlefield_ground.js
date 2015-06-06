@@ -85,7 +85,6 @@ define('view/battlefield_ground', [
 		},
 
 		loadUnits : function() {
-			return;
 			var units = this.controller.getUnits();
 
 			for(var i = 0; i < units.length; i++) {
@@ -94,15 +93,16 @@ define('view/battlefield_ground', [
 				var cube = hex.getCube();
 
 
-				var foregin = hex.getTile().append('foreignObject')
+				var foregin = this.$d3.append('foreignObject')
 					//.attr('requiredExtensions', 'http://www.w3.org/1999/xhtml')
 					//.attr('xmlns', 'http://www.w3.org/1999/xhtml')
 					.attr('width', 100)
 					.attr('height', 100)
-					.attr('x', -50)
-					.attr('y', -50)
+					.attr('x', 150)
+					.attr('y', 150)
 					//.attr('transform', 'translate(' + 100 + ', ' + 100 + ')')
 					.style("background-color", "red")
+					.attr('transform', "translate(0,0)");
 
 					//var body = foregin.append('body').attr('xmlns', 'http://www.w3.org/1999/xhtml')
 

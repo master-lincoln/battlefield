@@ -1,8 +1,18 @@
 .battlefield_unit {
-	width: 450px;
-	height: 400px;
+	width:100px;
+	height:100px;
+	position: relative;
 
-	background-image: url("../../../images/units/stronghold/battlefield/hobgoblin.png");
-	background-repeat: no-repeat;
-	background-position: -7650px 0;
+	&:after {
+		content:'';
+		position: absolute;
+		width:450px;
+		height:400px;
+		left:50%;
+		top:50%;
+		margin-left: -225px;
+		margin-top: -215px;
+		display: inline-block;
+		background: url("../../../images/units/stronghold/battlefield/hobgoblin.png") no-repeat -7650px 0;
+	}
 }
