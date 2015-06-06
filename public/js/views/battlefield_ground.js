@@ -94,33 +94,15 @@ define('view/battlefield_ground', [
 
 
 				var foregin = this.$d3.append('foreignObject')
-					//.attr('requiredExtensions', 'http://www.w3.org/1999/xhtml')
-					//.attr('xmlns', 'http://www.w3.org/1999/xhtml')
+					.attr('id', 'unit_'+i)
 					.attr('width', 100)
 					.attr('height', 100)
-					.attr('x', 150)
-					.attr('y', 150)
-					//.attr('transform', 'translate(' + 100 + ', ' + 100 + ')')
-					.style("background-color", "red")
+					.attr('x', 200)
+					.attr('y', 200)
 					.attr('transform', "translate(0,0)");
 
-					//var body = foregin.append('body').attr('xmlns', 'http://www.w3.org/1999/xhtml')
-
-
-
 					foregin.append("xhtml:div")
-						//.attr('xmlns', 'http://www.w3.org/1999/xhtml')
 						.attr('class', 'battlefield_unit ' + units[i].getType())
-						//.attr('transform', 'translate(150, 150)')
-
-					//.attr('width', 100)
-					//.attr('height', 100)
-					//.attr('fill', 'url(#Triangle)');
-
-				//console.log(position, hex);
-
-				//console.log(this.$el.find('#foregin_object'));
-				//hex.getTile().append(body)
 			}
 
 
