@@ -52,14 +52,23 @@ define('view/battlefield_ground', [
 				cubes = this.controller.getMapShape(),
 				hexagon_points = this.controller.getHexagonShape(scale);
 
+			var grid = this.grid = new Grid(scale, this.orientation, cubes);
+
 			for(var i = 0, l = cubes.length; i < l; i++) {
 				var cube = cubes[i];
+				var position = grid.hexToCenter(cube);
+
 				var tile = this.$root.append('g')
 					.attr('class', "tile")
 					.attr('x', cube.x)
 					.attr('y', cube.y)
-					.attr('z', cube.z);
-				var polygon = tile.append('polygon').attr('points', hexagon_points);
+					.attr('z', cube.z)
+					.attr('transform', "translate(" + position.x + "," + position.y + ")");
+
+				var polygon = tile.append('polygon')
+					.attr('points', hexagon_points)
+					.attr('transform', "rotate(" + (this.orientation * -30) + ")");
+
 				var label = tile.append('text').attr('y', "0.4em");
 
 				plainHexes.push({
@@ -70,32 +79,13 @@ define('view/battlefield_ground', [
 				});
 			}
 
-			var hexes = this.controller.addHexes(plainHexes, true);
-
-			var grid = this.grid = new Grid(scale, this.orientation, hexes.map(function(hex) {
-				return hex.getCube();
-			}));
-
-			var bounds = grid.bounds();
-
-			// NOTE: In Webkit I can use svg.node().clientWidth but in Gecko that returns 0 :(
-			/*var translate = new ScreenCoordinate(
-				(parseFloat(this.$d3.attr('width')) - bounds.minX - bounds.maxX) / 2,
-				(parseFloat(this.$d3.attr('height')) - bounds.minY - bounds.maxY) / 2
-			);*/
+			this.controller.addHexes(plainHexes, true);
 
 			this.$root.attr('transform', "translate(103,122)");
-
-			for(var i = 0, l = hexes.length; i < l; i++) {
-				var hex = hexes[i];
-				var center = grid.hexToCenter(hex.getCube());
-
-				hex.getTile().attr('transform', "translate(" + center.x + "," + center.y + ")");
-				hex.getPolygon().attr('transform', "rotate(" + (this.orientation * -30) + ")");
-			}
 		},
 
 		loadUnits : function() {
+			return;
 			var units = this.controller.getUnits();
 
 			for(var i = 0; i < units.length; i++) {
