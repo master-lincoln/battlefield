@@ -1,3 +1,9 @@
+# Installation
+
+- npm install
+- grunt less
+- open index.html in your browser
+
 # battlefield
 
 * add double sized units
