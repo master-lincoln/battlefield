@@ -209,10 +209,6 @@ define('view/battlefield_ground', [
 			var hex = this.controller.getHex(from.x, from.y, from.z);
 
 			var tile = hex.getTile();
-			//console.log(tile);
-
-			//var clone = d3.select(tile[0][0].cloneNode(true));
-
 
 			var getPath = function(path) {
 				var d = [];
@@ -241,14 +237,7 @@ define('view/battlefield_ground', [
 			clone.appendChild(animate);
 			this.$root[0][0].appendChild(clone);
 
-
-
 			animate.beginElement();
-
-			/*svgChild.firstChild.setAttribute('from','100');
-			 svgChild.firstChild.setAttribute('to','200');
-			 svgChild.firstChild.beginElement()*/
-
 
 			function animationEnd() {
 				callback();
