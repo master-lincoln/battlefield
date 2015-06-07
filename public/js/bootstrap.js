@@ -47,8 +47,8 @@ requirejs([
 
 	function getBattlefieldUnits() {
 		return [
-			{type : 'hobgoblin', position : {x : 1, y : -3, z : 2}},
-			{type : 'hobgoblin', position : {x : 2, y : -2, z : 0}}
+			{type : 'hobgoblin', position : {x : 1, y : -3, z : 2}}/*,
+			{type : 'hobgoblin', position : {x : 2, y : -2, z : 0}}*/
 		];
 	}
 
