@@ -1,21 +1,26 @@
 define('view/battlefield_ground', [
 	'view/base',
+	'snap',
 	'gridlib/grid',
 	'gridlib/cube',
 	'gridlib/screen_coordinate'
 ], function(
 	BaseView,
+	Snap,
 	Grid,
 	Cube,
 	ScreenCoordinate
 ) {
 	return BaseView.extend({
+		$root : null,
+
 		initialize : function(options) {
 			BaseView.prototype.initialize.apply(this, arguments);
 
+			var snap = new Snap('#diagram-movement-range');
+
 			this.orientation = true;//This will not change so I keep it here
-			this.$d3 = options.$d3;
-			this.$root = options.$root;
+			this.$root = snap.g();
 
 			this.initializeUIListeners();
 			this.createGroundCells();
@@ -57,37 +62,37 @@ define('view/battlefield_ground', [
 			for(var i = 0, l = cubes.length; i < l; i++) {
 				var cube = cubes[i];
 				var position = grid.hexToCenter(cube);
+				var label;
+				var labels = [cube.x, cube.y, cube.z];
 
-				var tile = this.$root.append('g')
-					.attr('class', "tile")
-					.attr('x', cube.x)
-					.attr('y', cube.y)
-					.attr('z', cube.z)
-					.attr('transform', "translate(" + position.x + "," + position.y + ")");
+				var tile = this.$root.g()
+					.attr({
+						'class' : 'tile',
+						x : cube.x,
+						y : cube.y,
+						z : cube.z,
+						transform : 'translate(' + position.x + ',' + position.y + ')'
+					});
 
-				var polygon = tile.append('polygon')
-					.attr('points', hexagon_points)
-					.attr('transform', "rotate(" + (this.orientation * -30) + ")");
-
-				var label = tile.append('text').attr('y', "0.4em");
+				var polygon = tile.polygon().attr({
+					points : hexagon_points,
+					transform : 'rotate(' + (this.orientation * -30) + ')'
+				});
 
 				plainHexes.push({
 					cube : cube,
 					tile : tile,
-					polygon : polygon,
-					label : label
+					polygon : polygon
 				});
 			}
 
 			this.controller.addHexes(plainHexes, true);
 
-			this.$root.attr('transform', "translate(103,122)");
+			this.$root.transform('translate(103,122)');
 		},
 
 		enablePath : function() {
-			this.pathLayer = this.$root.append('path')
-				.attr('d', "M 0 0")
-				.attr('class', "path");
+			this.pathLayer = this.$root.path('M 0 0').attr('class', 'path');
 
 			this.setPath = function(path) {
 				var d = [];
@@ -105,7 +110,7 @@ define('view/battlefield_ground', [
 			for(var i = 0, l = hexes.length; i < l; i++) {
 				var hex = hexes[i];
 				var cube = hex.getCube();
-				var label = hex.getLabel();
+				var tile = hex.getTile();
 				var labels = [cube.x, cube.y, cube.z];
 
 				if (labels[0] == 0 && labels[1] == 0 && labels[2] == 0) {
@@ -113,9 +118,7 @@ define('view/battlefield_ground', [
 					labels = ['x', 'y', 'z'];
 				}
 
-				label.append('tspan').attr('class', "q").text(labels[0] + ', ');
-				label.append('tspan').attr('class', "s").text(labels[1] + ', ');
-				label.append('tspan').attr('class', "r").text(labels[2]);
+				tile.text(0, 0, labels[0] + ', ' + labels[1] + ', ' + labels[2]);
 			}
 		},
 
@@ -135,8 +138,14 @@ define('view/battlefield_ground', [
 
 			for (var i = 0, l = hexes.length; i < l; i++) {
 				var hex = hexes[i];
+				var hex_status = this.controller.getHexStatuses(bfs, hex);
+				var tile = hex.getTile();
 
-				hex.getTile().classed(this.controller.getHexStatuses(bfs, hex));
+				for(var class_name in hex_status) {
+					if (hex_status.hasOwnProperty(class_name)) {
+						tile.toggleClass(class_name, hex_status[class_name]);
+					}
+				}
 			}
 		},
 
@@ -162,7 +171,7 @@ define('view/battlefield_ground', [
 		},
 
 		loadUnits : function() {
-			var units = this.controller.getUnits();
+			/*var units = this.controller.getUnits();
 
 			for(var i = 0; i < units.length; i++) {
 				var position = units[i].getPosition();
@@ -171,7 +180,7 @@ define('view/battlefield_ground', [
 
 
 				this.createUnit(i);
-			}
+			}*/
 		},
 
 		createUnit : function(i) {
@@ -210,6 +219,8 @@ define('view/battlefield_ground', [
 			var path = this.controller.getPath(from, to);
 
 			var clone = tile[0][0].cloneNode(true);
+			//var clone = tile.clone();
+
 			var animate = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
 
 			animate.setAttribute('repeatCount','1');

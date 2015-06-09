@@ -16,9 +16,6 @@ define('controller/battlefield_ground', [
 		initialize : function(options) {
 			BaseController.prototype.initialize.apply(this, arguments);
 
-			this.$d3 = d3.select(this.el);
-			this.$root = this.$d3.append('g');
-
 			this.initializeView();
 			this.initializeEvents();
 		},
@@ -45,8 +42,6 @@ define('controller/battlefield_ground', [
 		initializeView : function() {
 			this.view = new BattlefieldGroundView({
 				el : this.$el,
-				$d3 : this.$d3,
-				$root : this.$root,
 				controller : this
 			});
 
