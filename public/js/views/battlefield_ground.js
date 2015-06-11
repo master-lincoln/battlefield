@@ -202,14 +202,7 @@ define('view/battlefield_ground', [
 			var from = unit.getPreviousPosition(),
 				to = unit.getPosition();
 			var hex = this.controller.getHex(from.x, from.y, from.z);
-
 			var tile = hex.getTile();
-
-			function animationEnd() {
-				callback();
-
-				//clone.parentNode.removeChild(clone);
-			}
 
 			var getPath = function(path) {
 				var d = [];
