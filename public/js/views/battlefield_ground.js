@@ -205,6 +205,12 @@ define('view/battlefield_ground', [
 
 			var tile = hex.getTile();
 
+			function animationEnd() {
+				callback();
+
+				//clone.parentNode.removeChild(clone);
+			}
+
 			var getPath = function(path) {
 				var d = [];
 
@@ -218,20 +224,8 @@ define('view/battlefield_ground', [
 
 			var path = this.controller.getPath(from, to);
 
-			//var clone = tile[0][0].cloneNode(true);
 			var clone = tile.clone();
-
-			clone.appendTo(this.$root);
-			var animate = Snap.animation({
-				'repeatCount':'1',
-				'fill':'freeze',
-				'begin' :'indefinite',
-				'path' : getPath(path.reverse())
-			}, (path.length * 0.3) +'s');
-
-			clone.animate(animate);
-
-			/*var animate = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
+			var animate = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
 
 			animate.setAttribute('repeatCount','1');
 			animate.setAttribute('dur', (path.length * 0.3) +'s');
@@ -239,18 +233,20 @@ define('view/battlefield_ground', [
 			animate.setAttribute('begin','indefinite');
 			animate.setAttribute('path', getPath(path.reverse()));
 			animate.addEventListener('endEvent', animationEnd, false);
+			clone.attr({
+				transform : 'translate(0,0)'
+			});
 
-			clone.setAttribute('transform', "translate(0,0)");
-			clone.appendChild(animate);
-			this.$root[0][0].appendChild(clone);
+			clone.append(animate);
+			clone.appendTo(this.$root);
 
 			animate.beginElement();
 
 			function animationEnd() {
 				callback();
 
-				clone.parentNode.removeChild(clone);
-			}*/
+				clone.remove();
+			}
 		},
 
 		destroy : function() {
