@@ -5,6 +5,13 @@ define('gridlib/polygon', [
 ) {
 	'use strict';
 
+	/**
+	 * Code is a port from C++
+	 * http://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
+	 *
+	 * @type {number}
+	 */
+
 	var INF = 10000;
 
 	/**
@@ -149,15 +156,6 @@ define('gridlib/polygon', [
 		// Return true if count is odd, false otherwise
 		return count % 2 !== 0;
 	};
-
-
-	// Driver program to test above functions
-	/*var polygon1 = [new ScreenCoordinate(0, 0), new ScreenCoordinate(10, 0), new ScreenCoordinate(10, 10), new ScreenCoordinate(0, 10)];
-
-	console.log(isInside(polygon1, new ScreenCoordinate(20, 20)));
-	console.log(isInside(polygon1, new ScreenCoordinate(2, 2)));
-	console.log(isInside(polygon1, new ScreenCoordinate(0, 2)));
-	console.log(isInside(polygon1, new ScreenCoordinate(-1, 2)));*/
 
 	return Polygon;
 });
