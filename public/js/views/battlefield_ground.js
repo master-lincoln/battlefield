@@ -184,18 +184,15 @@ define('view/battlefield_ground', [
 		},
 
 		addCubeCoordinates : function(hexes) {
+			this.$layer_grid.fillStyle = "rgb(255,255,255)";
+
 			for(var i = 0, l = hexes.length; i < l; i++) {
 				var hex = hexes[i];
 				var cube = hex.getCube();
-				var tile = hex.getTile();
-				var labels = [cube.x, cube.y, cube.z];
+				var position = this.grid.hexToCenter(cube);
 
-				if (labels[0] == 0 && labels[1] == 0 && labels[2] == 0) {
-					// Special case: label the origin with x/y/z so that you can tell where things to
-					labels = ['x', 'y', 'z'];
-				}
-
-				tile.text(0, 0, labels[0] + ', ' + labels[1] + ', ' + labels[2]);
+				this.$layer_grid.font = "8px serif";
+				this.$layer_grid.fillText(cube.x + ',' + cube.y + ',' + cube.z, this.OFFSET_X + position.x - 10, this.OFFSET_Y + position.y + 4);
 			}
 		},
 

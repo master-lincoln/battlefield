@@ -13,7 +13,7 @@ define('controller/battlefield', [
 ) {
 	return BaseController.extend({
 		SCALE : 51,
-		HEX_LABELS_ENABLED : false,
+		HEX_LABELS_ENABLED : true,
 		MOVEMENT_ROUTE_ENABLED : false,
 
 		cm_context : {
