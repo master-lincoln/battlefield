@@ -171,7 +171,7 @@ define('view/battlefield_ground', [
 		},
 
 		loadUnits : function() {
-			/*var units = this.controller.getUnits();
+			var units = this.controller.getUnits();
 
 			for(var i = 0; i < units.length; i++) {
 				var position = units[i].getPosition();
@@ -180,22 +180,22 @@ define('view/battlefield_ground', [
 
 
 				this.createUnit(i);
-			}*/
+			}
 		},
 
 		createUnit : function(i) {
-			var foregin = this.$d3.append('foreignObject')
-				.attr('id', 'unit_'+i)
-				.attr('width', 100)
-				.attr('height', 100)
-				.attr('x', 200)
-				.attr('y', 200)
-				.attr('transform', "translate(0,0)");
+			var fobjectSVG =
+				'<svg>'
+					+ '<foreignObject width="100" height="100" x="200" y="200" transform="translate(0,0)">'
+						+ '<body><div class="battlefield_unit hobgoblin"></div></body>'
+					+'</foreignObject>'
+				+ '</svg>';
 
-			foregin.append("xhtml:div")
-				.attr('class', 'battlefield_unit hobgoblin');
+			var foreign = Snap.parse(fobjectSVG);
 
-			return foregin;
+			this.$root.append(foreign);
+
+			return foreign;
 		},
 
 		animate : function(unit, callback) {
