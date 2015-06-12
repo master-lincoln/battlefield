@@ -5,7 +5,6 @@ define('model/hex', [
 ) {
 	/**
 	 * cube : cube,
-	 * tile : tile,
 	 * polygon : polygon
 	 */
 	return Backbone.Model.extend({
@@ -15,10 +14,6 @@ define('model/hex', [
 
 		getCube : function() {
 			return this.get('cube');
-		},
-
-		getTile : function() {
-			return this.get('tile');
 		},
 
 		getPolygon : function() {

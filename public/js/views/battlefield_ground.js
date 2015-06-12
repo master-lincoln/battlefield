@@ -3,40 +3,46 @@ define('view/battlefield_ground', [
 	'snap',
 	'gridlib/grid',
 	'gridlib/cube',
+	'gridlib/polygon',
 	'gridlib/screen_coordinate'
 ], function(
 	BaseView,
 	Snap,
 	Grid,
 	Cube,
+	Polygon,
 	ScreenCoordinate
 ) {
 	return BaseView.extend({
 		$root : null,
+		OFFSET_X : 103,
+		OFFSET_Y : 132,
 
 		initialize : function(options) {
 			BaseView.prototype.initialize.apply(this, arguments);
 
-			var snap = new Snap('#diagram-movement-range');
+			//var snap = new Snap('#diagram-movement-range');
 
 			this.orientation = true;//This will not change so I keep it here
-			this.$root = snap.g();
+			//this.$root = snap.g();
+
+			this.$root = this.el.getContext('2d');
 
 			this.initializeUIListeners();
 			this.createGroundCells();
-			this.loadUnits();
+			//this.loadUnits();
 		},
 
 		render : function() {
-			this._draw();
+			//this._draw();
 		},
 
 		rerender : function () {
-			this._draw();
+			//this._draw();
 		},
 
 		initializeUIListeners : function() {
-			this.$el.on('mouseover', '.tile', function(e) {
+			/*this.$el.on('mouseover', '.tile', function(e) {
 				var $el = $(e.currentTarget),
 					hex = this.getHexFromSVGNode($el);
 
@@ -48,7 +54,24 @@ define('view/battlefield_ground', [
 					hex = this.getHexFromSVGNode($el);
 
 				this.controller.onMouseTileClick(hex);
+			}.bind(this));*/
+
+			this.$el.on('mousemove', function(e) {
+				this.handleMouseOver(e.offsetX, e.offsetY);
 			}.bind(this));
+		},
+
+		handleMouseOver : function(x, y) {
+			var point = new ScreenCoordinate(x, y),
+				hexes = this.controller.getHexes();
+
+			for (var i = 0; i < hexes.length; i++) {
+				var hex = hexes[i];
+
+				if (hex.getPolygon().containsPoint(point)) {
+					console.log(hex.getCube());
+				}
+			}
 		},
 
 		createGroundCells : function() {
@@ -57,38 +80,53 @@ define('view/battlefield_ground', [
 				cubes = this.controller.getMapShape(),
 				hexagon_points = this.controller.getHexagonShape(scale);
 
+			var offset_x = this.OFFSET_X;
+			var offset_y = this.OFFSET_Y;
+
 			var grid = this.grid = new Grid(scale, this.orientation, cubes);
 
 			for(var i = 0, l = cubes.length; i < l; i++) {
 				var cube = cubes[i];
 				var position = grid.hexToCenter(cube);
-				var label;
-				var labels = [cube.x, cube.y, cube.z];
+				var x = position.x + offset_x;
+				var y = position.y + offset_y;
+				var polygon = [];
 
-				var tile = this.$root.g()
-					.attr({
-						'class' : 'tile',
-						x : cube.x,
-						y : cube.y,
-						z : cube.z,
-						transform : 'translate(' + position.x + ',' + position.y + ')'
-					});
+				this.$root.beginPath();
+				this.$root.moveTo(x, y);//Move to center point of hexagon
 
-				var polygon = tile.polygon().attr({
-					points : hexagon_points,
-					transform : 'rotate(' + (this.orientation * -30) + ')'
-				});
+				for (var j = 0; j < hexagon_points.length; j++) {
+					var point = hexagon_points[j];
+
+					if (j === 0) {
+						this.$root.moveTo(x + point.x, y + point.y);//Its necessary to remove line between center point of hexagon and first verticle
+					}
+
+					this.$root.lineTo(x + point.x, y + point.y);
+					polygon.push(new ScreenCoordinate(x + point.x, y + point.y));
+				}
 
 				plainHexes.push({
+					polygon : new Polygon(polygon),
+					cube : cube
+				});
+
+				this.$root.lineTo(x + hexagon_points[0].x, y + hexagon_points[0].y);
+				this.$root.strokeStyle = "#678a00";
+				this.$root.lineWidth = 1;
+				this.$root.fillStyle = "rgba(0,0,0,0)";
+
+				this.$root.closePath();
+				this.$root.stroke();
+
+				/*plainHexes.push({
 					cube : cube,
 					tile : tile,
 					polygon : polygon
-				});
+				});*/
 			}
 
 			this.controller.addHexes(plainHexes, true);
-
-			this.$root.transform('translate(103,122)');
 		},
 
 		enablePath : function() {
@@ -197,7 +235,7 @@ define('view/battlefield_ground', [
 				width : 100,
 				height:100
 			}).append(foreign).append(animation);
-console.log("g", g);
+
 			g.select('animateMotion').node.beginElement();
 //console.log("g.select('animateMotion')", g.select('animateMotion').node)
 			return foreign;

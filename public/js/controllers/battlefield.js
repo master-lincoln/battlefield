@@ -15,8 +15,8 @@ define('controller/battlefield', [
 ) {
 	return BaseController.extend({
 		SCALE : 51,
-		HEX_LABELS_ENABLED : true,
-		MOVEMENT_ROUTE_ENABLED : true,
+		HEX_LABELS_ENABLED : false,
+		MOVEMENT_ROUTE_ENABLED : false,
 
 		cm_context : {
 			main : 'battlefield',
@@ -51,7 +51,7 @@ define('controller/battlefield', [
 		initializeBattlefieldGround : function() {
 			this.registerController('battlefield_ground', new BattlefieldGroundController({
 				parent_controller : this,
-				el : this.$el.find('svg')
+				el : this.$el.find('#diagram-movement-range')
 			}));
 		},
 

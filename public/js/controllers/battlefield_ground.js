@@ -12,12 +12,12 @@ define('controller/battlefield_ground', [
 	Cube
 ) {
 	return BaseController.extend({
-
+		ORIENTATION : true,
 		initialize : function(options) {
 			BaseController.prototype.initialize.apply(this, arguments);
 
 			this.initializeView();
-			this.initializeEvents();
+			//this.initializeEvents();
 		},
 
 		initializeEvents : function() {
@@ -90,13 +90,13 @@ define('controller/battlefield_ground', [
 		 * @returns {string}
 		 */
 		getHexagonShape : function getHexagonShape(scale) {
-			return this.hexToPolygon(scale, 0, 0, false).map(function(screen_coordinate) {
-				return screen_coordinate.x.toFixed(3) + "," + screen_coordinate.y.toFixed(3);
-			}).join(" ");
+			return this.hexToPolygon(scale, 0, 0, this.ORIENTATION)/*.map(function(screen_coordinate) {
+			 return screen_coordinate.x.toFixed(3) + "," + screen_coordinate.y.toFixed(3);
+			 }).join(" ")*/;
 		},
 
 		isHexBlocked : function(cube) {
-			var is_obstacle = this.parent_controller.getCollection('obstacles').isObstacle(cube);
+			var is_obstacle = false;//this.parent_controller.getCollection('obstacles').isObstacle(cube);
 			//var has_unit_standing = this.hasUnitStanding(this.getHex(cube));
 
 			//Later we will check here whether unit is standing on this hex as well
