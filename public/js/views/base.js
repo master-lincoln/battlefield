@@ -1,17 +1,13 @@
 define('view/base', [
-	'backbone',
-	'd3'
+	'backbone'
 ], function(
-	Backbone,
-	d3
+	Backbone
 ) {
 	return Backbone.View.extend({
 		controller : null,
-		d3 : null,
 
 		initialize : function(options) {
 			this.controller = options.controller;
-			this.d3 = d3.select(this.el);
 		},
 
 		_destroy : function() {

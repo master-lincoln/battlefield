@@ -58,6 +58,10 @@ define('controller/battlefield_ground', [
 			this.view.render();
 		},
 
+		getOrientation : function() {
+			return this.ORIENTATION;
+		},
+
 		/**
 		 * (x, y) should be the center
 		 * scale should be the distance from corner to corner
@@ -90,9 +94,7 @@ define('controller/battlefield_ground', [
 		 * @returns {string}
 		 */
 		getHexagonShape : function getHexagonShape(scale) {
-			return this.hexToPolygon(scale, 0, 0, this.ORIENTATION)/*.map(function(screen_coordinate) {
-			 return screen_coordinate.x.toFixed(3) + "," + screen_coordinate.y.toFixed(3);
-			 }).join(" ")*/;
+			return this.hexToPolygon(scale, 0, 0, this.getOrientation());
 		},
 
 		isHexBlocked : function(cube) {

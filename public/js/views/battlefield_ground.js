@@ -1,13 +1,11 @@
 define('view/battlefield_ground', [
 	'view/base',
-	'snap',
 	'gridlib/grid',
 	'gridlib/cube',
 	'gridlib/polygon',
 	'gridlib/screen_coordinate'
 ], function(
 	BaseView,
-	Snap,
 	Grid,
 	Cube,
 	Polygon,
@@ -20,11 +18,6 @@ define('view/battlefield_ground', [
 
 		initialize : function(options) {
 			BaseView.prototype.initialize.apply(this, arguments);
-
-			//var snap = new Snap('#diagram-movement-range');
-
-			this.orientation = true;//This will not change so I keep it here
-			//this.$root = snap.g();
 
 			this.$root = this.el.getContext('2d');
 
@@ -83,7 +76,7 @@ define('view/battlefield_ground', [
 			var offset_x = this.OFFSET_X;
 			var offset_y = this.OFFSET_Y;
 
-			var grid = this.grid = new Grid(scale, this.orientation, cubes);
+			var grid = this.grid = new Grid(scale, this.controller.getOrientation(), cubes);
 
 			for(var i = 0, l = cubes.length; i < l; i++) {
 				var cube = cubes[i];
@@ -118,15 +111,13 @@ define('view/battlefield_ground', [
 
 				this.$root.closePath();
 				this.$root.stroke();
-
-				/*plainHexes.push({
-					cube : cube,
-					tile : tile,
-					polygon : polygon
-				});*/
 			}
 
 			this.controller.addHexes(plainHexes, true);
+		},
+
+		drawPolygon : function(ctx) {
+
 		},
 
 		enablePath : function() {

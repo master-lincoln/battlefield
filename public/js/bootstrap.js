@@ -4,8 +4,6 @@ requirejs.config({
 		jquery: 'libs/jquery-2.1.4.min',
 		underscore: 'libs/underscore-min',
 		backbone: 'libs/backbone-min',
-		d3 : 'libs/d3-min',
-		snap : 'libs/snap.svg-min',
 		gridlib : 'libs/gridlib',
 
 		view : 'views',

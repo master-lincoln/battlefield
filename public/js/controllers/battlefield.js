@@ -1,13 +1,11 @@
 define('controller/battlefield', [
 	'controller/base',
-	'd3',
 	'view/battlefield',
 	'gridlib/cube',
 	'provider/events',
 	'controller/battlefield_ground'
 ], function(
 	BaseController,
-	d3,
 	BattlefieldView,
 	Cube,
 	eventsProvider,
