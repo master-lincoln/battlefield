@@ -184,17 +184,22 @@ define('view/battlefield_ground', [
 		},
 
 		createUnit : function(i) {
-			var fobjectSVG =
+			var foreign = Snap.parse(
 				'<svg>'
-					+ '<foreignObject width="100" height="100" x="200" y="200" transform="translate(0,0)">'
+					+ '<foreignObject id="f_unit" width="100" height="100" x="200" y="200" transform="translate(0,0)">'
 						+ '<body><div class="battlefield_unit hobgoblin"></div></body>'
 					+'</foreignObject>'
-				+ '</svg>';
+				+ '</svg>');
 
-			var foreign = Snap.parse(fobjectSVG);
+			var animation = Snap.parse('<animateMotion repeatCount="1" dur="1.7999999999999998s" fill="freeze" begin="indefinite" path="M 88.33459118601273,76.5 L 66.25094338950956,114.75 L 44.167295593006365,153 L 66.25094338950954,191.25 L 88.33459118601274,229.5 L 110.41823898251592,267.75"></animateMotion>');
 
-			this.$root.append(foreign);
-
+			var g = this.$root.g().attr({
+				width : 100,
+				height:100
+			}).append(foreign).append(animation);
+console.log("g", g);
+			g.select('animateMotion').node.beginElement();
+//console.log("g.select('animateMotion')", g.select('animateMotion').node)
 			return foreign;
 		},
 
@@ -234,7 +239,7 @@ define('view/battlefield_ground', [
 			clone.appendTo(this.$root);
 
 			animate.beginElement();
-
+console.log("animate", animate)
 			function animationEnd() {
 				callback();
 
