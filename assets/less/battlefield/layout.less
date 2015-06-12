@@ -6,6 +6,20 @@
 
 	.terrain {
 		position: relative;
+
+		.layer {
+			position: absolute;
+			top:0;
+			left:0;
+
+			.layer-grid {
+				z-index: 1;
+			}
+
+			.layer-grid-hover {
+				z-index: 2;
+			}
+		}
 	}
 
 	.bar {
@@ -29,17 +43,7 @@
 		}
 	}
 
-	svg {
-		overflow: hidden;
-		pointer-events: visiblePainted;
-		-webkit-user-select: none;
-		-moz-user-select: none;
-		user-select: none;
 
-		& > * {
-			pointer-events: none;
-		}
-	}
 
 	.unit {
 		width:50px;

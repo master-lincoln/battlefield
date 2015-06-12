@@ -1,29 +1,46 @@
 define('view/battlefield_ground', [
 	'view/base',
+	'enum/hex_states',
 	'gridlib/grid',
 	'gridlib/cube',
 	'gridlib/polygon',
 	'gridlib/screen_coordinate'
 ], function(
 	BaseView,
+	hexStatesEnum,
 	Grid,
 	Cube,
 	Polygon,
 	ScreenCoordinate
 ) {
 	return BaseView.extend({
+		grid : null,
 		$root : null,
 		OFFSET_X : 103,
 		OFFSET_Y : 132,
+		WIDTH : 800,
+		HEIGHT : 556,
+
+		$layer_grid : null,
+		$layer_grid_hover : null,
 
 		initialize : function(options) {
 			BaseView.prototype.initialize.apply(this, arguments);
 
-			this.$root = this.el.getContext('2d');
+			this.initializeLayer('grid');
+			this.initializeLayer('grid_hover');
+
+			this.grid = new Grid(this.controller.getScale(), this.controller.getOrientation(), this.controller.getMapShape());
 
 			this.initializeUIListeners();
 			this.createGroundCells();
 			//this.loadUnits();
+		},
+
+		initializeLayer : function(layer_name) {
+			var $layer = this.controller.getLayer(layer_name);
+			$layer.attr({width : this.WIDTH, height : this.HEIGHT});
+			this['$layer_' + layer_name] = $layer[0].getContext('2d');
 		},
 
 		render : function() {
@@ -62,7 +79,8 @@ define('view/battlefield_ground', [
 				var hex = hexes[i];
 
 				if (hex.getPolygon().containsPoint(point)) {
-					console.log(hex.getCube());
+					this.cleanUpCanvas(this.$layer_grid_hover);
+					this.drawHoverPolygon(this.$layer_grid_hover, hex.getCube());
 				}
 			}
 		},
@@ -73,55 +91,85 @@ define('view/battlefield_ground', [
 				cubes = this.controller.getMapShape(),
 				hexagon_points = this.controller.getHexagonShape(scale);
 
-			var offset_x = this.OFFSET_X;
-			var offset_y = this.OFFSET_Y;
-
-			var grid = this.grid = new Grid(scale, this.controller.getOrientation(), cubes);
-
 			for(var i = 0, l = cubes.length; i < l; i++) {
 				var cube = cubes[i];
-				var position = grid.hexToCenter(cube);
-				var x = position.x + offset_x;
-				var y = position.y + offset_y;
-				var polygon = [];
-
-				this.$root.beginPath();
-				this.$root.moveTo(x, y);//Move to center point of hexagon
-
-				for (var j = 0; j < hexagon_points.length; j++) {
-					var point = hexagon_points[j];
-
-					if (j === 0) {
-						this.$root.moveTo(x + point.x, y + point.y);//Its necessary to remove line between center point of hexagon and first verticle
-					}
-
-					this.$root.lineTo(x + point.x, y + point.y);
-					polygon.push(new ScreenCoordinate(x + point.x, y + point.y));
-				}
+				var polygon = this.drawIdlePolygon(this.$layer_grid, cube, hexagon_points);
 
 				plainHexes.push({
 					polygon : new Polygon(polygon),
 					cube : cube
 				});
-
-				this.$root.lineTo(x + hexagon_points[0].x, y + hexagon_points[0].y);
-				this.$root.strokeStyle = "#678a00";
-				this.$root.lineWidth = 1;
-				this.$root.fillStyle = "rgba(0,0,0,0)";
-
-				this.$root.closePath();
-				this.$root.stroke();
 			}
 
 			this.controller.addHexes(plainHexes, true);
 		},
 
-		drawPolygon : function(ctx) {
+		cleanUpCanvas : function(ctx) {
+			ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT);
+		},
 
+		drawIdlePolygon : function(ctx, cube, hexagon_points) {
+			return this.drawPolygon(ctx, cube, hexagon_points, {
+				state : hexStatesEnum.IDLE
+			});
+		},
+
+		drawHoverPolygon : function(ctx, cube, hexagon_points) {
+			return this.drawPolygon(ctx, cube, hexagon_points, {
+				state : hexStatesEnum.HOVER
+			});
+		},
+
+		drawPolygon : function(ctx, cube, hexagon_points, settings) {
+			var scale = this.controller.getScale();
+
+			return this._drawPolygon(ctx, cube, hexagon_points || this.controller.getHexagonShape(scale), settings);
+		},
+
+		_drawPolygon : function(ctx, cube, hexagon_points, settings) {
+			var position = this.grid.hexToCenter(cube);
+			var x = position.x + this.OFFSET_X;
+			var y = position.y + this.OFFSET_Y;
+			var polygon = [];
+
+			ctx.beginPath();
+			ctx.moveTo(x, y);//Move to center point of hexagon
+
+			for (var j = 0; j < hexagon_points.length; j++) {
+				var point = hexagon_points[j];
+
+				if (j === 0) {
+					ctx.moveTo(x + point.x, y + point.y);//Its necessary to remove line between center point of hexagon and first verticle
+				}
+
+				ctx.lineTo(x + point.x, y + point.y);
+				polygon.push(new ScreenCoordinate(x + point.x, y + point.y));
+			}
+
+			ctx.lineTo(x + hexagon_points[0].x, y + hexagon_points[0].y);
+			ctx.strokeStyle = this.getHexStrokeColor(settings.state);
+			ctx.lineWidth = 1;
+			ctx.fillStyle = 'rgba(0,0,0,0)';
+
+			ctx.closePath();
+			ctx.stroke();
+
+			return polygon;
+		},
+
+		getHexStrokeColor : function(state) {
+			switch(state) {
+				case hexStatesEnum.IDLE:
+					return '#678a00';
+				case hexStatesEnum.HOVER:
+					return '#fff200';
+				default:
+					return '#678a00';
+			}
 		},
 
 		enablePath : function() {
-			this.pathLayer = this.$root.path('M 0 0').attr('class', 'path');
+			this.pathLayer = this.$layer_grid.path('M 0 0').attr('class', 'path');
 
 			this.setPath = function(path) {
 				var d = [];
@@ -222,7 +270,7 @@ define('view/battlefield_ground', [
 
 			var animation = Snap.parse('<animateMotion repeatCount="1" dur="1.7999999999999998s" fill="freeze" begin="indefinite" path="M 88.33459118601273,76.5 L 66.25094338950956,114.75 L 44.167295593006365,153 L 66.25094338950954,191.25 L 88.33459118601274,229.5 L 110.41823898251592,267.75"></animateMotion>');
 
-			var g = this.$root.g().attr({
+			var g = this.$layer_grid.g().attr({
 				width : 100,
 				height:100
 			}).append(foreign).append(animation);
@@ -265,7 +313,7 @@ define('view/battlefield_ground', [
 			});
 
 			clone.append(animate);
-			clone.appendTo(this.$root);
+			clone.appendTo(this.$layer_grid);
 
 			animate.beginElement();
 console.log("animate", animate)

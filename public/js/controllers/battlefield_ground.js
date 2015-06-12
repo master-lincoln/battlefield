@@ -16,6 +16,8 @@ define('controller/battlefield_ground', [
 		initialize : function(options) {
 			BaseController.prototype.initialize.apply(this, arguments);
 
+			this.layers = options.layers;
+
 			this.initializeView();
 			//this.initializeEvents();
 		},
@@ -58,8 +60,8 @@ define('controller/battlefield_ground', [
 			this.view.render();
 		},
 
-		getOrientation : function() {
-			return this.ORIENTATION;
+		getLayer : function(name) {
+			return this.layers[name];
 		},
 
 		/**
@@ -191,6 +193,10 @@ define('controller/battlefield_ground', [
 
 		getScale : function() {
 			return this.parent_controller.getScale();
+		},
+
+		getOrientation : function() {
+			return this.ORIENTATION;
 		},
 
 		getMapShape : function() {

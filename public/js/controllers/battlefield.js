@@ -49,7 +49,11 @@ define('controller/battlefield', [
 		initializeBattlefieldGround : function() {
 			this.registerController('battlefield_ground', new BattlefieldGroundController({
 				parent_controller : this,
-				el : this.$el.find('#diagram-movement-range')
+				el : this.$el,
+				layers : {
+					grid : this.$el.find('.layer-grid'),
+					grid_hover : this.$el.find('.layer-grid-hover')
+				}
 			}));
 		},
 
