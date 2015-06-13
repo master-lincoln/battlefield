@@ -23,17 +23,20 @@ define('view/battlefield_ground', [
 
 		$layer_grid : null,
 		$layer_grid_hover : null,
+		$layer_grid_obstacles : null,
 
 		initialize : function(options) {
 			BaseView.prototype.initialize.apply(this, arguments);
 
 			this.initializeLayer('grid');
 			this.initializeLayer('grid_hover');
+			this.initializeLayer('grid_obstacles');
 
 			this.grid = new Grid(this.controller.getScale(), this.controller.getOrientation(), this.controller.getMapShape());
 
 			this.initializeUIListeners();
 			this.createGroundCells();
+			this.drawObstacles();
 			//this.loadUnits();
 		},
 
@@ -44,11 +47,11 @@ define('view/battlefield_ground', [
 		},
 
 		render : function() {
-			//this._draw();
+			this._draw();
 		},
 
 		rerender : function () {
-			//this._draw();
+			this._draw();
 		},
 
 		initializeUIListeners : function() {
@@ -88,8 +91,8 @@ define('view/battlefield_ground', [
 		createGroundCells : function() {
 			var plainHexes = [],
 				scale = this.controller.getScale(),
-				cubes = this.controller.getMapShape(),
-				hexagon_points = this.controller.getHexagonShape(scale);
+				hexagon_points = this.controller.getHexagonShape(scale),
+				cubes = this.controller.getMapShape();
 
 			for(var i = 0, l = cubes.length; i < l; i++) {
 				var cube = cubes[i];
@@ -117,6 +120,12 @@ define('view/battlefield_ground', [
 		drawHoverPolygon : function(ctx, cube, hexagon_points) {
 			return this.drawPolygon(ctx, cube, hexagon_points, {
 				state : hexStatesEnum.HOVER
+			});
+		},
+
+		drawBlockedPolygon : function(ctx, cube, hexagon_points) {
+			return this.drawPolygon(ctx, cube, hexagon_points, {
+				state : hexStatesEnum.BLOCKED
 			});
 		},
 
@@ -163,6 +172,8 @@ define('view/battlefield_ground', [
 					return '#678a00';
 				case hexStatesEnum.HOVER:
 					return '#fff200';
+				case hexStatesEnum.BLOCKED:
+					return 'red';
 				default:
 					return '#678a00';
 			}
@@ -198,11 +209,29 @@ define('view/battlefield_ground', [
 
 		_draw : function() {
 			//Update CSS classes on hexes
-			this.updateCssClasses();
+
+			//this.updateCssClasses();
 
 			// Reconstruct path to mouse over position
 			if (this.controller.isMovementRouteEnabled()) {
 				this.createRouteBetweenPoints();
+			}
+		},
+
+		drawObstacles : function() {
+			var obstacles = this.controller.getObstacles(),
+				ctx = this.$layer_grid_obstacles,
+				scale = this.controller.getScale(),
+				hexagon_points = this.controller.getHexagonShape(scale);
+
+			for (var i = 0, l = obstacles.length; i < l; i++) {
+				var obstacle = obstacles[i];
+
+				if (!obstacle.isFakeBorder()) {
+					var cube = obstacle.getCube();
+
+					this.drawBlockedPolygon(ctx, cube, hexagon_points);
+				}
 			}
 		},
 

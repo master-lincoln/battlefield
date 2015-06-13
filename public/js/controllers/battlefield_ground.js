@@ -99,8 +99,12 @@ define('controller/battlefield_ground', [
 			return this.hexToPolygon(scale, 0, 0, this.getOrientation());
 		},
 
+		getObstacles : function() {
+			return this.getCollection('obstacles').getObstacles();
+		},
+
 		isHexBlocked : function(cube) {
-			var is_obstacle = false;//this.parent_controller.getCollection('obstacles').isObstacle(cube);
+			var is_obstacle = this.getCollection('obstacles').isObstacle(cube);
 			//var has_unit_standing = this.hasUnitStanding(this.getHex(cube));
 
 			//Later we will check here whether unit is standing on this hex as well

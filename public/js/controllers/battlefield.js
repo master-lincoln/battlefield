@@ -52,7 +52,8 @@ define('controller/battlefield', [
 				el : this.$el,
 				layers : {
 					grid : this.$el.find('.layer-grid'),
-					grid_hover : this.$el.find('.layer-grid-hover')
+					grid_hover : this.$el.find('.layer-grid-hover'),
+					grid_obstacles : this.$el.find('.layer-grid-obstacles')
 				}
 			}));
 		},

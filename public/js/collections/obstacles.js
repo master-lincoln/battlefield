@@ -14,6 +14,10 @@ define('collection/obstacles', [
 
 				return position.x === cube.x && position.y === cube.y && position.z === cube.z;
 			}) !== undefined;
+		},
+
+		getObstacles : function() {
+			return this.models;
 		}
 	});
 });
