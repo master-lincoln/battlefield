@@ -14,7 +14,8 @@ requirejs.config({
 		collection : 'collections',
 		enum : 'enums',
 
-		map : 'data/maps'
+		map : 'data/maps',
+		unit : 'data/units'
 	},
 	'shim': {
 		'underscore': {
@@ -42,7 +43,6 @@ requirejs([
 	Battlefield,
 	map
 ) {
-
 
 	function getBattlefieldUnits() {
 		return [

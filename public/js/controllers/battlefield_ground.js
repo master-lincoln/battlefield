@@ -60,8 +60,8 @@ define('controller/battlefield_ground', [
 			this.view.render();
 		},
 
-		getLayer : function(name) {
-			return this.layers[name];
+		getLayers : function() {
+			return this.layers;
 		},
 
 		/**

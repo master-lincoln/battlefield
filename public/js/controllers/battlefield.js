@@ -53,7 +53,8 @@ define('controller/battlefield', [
 				layers : {
 					grid : this.$el.find('.layer-grid'),
 					grid_hover : this.$el.find('.layer-grid-hover'),
-					grid_obstacles : this.$el.find('.layer-grid-obstacles')
+					grid_obstacles : this.$el.find('.layer-grid-obstacles'),
+					units : this.$el.find('.layer-units')
 				}
 			}));
 		},

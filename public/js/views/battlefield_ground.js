@@ -24,13 +24,12 @@ define('view/battlefield_ground', [
 		$layer_grid : null,
 		$layer_grid_hover : null,
 		$layer_grid_obstacles : null,
+		$layer_units : null,
 
 		initialize : function(options) {
 			BaseView.prototype.initialize.apply(this, arguments);
 
-			this.initializeLayer('grid');
-			this.initializeLayer('grid_hover');
-			this.initializeLayer('grid_obstacles');
+			this.initializeLayers();
 
 			this.grid = new Grid(this.controller.getScale(), this.controller.getOrientation(), this.controller.getMapShape());
 
@@ -40,10 +39,17 @@ define('view/battlefield_ground', [
 			this.drawUnits();
 		},
 
-		initializeLayer : function(layer_name) {
-			var $layer = this.controller.getLayer(layer_name);
-			$layer.attr({width : this.WIDTH, height : this.HEIGHT});
-			this['$layer_' + layer_name] = $layer[0].getContext('2d');
+		initializeLayers : function() {
+			var layers = this.controller.getLayers();
+
+			for(var layer_name in layers) {
+				if (layers.hasOwnProperty(layer_name)) {
+					var $layer = layers[layer_name];
+
+					$layer.attr({width : this.WIDTH, height : this.HEIGHT});
+					this['$layer_' + layer_name] = $layer[0].getContext('2d');
+				}
+			}
 		},
 
 		render : function() {
@@ -202,7 +208,7 @@ define('view/battlefield_ground', [
 				var cube = hex.getCube();
 				var position = this.grid.hexToCenter(cube);
 
-				this.$layer_grid.font = "8px serif";
+				this.$layer_grid.font = "9px serif";
 				this.$layer_grid.fillText(cube.x + ',' + cube.y + ',' + cube.z, this.OFFSET_X + position.x - 10, this.OFFSET_Y + position.y + 4);
 			}
 		},
@@ -235,7 +241,7 @@ define('view/battlefield_ground', [
 			}
 		},
 
-		updateCssClasses : function() {
+		/*updateCssClasses : function() {
 			var hexes = this.controller.getHexes(),
 				bfs = this.controller.getBFS(this.controller.parent_controller.getStartingPoint());
 
@@ -250,7 +256,7 @@ define('view/battlefield_ground', [
 					}
 				}
 			}
-		},
+		},*/
 
 		createRouteBetweenPoints : function() {
 			this.controller.createRouteBetweenPoints();
@@ -271,9 +277,33 @@ define('view/battlefield_ground', [
 		},
 
 		createUnit : function(unit) {
-			//var position = unit.getCube();
-			//var hex = this.controller.getHex(position);
-			//var cube = hex.getCube();
+			var sprite_data = unit.getSpriteData().walk,
+				cube = unit.getCube(),
+				position = this.grid.hexToCenter(cube);
+
+			var img = document.createElement('img');
+			img.src = sprite_data.url;
+
+			img.onload = function() {
+				var steps = sprite_data.steps,
+					img_width = sprite_data.width,
+					img_height = sprite_data.height;
+
+				img.width = img_width * steps;
+				img.height = img_height;
+
+				this.$layer_units.drawImage(
+					img,
+					0,
+					0,
+					img_width,
+					img_height,
+					this.OFFSET_X + position.x - sprite_data.legs_x,
+					this.OFFSET_Y + position.y - sprite_data.legs_y,
+					img_width,
+					img_height
+				);
+			}.bind(this);
 		},
 
 		animate : function(unit, callback) {

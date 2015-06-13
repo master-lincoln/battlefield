@@ -1,14 +1,20 @@
 define('model/battlefield_unit', [
 	'backbone',
-	'gridlib/cube'
+	'gridlib/cube',
+	'data/units/all'
 ], function(
 	Backbone,
-	Cube
+	Cube,
+	allUnitsData
 ) {
 	return Backbone.Model.extend({
 		defaults : {
 			type : '',
 			position : {x : 0, y : 0, z : 0}
+		},
+
+		getSpriteData : function() {
+			return allUnitsData[this.getType()].sprites;
 		},
 
 		getType : function() {
