@@ -25,7 +25,7 @@ define('helper/animate', [], function() {
 	}
 	return {
 		animateUnit : function(view, unit, ctx) {
-			var sprite_data = unit.getSpriteData().walk,
+			var sprite_data = unit.getSpriteData().walking,
 				cube = unit.getCube(),
 				position = view.grid.hexToCenter(cube);
 

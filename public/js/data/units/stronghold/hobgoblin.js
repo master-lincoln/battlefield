@@ -4,7 +4,7 @@ define('unit/stronghold/hobgoblin', [
 
 ) {
 	var sprites = {
-		walk : {
+		walking : {
 			url : 'images/units/stronghold/battlefield/hobgoblin/walking_sprite.png',
 			steps : 10,
 			width : 110,
