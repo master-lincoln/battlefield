@@ -13,6 +13,7 @@ requirejs.config({
 		model : 'models',
 		collection : 'collections',
 		enum : 'enums',
+		helper : 'helpers',
 
 		map : 'data/maps',
 		unit : 'data/units'

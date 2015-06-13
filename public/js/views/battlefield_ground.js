@@ -4,14 +4,16 @@ define('view/battlefield_ground', [
 	'gridlib/grid',
 	'gridlib/cube',
 	'gridlib/polygon',
-	'gridlib/screen_coordinate'
+	'gridlib/screen_coordinate',
+	'helper/animate'
 ], function(
 	BaseView,
 	hexStatesEnum,
 	Grid,
 	Cube,
 	Polygon,
-	ScreenCoordinate
+	ScreenCoordinate,
+	animateHelper
 ) {
 	return BaseView.extend({
 		grid : null,
@@ -277,7 +279,7 @@ define('view/battlefield_ground', [
 		},
 
 		createUnit : function(unit) {
-			var sprite_data = unit.getSpriteData().walk,
+			/*var sprite_data = unit.getSpriteData().walk,
 				cube = unit.getCube(),
 				position = this.grid.hexToCenter(cube);
 
@@ -303,7 +305,9 @@ define('view/battlefield_ground', [
 					img_width,
 					img_height
 				);
-			}.bind(this);
+			}.bind(this);*/
+
+			animateHelper.animateUnit(this, unit, this.$layer_units);
 		},
 
 		animate : function(unit, callback) {
