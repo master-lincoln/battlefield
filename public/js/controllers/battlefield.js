@@ -91,7 +91,7 @@ define('controller/battlefield', [
 		},
 
 		getStartingPoint : function() {
-			return this.getActiveUnit().getPosition();
+			return this.getActiveUnit().getCube();
 		},
 
 		moveActiveUnitTo : function(hex) {

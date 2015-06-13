@@ -15,7 +15,7 @@ define('model/battlefield_unit', [
 			return this.get('type');
 		},
 
-		getPosition : function() {
+		getCube : function() {
 			var position = this.get('position');
 			return new Cube(position.x, position.y, position.z);
 		},

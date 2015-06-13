@@ -10,9 +10,9 @@ define('collection/obstacles', [
 
 		isObstacle : function(cube) {
 			return this.find(function(obstacle) {
-				var position = obstacle.getPosition();
+				var obstacle_cube = obstacle.getCube();
 
-				return position.x === cube.x && position.y === cube.y && position.z === cube.z;
+				return obstacle_cube.x === cube.x && obstacle_cube.y === cube.y && obstacle_cube.z === cube.z;
 			}) !== undefined;
 		},
 

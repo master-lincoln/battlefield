@@ -20,9 +20,9 @@ define('collection/battlefield_units', [
 			var cube = hex.getCube();
 
 			return this.find(function(unit) {
-				var position = unit.getPosition();
+				var unit_cube = unit.getCube();
 
-				return position.x === cube.x && position.y === cube.y && position.z === cube.z;
+				return unit_cube.x === cube.x && unit_cube.y === cube.y && unit_cube.z === cube.z;
 			});
 		},
 

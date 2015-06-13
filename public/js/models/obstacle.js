@@ -19,10 +19,6 @@ define('model/obstacle', [
 			type : ''
 		},
 
-		getPosition : function() {
-			return this.getCube();
-		},
-
 		getType : function() {
 			return this.get('type');
 		},

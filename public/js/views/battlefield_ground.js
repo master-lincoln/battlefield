@@ -37,7 +37,7 @@ define('view/battlefield_ground', [
 			this.initializeUIListeners();
 			this.createGroundCells();
 			this.drawObstacles();
-			//this.loadUnits();
+			this.drawUnits();
 		},
 
 		initializeLayer : function(layer_name) {
@@ -256,59 +256,29 @@ define('view/battlefield_ground', [
 			this.controller.createRouteBetweenPoints();
 		},
 
-		/*addDistanceLabels : function(bfs) {
-		 this.diagram.tiles.selectAll("text")
-		 .text(function(d) {
-		 return bfs.cost_so_far.has(d.cube) ?
-		 bfs.cost_so_far.get(d.cube) :
-		 "";
-		 });
-		 },*/
+		/* addDistanceLabels : function(bfs) {
+			this.diagram.tiles.selectAll("text").text(function(d) {
+		 		return bfs.cost_so_far.has(d.cube) ? bfs.cost_so_far.get(d.cube) : "";
+		 	});
+		},*/
 
-		getHexFromSVGNode : function($el) {
-			var x = $el.attr('x') | 0,
-				y = $el.attr('y') | 0,
-				z = $el.attr('z') | 0;
-
-			return this.controller.getHex(x, y, z);
-		},
-
-		loadUnits : function() {
+		drawUnits : function() {
 			var units = this.controller.getUnits();
 
 			for(var i = 0; i < units.length; i++) {
-				var position = units[i].getPosition();
-				var hex = this.controller.getHex(position);
-				var cube = hex.getCube();
-
-
-				this.createUnit(i);
+				this.createUnit(units[i]);
 			}
 		},
 
-		createUnit : function(i) {
-			var foreign = Snap.parse(
-				'<svg>'
-					+ '<foreignObject id="f_unit" width="100" height="100" x="200" y="200" transform="translate(0,0)">'
-						+ '<body><div class="battlefield_unit hobgoblin"></div></body>'
-					+'</foreignObject>'
-				+ '</svg>');
-
-			var animation = Snap.parse('<animateMotion repeatCount="1" dur="1.7999999999999998s" fill="freeze" begin="indefinite" path="M 88.33459118601273,76.5 L 66.25094338950956,114.75 L 44.167295593006365,153 L 66.25094338950954,191.25 L 88.33459118601274,229.5 L 110.41823898251592,267.75"></animateMotion>');
-
-			var g = this.$layer_grid.g().attr({
-				width : 100,
-				height:100
-			}).append(foreign).append(animation);
-
-			g.select('animateMotion').node.beginElement();
-//console.log("g.select('animateMotion')", g.select('animateMotion').node)
-			return foreign;
+		createUnit : function(unit) {
+			//var position = unit.getCube();
+			//var hex = this.controller.getHex(position);
+			//var cube = hex.getCube();
 		},
 
 		animate : function(unit, callback) {
 			var from = unit.getPreviousPosition(),
-				to = unit.getPosition();
+				to = unit.getCube();
 			var hex = this.controller.getHex(from.x, from.y, from.z);
 			var tile = hex.getTile();
 
