@@ -103,6 +103,10 @@ define('controller/battlefield_ground', [
 			return this.getCollection('obstacles').getObstacles();
 		},
 
+		getHexByScreenCoordinate : function(point) {
+			return this.getCollection('hexes').getHexByScreenCoordinate(point);
+		},
+
 		isHexBlocked : function(cube) {
 			var is_obstacle = this.getCollection('obstacles').isObstacle(cube);
 			//var has_unit_standing = this.hasUnitStanding(this.getHex(cube));

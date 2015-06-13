@@ -76,12 +76,12 @@ define('view/battlefield_ground', [
 
 		handleMouseOver : function(x, y) {
 			var point = new ScreenCoordinate(x, y),
-				hexes = this.controller.getHexes();
+				hex = this.controller.getHexByScreenCoordinate(point);
 
-			for (var i = 0; i < hexes.length; i++) {
-				var hex = hexes[i];
+			if (hex) {
+				var cube = hex.getCube();
 
-				if (hex.getPolygon().containsPoint(point)) {
+				if (!this.controller.isHexBlocked(cube)) {
 					this.cleanUpCanvas(this.$layer_grid_hover);
 					this.drawHoverPolygon(this.$layer_grid_hover, hex.getCube());
 				}

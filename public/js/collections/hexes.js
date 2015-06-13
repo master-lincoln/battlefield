@@ -38,6 +38,12 @@ define('collection/hexes', [
 			}
 
 			return null;
+		},
+
+		getHexByScreenCoordinate : function(point) {
+			return this.find(function(hex) {
+				return hex.getPolygon().containsPoint(point);
+			});
 		}
 	});
 });
