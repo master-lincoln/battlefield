@@ -25,10 +25,26 @@ define('helper/animate', [], function() {
 	}
 	return {
 		animateUnit : function(view, unit, ctx) {
+			//this code is only for tests purposes
+
 			var animation_type = 'mouseover_active';
 			var sprite_data = unit.getSpriteData(),
 				cube = unit.getCube(),
 				position = view.grid.hexToCenter(cube);
+
+			var start_point = {
+				x : view.OFFSET_X + position.x - sprite_data.legs_x,
+				y : view.OFFSET_Y + position.y - sprite_data.legs_y
+			};
+
+			var destination_point = {
+				x : 500,
+				y : 500
+			};
+
+			var getCurrentPosition = function() {
+				return start_point;//Calculate here current position
+			};
 
 			var steps = sprite_data.states[animation_type],
 				step_count = steps.length;
@@ -38,10 +54,13 @@ define('helper/animate', [], function() {
 			img.src = sprite_data.url;
 
 			var counter = 0;
+			var startTime = (new Date()).getTime();
 
 			var animate = function() {
 				var img_width = sprite_data.width,
 					img_height = sprite_data.height;
+
+				var pos = getCurrentPosition();
 
 				img.width = img_width * step_count;
 				img.height = img_height;
@@ -54,8 +73,8 @@ define('helper/animate', [], function() {
 					0,
 					img_width,
 					img_height,
-					view.OFFSET_X + position.x - sprite_data.legs_x,
-					view.OFFSET_Y + position.y - sprite_data.legs_y,
+					pos.x,
+					pos.y,
 					img_width,
 					img_height
 				);
