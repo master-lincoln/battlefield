@@ -26,6 +26,8 @@ define('view/battlefield_ground', [
 		$layer_grid : null,
 		$layer_grid_hover : null,
 		$layer_grid_obstacles : null,
+		$layer_grid_route : null,
+		$layer_grid_range : null,
 		$layer_units : null,
 
 		initialize : function(options) {
@@ -37,6 +39,7 @@ define('view/battlefield_ground', [
 
 			this.initializeUIListeners();
 			this.createGroundCells();
+			this.drawCurrentUnitRange();
 			this.drawObstacles();
 			this.drawUnits();
 		},
@@ -63,14 +66,7 @@ define('view/battlefield_ground', [
 		},
 
 		initializeUIListeners : function() {
-			/*this.$el.on('mouseover', '.tile', function(e) {
-				var $el = $(e.currentTarget),
-					hex = this.getHexFromSVGNode($el);
-
-				this.controller.onMouseTileOver(hex);
-			}.bind(this));
-
-			this.$el.on('click', '.tile', function(e) {
+			/*this.$el.on('click', '.tile', function(e) {
 				var $el = $(e.currentTarget),
 					hex = this.getHexFromSVGNode($el);
 
@@ -92,6 +88,11 @@ define('view/battlefield_ground', [
 				if (!this.controller.isHexBlocked(cube)) {
 					this.cleanUpCanvas(this.$layer_grid_hover);
 					this.drawHoverPolygon(this.$layer_grid_hover, hex.getCube());
+				}
+
+				// Reconstruct path to mouse over position
+				if (this.controller.isMovementRouteEnabled()) {
+					this.createRouteBetweenPoints(hex);
 				}
 			}
 		},
@@ -137,6 +138,12 @@ define('view/battlefield_ground', [
 			});
 		},
 
+		drawObstaclePolygon : function(ctx, cube, hexagon_points) {
+			return this.drawPolygon(ctx, cube, hexagon_points, {
+				state : hexStatesEnum.OBSTACLE
+			});
+		},
+
 		drawPolygon : function(ctx, cube, hexagon_points, settings) {
 			var scale = this.controller.getScale();
 
@@ -164,9 +171,8 @@ define('view/battlefield_ground', [
 			}
 
 			ctx.lineTo(x + hexagon_points[0].x, y + hexagon_points[0].y);
-			ctx.strokeStyle = this.getHexStrokeColor(settings.state);
-			ctx.lineWidth = 1;
-			ctx.fillStyle = 'rgba(0,0,0,0)';
+
+			this.setHexStyles(ctx, settings.state);
 
 			ctx.closePath();
 			ctx.stroke();
@@ -174,32 +180,31 @@ define('view/battlefield_ground', [
 			return polygon;
 		},
 
-		getHexStrokeColor : function(state) {
+		setHexStyles : function(ctx, state) {
+			ctx.lineWidth = 1;
+
 			switch(state) {
 				case hexStatesEnum.IDLE:
-					return '#678a00';
+					ctx.strokeStyle = '#678a00';
+					ctx.fillStyle = 'rgba(0,0,0,0)';
+					ctx.fill();
+					break;
 				case hexStatesEnum.HOVER:
-					return '#fff200';
+					ctx.strokeStyle = '#fff200';
+					ctx.fillStyle = 'rgba(0,0,0,0)';
+					ctx.fill();
+					break;
 				case hexStatesEnum.BLOCKED:
-					return 'red';
-				default:
-					return '#678a00';
+					ctx.strokeStyle = '#678a00';
+					ctx.fillStyle = 'rgba(0,0,0,0.3)';
+					ctx.fill();
+					break;
+				case hexStatesEnum.OBSTACLE:
+					ctx.strokeStyle = 'red';
+					ctx.fillStyle = 'rgba(0,0,0,0)';
+					ctx.fill();
+					break;
 			}
-		},
-
-		enablePath : function() {
-			this.pathLayer = this.$layer_grid.path('M 0 0').attr('class', 'path');
-
-			this.setPath = function(path) {
-				var d = [];
-
-				for (var i = 0; i < path.length; i++) {
-					d.push(i == 0 ? 'M' : 'L');
-					d.push(this.grid.hexToCenter(path[i]));
-				}
-
-				this.pathLayer.attr('d', d.join(" "));
-			};
 		},
 
 		addCubeCoordinates : function(hexes) {
@@ -219,11 +224,6 @@ define('view/battlefield_ground', [
 			//Update CSS classes on hexes
 
 			//this.updateCssClasses();
-
-			// Reconstruct path to mouse over position
-			if (this.controller.isMovementRouteEnabled()) {
-				this.createRouteBetweenPoints();
-			}
 		},
 
 		drawObstacles : function() {
@@ -238,30 +238,49 @@ define('view/battlefield_ground', [
 				if (!obstacle.isFakeBorder()) {
 					var cube = obstacle.getCube();
 
-					this.drawBlockedPolygon(ctx, cube, hexagon_points);
+					this.drawObstaclePolygon(ctx, cube, hexagon_points);
 				}
 			}
 		},
 
-		/*updateCssClasses : function() {
-			var hexes = this.controller.getHexes(),
-				bfs = this.controller.getBFS(this.controller.parent_controller.getStartingPoint());
+		createRouteBetweenPoints : function(hex) {
+			var from = this.controller.parent_controller.getStartingPoint();
+			var to = hex.getCube();
+			var path = this.controller.getPath(from, to);
 
-			for (var i = 0, l = hexes.length; i < l; i++) {
+			this.drawPath(path);
+		},
+
+		drawPath : function(path) {
+			//this.$layer_grid_route;
+		},
+
+		drawCurrentUnitRange : function() {
+			var hexes = this.controller.getHexes();
+			var from = this.controller.parent_controller.getStartingPoint();
+			var bfs = this.controller.getBFS(from);
+			var unit_speed = this.controller.parent_controller.getUnitSpeed();
+			var ctx = this.$layer_grid_range;
+			var scale = this.controller.getScale();
+			var hexagon_points = this.controller.getHexagonShape(scale);
+
+			for (var i = 0; i < hexes.length; i++) {
 				var hex = hexes[i];
-				var hex_status = this.controller.getHexStatuses(bfs, hex);
-				var tile = hex.getTile();
+				var cube = hex.getCube();
 
-				for(var class_name in hex_status) {
-					if (hex_status.hasOwnProperty(class_name)) {
-						tile.toggleClass(class_name, hex_status[class_name]);
-					}
+				if (!bfs.cost_so_far.has(cube) || bfs.cost_so_far.get(cube) > unit_speed) {
+					this.drawBlockedPolygon(ctx, cube, hexagon_points);
 				}
 			}
-		},*/
 
-		createRouteBetweenPoints : function() {
-			this.controller.createRouteBetweenPoints();
+			//
+			//isHexBlocked : function(cube)
+
+			//blocked : this.isHexBlocked(cube),
+			//inactive : !bfs.cost_so_far.has(cube) || bfs.cost_so_far.get(cube) > unit_speed,
+			//start : this.hasUnitStanding(hex),
+			//goal : destination_point ? cube.equals(destination_point) : false,
+			//selected : cube.x === starting_point.x && cube.y === starting_point.y && cube.z === starting_point.z
 		},
 
 		/* addDistanceLabels : function(bfs) {
@@ -279,79 +298,7 @@ define('view/battlefield_ground', [
 		},
 
 		createUnit : function(unit) {
-			/*var sprite_data = unit.getSpriteData().walk,
-				cube = unit.getCube(),
-				position = this.grid.hexToCenter(cube);
-
-			var img = document.createElement('img');
-			img.src = sprite_data.url;
-
-			img.onload = function() {
-				var steps = sprite_data.steps,
-					img_width = sprite_data.width,
-					img_height = sprite_data.height;
-
-				img.width = img_width * steps;
-				img.height = img_height;
-
-				this.$layer_units.drawImage(
-					img,
-					0,
-					0,
-					img_width,
-					img_height,
-					this.OFFSET_X + position.x - sprite_data.legs_x,
-					this.OFFSET_Y + position.y - sprite_data.legs_y,
-					img_width,
-					img_height
-				);
-			}.bind(this);*/
-
 			animateHelper.animateUnit(this, unit, this.$layer_units);
-		},
-
-		animate : function(unit, callback) {
-			var from = unit.getPreviousPosition(),
-				to = unit.getCube();
-			var hex = this.controller.getHex(from.x, from.y, from.z);
-			var tile = hex.getTile();
-
-			var getPath = function(path) {
-				var d = [];
-
-				for (var i = 0; i < path.length; i++) {
-					d.push(i == 0 ? 'M' : 'L');
-					d.push(this.grid.hexToCenter(path[i]));
-				}
-
-				return d.join(" ");
-			}.bind(this);
-
-			var path = this.controller.getPath(from, to);
-
-			var clone = tile.clone();
-			var animate = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
-
-			animate.setAttribute('repeatCount','1');
-			animate.setAttribute('dur', (path.length * 0.3) +'s');
-			animate.setAttribute('fill','freeze');
-			animate.setAttribute('begin','indefinite');
-			animate.setAttribute('path', getPath(path.reverse()));
-			animate.addEventListener('endEvent', animationEnd, false);
-			clone.attr({
-				transform : 'translate(0,0)'
-			});
-
-			clone.append(animate);
-			clone.appendTo(this.$layer_grid);
-
-			animate.beginElement();
-console.log("animate", animate)
-			function animationEnd() {
-				callback();
-
-				clone.remove();
-			}
 		},
 
 		destroy : function() {

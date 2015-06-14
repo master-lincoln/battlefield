@@ -5,6 +5,7 @@ requirejs.config({
 		underscore: 'libs/underscore-min',
 		backbone: 'libs/backbone-min',
 		gridlib : 'libs/gridlib',
+		d3 : 'libs/d3.min',
 
 		view : 'views',
 		controller : 'controllers',

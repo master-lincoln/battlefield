@@ -3,13 +3,15 @@ define('controller/battlefield_ground', [
 	'view/battlefield_ground',
 	'gridlib/screen_coordinate',
 	'gridlib/grid',
-	'gridlib/cube'
+	'gridlib/cube',
+	'd3'
 ], function(
 	BaseController,
 	BattlefieldGroundView,
 	ScreenCoordinate,
 	Grid,
-	Cube
+	Cube,
+	d3
 ) {
 	return BaseController.extend({
 		ORIENTATION : true,
@@ -19,11 +21,11 @@ define('controller/battlefield_ground', [
 			this.layers = options.layers;
 
 			this.initializeView();
-			//this.initializeEvents();
+			this.initializeEvents();
 		},
 
 		initializeEvents : function() {
-			var battlefield_units = this.getCollection('battlefield_units'),
+			/*var battlefield_units = this.getCollection('battlefield_units'),
 				battlefield = this.getModel('battlefield');
 
 			battlefield_units.onUnitMovement(this, function(unit) {
@@ -32,13 +34,9 @@ define('controller/battlefield_ground', [
 				}.bind(this));
 			}.bind(this));
 
-			battlefield.onCursorPositionChange(this, function(model) {
-				this.view.rerender();
-			}.bind(this));
-
 			battlefield.onActiveUnitChange(this, function(model) {
 				this.view.rerender();
-			}.bind(this));
+			}.bind(this));*/
 		},
 
 		initializeView : function() {
@@ -47,13 +45,8 @@ define('controller/battlefield_ground', [
 				controller : this
 			});
 
-			if (this.isMovementRouteEnabled()) {
-				this.view.enablePath();
-			}
-
 			//Add distance labels
 			if (this.parent_controller.areHexLabelsEnabled()) {
-				//this.addDistanceLabels(bfs);
 				this.view.addCubeCoordinates(this.getHexes());
 			}
 
@@ -109,7 +102,6 @@ define('controller/battlefield_ground', [
 
 		isHexBlocked : function(cube) {
 			var is_obstacle = this.getCollection('obstacles').isObstacle(cube);
-			//var has_unit_standing = this.hasUnitStanding(this.getHex(cube));
 
 			//Later we will check here whether unit is standing on this hex as well
 
@@ -175,18 +167,6 @@ define('controller/battlefield_ground', [
 			return path;
 		},
 
-		getHex : function(p1, p2, p3) {
-			var x, y, z;
-
-			if (p1 instanceof Cube) {
-				x = p1.x; y = p1.y; z = p1.z;
-			} else {
-				x = p1; y = p2; z = p3;
-			}
-
-			return this.getCollection('hexes').getHex(x, y, z);
-		},
-
 		getHexes : function() {
 			return this.getCollection('hexes').getHexes();
 		},
@@ -211,38 +191,12 @@ define('controller/battlefield_ground', [
 			return this.parent_controller.getMapShape();
 		},
 
-		getHexStatuses : function(bfs, hex) {
-			var unit_speed = this.parent_controller.getUnitSpeed(),
-				starting_point = this.parent_controller.getStartingPoint(),
-				destination_point = this.parent_controller.getDestinationPoint(),
-				cube = hex.getCube();
-
-			return {
-				blocked : this.isHexBlocked(cube),
-				inactive : !bfs.cost_so_far.has(cube) || bfs.cost_so_far.get(cube) > unit_speed,
-				start : this.hasUnitStanding(hex),
-				goal : destination_point ? cube.equals(destination_point) : false,
-				selected : cube.x === starting_point.x && cube.y === starting_point.y && cube.z === starting_point.z
-			};
-		},
-
 		getUnits : function() {
 			return this.getCollection('battlefield_units').getUnits();
 		},
 
 		hasUnitStanding : function(hex) {
 			return this.getCollection('battlefield_units').isUnit(hex);
-		},
-
-		createRouteBetweenPoints : function() {
-			var from = this.parent_controller.getStartingPoint(),
-				to = this.parent_controller.getDestinationPoint();
-
-			this.view.setPath(this.getPath(from, to));
-		},
-
-		onMouseTileOver : function(hex) {
-			this.parent_controller.setDestinationPoint(hex);
 		},
 
 		onMouseTileClick : function(hex) {

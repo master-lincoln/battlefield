@@ -14,7 +14,7 @@ define('controller/battlefield', [
 	return BaseController.extend({
 		SCALE : 51,
 		HEX_LABELS_ENABLED : true,
-		MOVEMENT_ROUTE_ENABLED : false,
+		MOVEMENT_ROUTE_ENABLED : true,
 
 		cm_context : {
 			main : 'battlefield',
@@ -54,9 +54,26 @@ define('controller/battlefield', [
 					grid : this.$el.find('.layer-grid'),
 					grid_hover : this.$el.find('.layer-grid-hover'),
 					grid_obstacles : this.$el.find('.layer-grid-obstacles'),
+					grid_route : this.$el.find('.layer-grid-route'),
+					grid_range : this.$el.find('.layer-grid-range'),
 					units : this.$el.find('.layer-units')
 				}
 			}));
+		},
+
+		getStartingPoint : function() {
+			return this.getActiveUnit().getCube();
+		},
+
+		/**
+		 * Active Unit
+		 */
+		getUnitSpeed : function() {
+			return this.getActiveUnit().getSpeed();
+		},
+
+		moveActiveUnitTo : function(hex) {
+			this.getActiveUnit().moveTo(hex.getCube());
 		},
 
 		setActiveUnit : function(battlefield_unit) {
@@ -66,6 +83,14 @@ define('controller/battlefield', [
 		getActiveUnit : function() {
 			return this.getModel('battlefield').getActiveUnit();
 		},
+
+		setStartingPoint : function(hex) {
+			this.setActiveUnit(this.getCollection('battlefield_units').getUnit(hex));
+		},
+
+		/**
+		 * Settings
+		 */
 
 		getMapShape : function() {
 			return this.map.shape;
@@ -79,36 +104,12 @@ define('controller/battlefield', [
 			return Infinity;
 		},
 
-		getUnitSpeed : function() {
-			return this.getActiveUnit().getSpeed();
-		},
-
 		areHexLabelsEnabled : function() {
 			return this.HEX_LABELS_ENABLED;
 		},
 
 		isMovementRouteEnabled : function() {
 			return this.MOVEMENT_ROUTE_ENABLED;
-		},
-
-		getStartingPoint : function() {
-			return this.getActiveUnit().getCube();
-		},
-
-		moveActiveUnitTo : function(hex) {
-			this.getActiveUnit().moveTo(hex.getCube());
-		},
-
-		setStartingPoint : function(hex) {
-			this.setActiveUnit(this.getCollection('battlefield_units').getUnit(hex));
-		},
-
-		getDestinationPoint : function() {
-			return this.getModel('battlefield').getCursorPosition();
-		},
-
-		setDestinationPoint : function(hex) {
-			this.getModel('battlefield').moveCursorTo(hex.getCube());
 		},
 
 		destroy : function() {
