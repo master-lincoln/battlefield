@@ -37,16 +37,6 @@ define('unit/stronghold/hobgoblin', [
 			start_moving : [9],
 			stop_moving : [19]
 		}
-
-
-		/*walking : {
-			url : 'images/units/stronghold/battlefield/hobgoblin/walking_sprite.png',
-			steps : 10,
-			width : 110,
-			height: 110,
-			legs_x : 55,
-			legs_y : 72
-		}*/
 	};
 
 	return {
