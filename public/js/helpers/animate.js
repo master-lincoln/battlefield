@@ -25,9 +25,13 @@ define('helper/animate', [], function() {
 	}
 	return {
 		animateUnit : function(view, unit, ctx) {
-			var sprite_data = unit.getSpriteData().walking,
+			var animation_type = 'mouseover_active';
+			var sprite_data = unit.getSpriteData(),
 				cube = unit.getCube(),
 				position = view.grid.hexToCenter(cube);
+
+			var steps = sprite_data.states[animation_type],
+				step_count = steps.length;
 
 
 			var img = document.createElement('img');
@@ -36,18 +40,17 @@ define('helper/animate', [], function() {
 			var counter = 0;
 
 			var animate = function() {
-				var steps = sprite_data.steps,
-					img_width = sprite_data.width,
+				var img_width = sprite_data.width,
 					img_height = sprite_data.height;
 
-				img.width = img_width * steps;
+				img.width = img_width * step_count;
 				img.height = img_height;
 
 				ctx.clearRect(0, 0, 800, 556);
 
 				ctx.drawImage(
 					img,
-					img_width * counter,
+					img_width * (steps[counter] - 1),
 					0,
 					img_width,
 					img_height,
@@ -59,7 +62,7 @@ define('helper/animate', [], function() {
 
 				counter++;
 
-				if(counter === steps) {
+				if(counter === step_count) {
 					counter = 0;
 				}
 

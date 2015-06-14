@@ -1,13 +1,19 @@
 define('enum/battlefield_unit_states', [], function() {
 	return {
-		ACTIVE : 'active',
-		ATTACK_TOP : 'attack_top',
-		ATTACK_MIDDLE : 'attack_middle',
-		ATTACK_BOTTOM : 'attack_bottom',
-		DAMAGED : 'damaged',
-		DAMAGED_DISTANCE : 'damaged_distance',
+		MOVING : 'moving',
+		MOUSEOVER : 'mouseover',
+		STANDING : 'standing',
+		MOUSEOVER_ACTIVE : 'mouseover_active',
+		STANDING_ACTIVE : 'standing_active',
+		HIT : 'hit',
+		DEFEND : 'defend',
 		DEATH : 'death',
-		FIGHT_SCREAM : 'fight_scream',
-		WALKING : 'walking'
+		TURN_LEFT : 'turn_left',
+		TURN_RIGHT : 'turn_right',
+		ATTACK_UP : 'attack_up',
+		ATTACK_STRAIGHT : 'attack_straight',
+		ATTACK_DOWN : 'attack_down',
+		START_MOVING : 'start_moving',
+		STOP_MOVING : 'stop_moving'
 	};
 });
