@@ -176,9 +176,9 @@ define('gridlib/grid', [
 			var size = this.scale / 2;
 
 			if (this.orientation) {
-				s = new ScreenCoordinate(Math.sqrt(3) * cube.x + Math.sqrt(3) / 2 * cube.z,1.5 * cube.z);
+				s = new ScreenCoordinate(Math.sqrt(3) * cube.x + Math.sqrt(3) / 2 * cube.z, 1.5 * cube.z);
 			} else {
-				s = new ScreenCoordinate(1.5 * cube.x,Math.sqrt(3) / 2 * cube.x + Math.sqrt(3) * cube.z);
+				s = new ScreenCoordinate(1.5 * cube.x, Math.sqrt(3) / 2 * cube.x + Math.sqrt(3) * cube.z);
 			}
 
 			return s.scale(size);

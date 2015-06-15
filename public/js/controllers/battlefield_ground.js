@@ -15,8 +15,11 @@ define('controller/battlefield_ground', [
 ) {
 	return BaseController.extend({
 		ORIENTATION : true,
+		grid : null,
 		initialize : function(options) {
 			BaseController.prototype.initialize.apply(this, arguments);
+
+			this.grid = new Grid(this.getScale(), this.getOrientation(), this.getMapShape());
 
 			this.layers = options.layers;
 
@@ -51,6 +54,10 @@ define('controller/battlefield_ground', [
 			}
 
 			this.view.render();
+		},
+
+		getHexPixelPosition : function(cube) {
+			return this.grid.hexToCenter(cube);
 		},
 
 		getLayers : function() {

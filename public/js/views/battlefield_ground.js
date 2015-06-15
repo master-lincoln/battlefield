@@ -16,7 +16,6 @@ define('view/battlefield_ground', [
 	animateHelper
 ) {
 	return BaseView.extend({
-		grid : null,
 		$root : null,
 		OFFSET_X : 103,
 		OFFSET_Y : 132,
@@ -34,8 +33,6 @@ define('view/battlefield_ground', [
 			BaseView.prototype.initialize.apply(this, arguments);
 
 			this.initializeLayers();
-
-			this.grid = new Grid(this.controller.getScale(), this.controller.getOrientation(), this.controller.getMapShape());
 
 			this.initializeUIListeners();
 			this.createGroundCells();
@@ -151,7 +148,7 @@ define('view/battlefield_ground', [
 		},
 
 		_drawPolygon : function(ctx, cube, hexagon_points, settings) {
-			var position = this.grid.hexToCenter(cube);
+			var position = this.controller.getHexPixelPosition(cube);
 			var x = position.x + this.OFFSET_X;
 			var y = position.y + this.OFFSET_Y;
 			var polygon = [];
@@ -213,7 +210,7 @@ define('view/battlefield_ground', [
 			for(var i = 0, l = hexes.length; i < l; i++) {
 				var hex = hexes[i];
 				var cube = hex.getCube();
-				var position = this.grid.hexToCenter(cube);
+				var position = this.controller.getHexPixelPosition(cube);
 
 				this.$layer_grid.font = "9px serif";
 				this.$layer_grid.fillText(cube.x + ',' + cube.y + ',' + cube.z, this.OFFSET_X + position.x - 10, this.OFFSET_Y + position.y + 4);
@@ -268,7 +265,7 @@ define('view/battlefield_ground', [
 			ctx.lineWidth = 5;
 
 			for(var i = 0; i < path.length; i++) {
-				var position = this.grid.hexToCenter(path[i]);
+				var position = this.controller.getHexPixelPosition(path[i]);
 
 				if (i === 0) {
 					ctx.moveTo(x + position.x, y + position.y);
