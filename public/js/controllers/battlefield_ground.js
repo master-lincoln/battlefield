@@ -14,7 +14,6 @@ define('controller/battlefield_ground', [
 	d3
 ) {
 	return BaseController.extend({
-		ORIENTATION : true,
 		grid : null,
 		initialize : function(options) {
 			BaseController.prototype.initialize.apply(this, arguments);
@@ -28,24 +27,14 @@ define('controller/battlefield_ground', [
 		},
 
 		initializeEvents : function() {
-			/*var battlefield_units = this.getCollection('battlefield_units'),
-				battlefield = this.getModel('battlefield');
 
-			battlefield_units.onUnitMovement(this, function(unit) {
-				this.view.animate(unit, function() {
-					this.view.rerender();
-				}.bind(this));
-			}.bind(this));
-
-			battlefield.onActiveUnitChange(this, function(model) {
-				this.view.rerender();
-			}.bind(this));*/
 		},
 
 		initializeView : function() {
 			this.view = new BattlefieldGroundView({
 				el : this.$el,
-				controller : this
+				controller : this,
+				layers : this.layers
 			});
 
 			//Add distance labels
@@ -60,43 +49,13 @@ define('controller/battlefield_ground', [
 			return this.grid.hexToCenter(cube);
 		},
 
-		getLayers : function() {
-			return this.layers;
-		},
-
-		/**
-		 * (x, y) should be the center
-		 * scale should be the distance from corner to corner
-		 * orientation should be 0 (flat bottom hex) or 1 (flat side hex)
-		 */
-		hexToPolygon : function hexToPolygon(scale, x, y, orientation) {
-			// NOTE: the article says to use angles 0..300 or 30..330 (e.g. I
-			// add 30 degrees for pointy top) but I instead use -30..270
-			// (e.g. I subtract 30 degrees for pointy top) because it better
-			// matches the animations I needed for my diagrams. They're
-			// equivalent.
-			var points = [];
-
-			for (var i = 0; i < 6; i++) {
-				var angle = 2 * Math.PI * (2 * i - orientation) / 12;
-
-				points.push(new ScreenCoordinate(
-					x + 0.5 * scale * Math.cos(angle),
-					y + 0.5 * scale * Math.sin(angle)
-				));
-			}
-
-			return points;
-		},
-
 		/**
 		 * The shape of a hexagon is adjusted by the scale; the rotation is handled elsewhere, using svg transforms
 		 *
-		 * @param scale
 		 * @returns {string}
 		 */
-		getHexagonShape : function getHexagonShape(scale) {
-			return this.hexToPolygon(scale, 0, 0, this.getOrientation());
+		getHexagonShape : function getHexagonShape() {
+			return this.grid.hexToPolygon(0, 0);
 		},
 
 		getObstacles : function() {
@@ -191,7 +150,7 @@ define('controller/battlefield_ground', [
 		},
 
 		getOrientation : function() {
-			return this.ORIENTATION;
+			return this.parent_controller.getOrientation();
 		},
 
 		getMapShape : function() {

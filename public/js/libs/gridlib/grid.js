@@ -171,6 +171,33 @@ define('gridlib/grid', [
 	};
 
 	Grid.prototype = {
+		/**
+		 * @param {Number} x   (x, y) should be the center
+		 * @param {Number} y   (x, y) should be the center
+		 */
+		hexToPolygon : function hexToPolygon(x, y) {
+			var scale = this.scale;
+			var orientation = this.orientation;
+
+			// NOTE: the article says to use angles 0..300 or 30..330 (e.g. I
+			// add 30 degrees for pointy top) but I instead use -30..270
+			// (e.g. I subtract 30 degrees for pointy top) because it better
+			// matches the animations I needed for my diagrams. They're
+			// equivalent.
+			var points = [];
+
+			for (var i = 0; i < 6; i++) {
+				var angle = 2 * Math.PI * (2 * i - orientation) / 12;
+
+				points.push(new ScreenCoordinate(
+					x + 0.5 * scale * Math.cos(angle),
+					y + 0.5 * scale * Math.sin(angle)
+				));
+			}
+
+			return points;
+		},
+
 		hexToCenter : function(cube) {
 			var s;
 			var size = this.scale / 2;

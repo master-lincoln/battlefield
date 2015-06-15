@@ -20,6 +20,8 @@ define('view/battlefield_ground', [
 		WIDTH : 800,
 		HEIGHT : 556,
 
+		layers : null,
+
 		$layer_grid : null,
 		$layer_grid_hover : null,
 		$layer_grid_obstacles : null,
@@ -29,6 +31,8 @@ define('view/battlefield_ground', [
 
 		initialize : function(options) {
 			BaseView.prototype.initialize.apply(this, arguments);
+
+			this.layers = options.layers;
 
 			this.initializeLayers();
 
@@ -40,7 +44,7 @@ define('view/battlefield_ground', [
 		},
 
 		initializeLayers : function() {
-			var layers = this.controller.getLayers();
+			var layers = this.layers;
 
 			for(var layer_name in layers) {
 				if (layers.hasOwnProperty(layer_name)) {
@@ -94,8 +98,7 @@ define('view/battlefield_ground', [
 
 		createGroundCells : function() {
 			var plainHexes = [],
-				scale = this.controller.getScale(),
-				hexagon_points = this.controller.getHexagonShape(scale),
+				hexagon_points = this.controller.getHexagonShape(),
 				cubes = this.controller.getMapShape();
 
 			for(var i = 0, l = cubes.length; i < l; i++) {
@@ -140,9 +143,7 @@ define('view/battlefield_ground', [
 		},
 
 		drawPolygon : function(ctx, cube, hexagon_points, settings) {
-			var scale = this.controller.getScale();
-
-			return this._drawPolygon(ctx, cube, hexagon_points || this.controller.getHexagonShape(scale), settings);
+			return this._drawPolygon(ctx, cube, hexagon_points || this.controller.getHexagonShape(), settings);
 		},
 
 		_drawPolygon : function(ctx, cube, hexagon_points, settings) {
@@ -224,8 +225,7 @@ define('view/battlefield_ground', [
 		drawObstacles : function() {
 			var obstacles = this.controller.getObstacles(),
 				ctx = this.$layer_grid_obstacles,
-				scale = this.controller.getScale(),
-				hexagon_points = this.controller.getHexagonShape(scale);
+				hexagon_points = this.controller.getHexagonShape();
 
 			for (var i = 0, l = obstacles.length; i < l; i++) {
 				var obstacle = obstacles[i];
@@ -282,8 +282,7 @@ define('view/battlefield_ground', [
 			var bfs = this.controller.getBFS(from);
 			var unit_speed = this.controller.parent_controller.getUnitSpeed();
 			var ctx = this.$layer_grid_range;
-			var scale = this.controller.getScale();
-			var hexagon_points = this.controller.getHexagonShape(scale);
+			var hexagon_points = this.controller.getHexagonShape();
 
 			for (var i = 0; i < hexes.length; i++) {
 				var hex = hexes[i];
