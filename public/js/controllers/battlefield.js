@@ -35,7 +35,7 @@ define('controller/battlefield', [
 			this.setActiveUnit(this.getCollection('battlefield_units').getFirstUnit());
 
 			this.initializeView();
-			this.initializeBattlefieldGround();
+			this.initializeBattlefieldGroundController();
 		},
 
 		initializeView : function() {
@@ -47,18 +47,10 @@ define('controller/battlefield', [
 			this.view.render();
 		},
 
-		initializeBattlefieldGround : function() {
+		initializeBattlefieldGroundController : function() {
 			this.registerController('battlefield_ground', new BattlefieldGroundController({
 				parent_controller : this,
-				el : this.$el,
-				layers : {
-					grid : this.$el.find('.layer-grid'),
-					grid_hover : this.$el.find('.layer-grid-hover'),
-					grid_obstacles : this.$el.find('.layer-grid-obstacles'),
-					grid_route : this.$el.find('.layer-grid-route'),
-					grid_range : this.$el.find('.layer-grid-range'),
-					units : this.$el.find('.layer-units')
-				}
+				el : this.$el
 			}));
 		},
 
@@ -67,7 +59,9 @@ define('controller/battlefield', [
 		},
 
 		/**
-		 * Active Unit
+		 * =============================
+		 *          Active Unit
+		 * =============================
 		 */
 		getUnitSpeed : function() {
 			return this.getActiveUnit().getSpeed();
@@ -90,9 +84,10 @@ define('controller/battlefield', [
 		},
 
 		/**
-		 * Settings
+		 * =============================
+		 *          Settings
+		 * =============================
 		 */
-
 		getMapShape : function() {
 			return this.map.shape;
 		},

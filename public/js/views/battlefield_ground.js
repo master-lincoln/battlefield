@@ -22,12 +22,12 @@ define('view/battlefield_ground', [
 
 		layers : null,
 
-		$layer_grid : null,
-		$layer_grid_hover : null,
-		$layer_grid_obstacles : null,
-		$layer_grid_route : null,
-		$layer_grid_range : null,
-		$layer_units : null,
+		$ctx_grid : null,
+		$ctx_grid_hover : null,
+		$ctx_grid_obstacles : null,
+		$ctx_grid_route : null,
+		$ctx_grid_range : null,
+		$ctx_units : null,
 
 		initialize : function(options) {
 			BaseView.prototype.initialize.apply(this, arguments);
@@ -38,9 +38,9 @@ define('view/battlefield_ground', [
 
 			this.initializeUIListeners();
 			this.createGroundCells();
-			this.drawCurrentUnitRange();
 			this.drawObstacles();
 			this.drawUnits();
+			this.drawCurrentUnitRange();
 		},
 
 		initializeLayers : function() {
@@ -51,7 +51,7 @@ define('view/battlefield_ground', [
 					var $layer = layers[layer_name];
 
 					$layer.attr({width : this.WIDTH, height : this.HEIGHT});
-					this['$layer_' + layer_name] = $layer[0].getContext('2d');
+					this['$ctx_' + layer_name] = $layer[0].getContext('2d');
 				}
 			}
 		},
@@ -74,17 +74,19 @@ define('view/battlefield_ground', [
 			var point = new ScreenCoordinate(x, y),
 				hex = this.controller.getHexByScreenCoordinate(point);
 
+			//Grid does not fill entire battlefield, so there might be space where hexes don't exist
 			if (hex) {
 				var cube = hex.getCube();
 
 				if (!this.controller.isHexBlocked(cube)) {
-					this.cleanUpCanvas(this.$layer_grid_hover);
-					this.drawHoverPolygon(this.$layer_grid_hover, hex.getCube());
+					this.cleanUpCanvas(this.$ctx_grid_hover);
+					this.drawHoverPolygon(this.$ctx_grid_hover, hex.getCube());
 				}
 
 				// Reconstruct path to mouse over position
 				if (this.controller.isMovementRouteEnabled()) {
-					this.createRouteBetweenPoints(hex);
+					var from = this.controller.parent_controller.getStartingPoint();
+					this.createRouteBetweenPoints(from, hex);
 				}
 			}
 		},
@@ -96,7 +98,7 @@ define('view/battlefield_ground', [
 
 			for(var i = 0, l = cubes.length; i < l; i++) {
 				var cube = cubes[i];
-				var polygon = this.drawIdlePolygon(this.$layer_grid, cube, hexagon_points);
+				var polygon = this.drawIdlePolygon(this.$ctx_grid, cube, hexagon_points);
 
 				plainHexes.push({
 					polygon : new Polygon(polygon),
@@ -197,15 +199,15 @@ define('view/battlefield_ground', [
 		},
 
 		addCubeCoordinates : function(hexes) {
-			this.$layer_grid.fillStyle = "rgb(255,255,255)";
+			this.$ctx_grid.fillStyle = "rgb(255,255,255)";
 
 			for(var i = 0, l = hexes.length; i < l; i++) {
 				var hex = hexes[i];
 				var cube = hex.getCube();
 				var position = this.controller.getHexPixelPosition(cube);
 
-				this.$layer_grid.font = "9px serif";
-				this.$layer_grid.fillText(cube.x + ',' + cube.y + ',' + cube.z, this.OFFSET_X + position.x - 10, this.OFFSET_Y + position.y + 4);
+				this.$ctx_grid.font = "9px serif";
+				this.$ctx_grid.fillText(cube.x + ',' + cube.y + ',' + cube.z, this.OFFSET_X + position.x - 10, this.OFFSET_Y + position.y + 4);
 			}
 		},
 
@@ -217,7 +219,7 @@ define('view/battlefield_ground', [
 
 		drawObstacles : function() {
 			var obstacles = this.controller.getObstacles(),
-				ctx = this.$layer_grid_obstacles,
+				ctx = this.$ctx_grid_obstacles,
 				hexagon_points = this.controller.getHexagonShape();
 
 			for (var i = 0, l = obstacles.length; i < l; i++) {
@@ -231,8 +233,7 @@ define('view/battlefield_ground', [
 			}
 		},
 
-		createRouteBetweenPoints : function(hex) {
-			var from = this.controller.parent_controller.getStartingPoint();
+		createRouteBetweenPoints : function(from, hex) {
 			var to = hex.getCube();
 			var path = this.controller.getPath(from, to);
 
@@ -240,7 +241,7 @@ define('view/battlefield_ground', [
 		},
 
 		drawPath : function(path) {
-			var ctx = this.$layer_grid_route;
+			var ctx = this.$ctx_grid_route;
 			var x = this.OFFSET_X;
 			var y = this.OFFSET_Y;
 
@@ -276,7 +277,7 @@ define('view/battlefield_ground', [
 			var from = this.controller.parent_controller.getStartingPoint();
 			var bfs = this.controller.getBFS(from);
 			var unit_speed = this.controller.parent_controller.getUnitSpeed();
-			var ctx = this.$layer_grid_range;
+			var ctx = this.$ctx_grid_range;
 			var hexagon_points = this.controller.getHexagonShape();
 
 			for (var i = 0; i < hexes.length; i++) {
@@ -314,7 +315,7 @@ define('view/battlefield_ground', [
 
 		createUnit : function(unit) {
 
-			animateHelper.animateUnit(unit, this.$layer_units, this.OFFSET_X, this.OFFSET_Y, this.controller.getHexPixelPosition.bind(this.controller));
+			animateHelper.animateUnit(unit, this.$ctx_units, this.OFFSET_X, this.OFFSET_Y, this.controller.getHexPixelPosition.bind(this.controller));
 		},
 
 		destroy : function() {

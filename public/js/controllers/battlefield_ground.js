@@ -17,8 +17,6 @@ define('controller/battlefield_ground', [
 
 			this.grid = new Grid(this.getScale(), this.getOrientation(), this.getMapShape());
 
-			this.layers = options.layers;
-
 			this.initializeView();
 			this.initializeEvents();
 		},
@@ -31,7 +29,14 @@ define('controller/battlefield_ground', [
 			this.view = new BattlefieldGroundView({
 				el : this.$el,
 				controller : this,
-				layers : this.layers
+				layers : {
+					grid : this.$el.find('.layer-grid'),
+					grid_hover : this.$el.find('.layer-grid-hover'),
+					grid_obstacles : this.$el.find('.layer-grid-obstacles'),
+					grid_route : this.$el.find('.layer-grid-route'),
+					grid_range : this.$el.find('.layer-grid-range'),
+					units : this.$el.find('.layer-units')
+				}
 			});
 
 			//Add distance labels
