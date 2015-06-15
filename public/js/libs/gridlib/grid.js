@@ -4,12 +4,14 @@ define('gridlib/grid', [
 	'gridlib/hex',
 	'gridlib/screen_coordinate',
 	'gridlib/lambda',
+	'd3'
 ], function(
 	Cube,
 	FractionalCube,
 	Hex,
 	ScreenCoordinate,
-	Lambda
+	Lambda,
+	d3
 ) {
 	'use strict';
 
@@ -171,6 +173,44 @@ define('gridlib/grid', [
 	};
 
 	Grid.prototype = {
+		/**
+		 * @see http://www.redblobgames.com/pathfinding/a-star/introduction.html
+		 *
+		 * @param starting_point
+		 * @param max_movement
+		 * @param max_magnitude
+		 * @param isBlocked
+		 * @returns {{cost_so_far: (Array|*), came_from: (Array|*)}}
+		 */
+		breadthFirstSearch : function(starting_point, max_movement, max_magnitude, isBlocked) {
+			var cost_so_far = d3.map();
+			var came_from = d3.map();
+			var fringes = [[starting_point]];
+
+			cost_so_far.set(starting_point, 0);
+			came_from.set(starting_point, null);
+
+			for (var k = 0; k < max_movement && fringes[k].length > 0; k++) {
+				fringes[k + 1] = [];
+				fringes[k].forEach(function(cube) {
+					for (var dir = 0; dir < 6; dir++) {
+						var neighbor = Cube.neighbor(cube, dir);
+
+						if (!cost_so_far.has(neighbor) && !isBlocked(neighbor) && Cube.$length(neighbor) <= max_magnitude) {
+							cost_so_far.set(neighbor, k + 1);
+							came_from.set(neighbor, cube);
+							fringes[k + 1].push(neighbor);
+						}
+					}
+				});
+			}
+
+			return {
+				cost_so_far: cost_so_far,
+				came_from: came_from
+			};
+		},
+
 		/**
 		 * @param {Number} x   (x, y) should be the center
 		 * @param {Number} y   (x, y) should be the center

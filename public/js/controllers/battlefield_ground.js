@@ -2,19 +2,16 @@ define('controller/battlefield_ground', [
 	'controller/base',
 	'view/battlefield_ground',
 	'gridlib/screen_coordinate',
-	'gridlib/grid',
-	'gridlib/cube',
-	'd3'
+	'gridlib/grid'
 ], function(
 	BaseController,
 	BattlefieldGroundView,
 	ScreenCoordinate,
-	Grid,
-	Cube,
-	d3
+	Grid
 ) {
 	return BaseController.extend({
 		grid : null,
+
 		initialize : function(options) {
 			BaseController.prototype.initialize.apply(this, arguments);
 
@@ -50,9 +47,10 @@ define('controller/battlefield_ground', [
 		},
 
 		/**
-		 * The shape of a hexagon is adjusted by the scale; the rotation is handled elsewhere, using svg transforms
+		 * The shape of a hexagon is adjusted by the scale;
+		 * the rotation is handled elsewhere, using svg transforms (not up-to-date info)
 		 *
-		 * @returns {string}
+		 * @returns {Array}
 		 */
 		getHexagonShape : function getHexagonShape() {
 			return this.grid.hexToPolygon(0, 0);
@@ -75,50 +73,12 @@ define('controller/battlefield_ground', [
 		},
 
 		getBFS : function(from) {
-			return this.breadthFirstSearch(
+			return this.grid.breadthFirstSearch(
 				from,
 				this.parent_controller.getUnitSpeed(),
 				this.parent_controller.getMaxDistance(),
 				this.isHexBlocked.bind(this)
 			);
-		},
-
-		/**
-		 * @see http://www.redblobgames.com/pathfinding/a-star/introduction.html
-		 *
-		 * @param starting_point
-		 * @param max_movement
-		 * @param max_magnitude
-		 * @param isBlocked
-		 * @returns {{cost_so_far: (Array|*), came_from: (Array|*)}}
-		 */
-		breadthFirstSearch : function(starting_point, max_movement, max_magnitude, isBlocked) {
-			var cost_so_far = d3.map();
-			var came_from = d3.map();
-			var fringes = [[starting_point]];
-
-			cost_so_far.set(starting_point, 0);
-			came_from.set(starting_point, null);
-
-			for (var k = 0; k < max_movement && fringes[k].length > 0; k++) {
-				fringes[k + 1] = [];
-				fringes[k].forEach(function(cube) {
-					for (var dir = 0; dir < 6; dir++) {
-						var neighbor = Cube.neighbor(cube, dir);
-
-						if (!cost_so_far.has(neighbor) && !isBlocked(neighbor) && Cube.$length(neighbor) <= max_magnitude) {
-							cost_so_far.set(neighbor, k + 1);
-							came_from.set(neighbor, cube);
-							fringes[k + 1].push(neighbor);
-						}
-					}
-				});
-			}
-
-			return {
-				cost_so_far: cost_so_far,
-				came_from: came_from
-			};
 		},
 
 		getPath : function(from, to) {
@@ -163,15 +123,6 @@ define('controller/battlefield_ground', [
 
 		hasUnitStanding : function(hex) {
 			return this.getCollection('battlefield_units').isUnit(hex);
-		},
-
-		onMouseTileClick : function(hex) {
-			if (this.hasUnitStanding(hex)) {
-				this.parent_controller.setStartingPoint(hex);
-			}
-			else {
-				this.parent_controller.moveActiveUnitTo(hex);
-			}
 		},
 
 		destroy : function() {

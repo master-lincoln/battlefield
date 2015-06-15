@@ -65,13 +65,6 @@ define('view/battlefield_ground', [
 		},
 
 		initializeUIListeners : function() {
-			/*this.$el.on('click', '.tile', function(e) {
-				var $el = $(e.currentTarget),
-					hex = this.getHexFromSVGNode($el);
-
-				this.controller.onMouseTileClick(hex);
-			}.bind(this));*/
-
 			this.$el.on('mousemove', function(e) {
 				this.handleMouseOver(e.offsetX, e.offsetY);
 			}.bind(this));
@@ -260,7 +253,9 @@ define('view/battlefield_ground', [
 
 			ctx.beginPath();
 			ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-			ctx.lineWidth = 5;
+			ctx.lineWidth = 7;
+			ctx.lineCap = "round";
+			ctx.lineJoin = "round";
 
 			for(var i = 0; i < path.length; i++) {
 				var position = this.controller.getHexPixelPosition(path[i]);
