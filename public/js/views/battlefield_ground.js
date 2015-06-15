@@ -252,7 +252,33 @@ define('view/battlefield_ground', [
 		},
 
 		drawPath : function(path) {
-			//this.$layer_grid_route;
+			var ctx = this.$layer_grid_route;
+			var x = this.OFFSET_X;
+			var y = this.OFFSET_Y;
+
+			//
+			if (path.length === 0) {
+				return;
+			}
+
+			this.cleanUpCanvas(ctx);
+
+			ctx.beginPath();
+			ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+			ctx.lineWidth = 5;
+
+			for(var i = 0; i < path.length; i++) {
+				var position = this.grid.hexToCenter(path[i]);
+
+				if (i === 0) {
+					ctx.moveTo(x + position.x, y + position.y);
+				}
+				else {
+					ctx.lineTo(x + position.x, y + position.y);
+				}
+			}
+
+			ctx.stroke();
 		},
 
 		drawCurrentUnitRange : function() {
