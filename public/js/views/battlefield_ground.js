@@ -1,7 +1,6 @@
 define('view/battlefield_ground', [
 	'view/base',
 	'enum/hex_states',
-	'gridlib/grid',
 	'gridlib/cube',
 	'gridlib/polygon',
 	'gridlib/screen_coordinate',
@@ -9,7 +8,6 @@ define('view/battlefield_ground', [
 ], function(
 	BaseView,
 	hexStatesEnum,
-	Grid,
 	Cube,
 	Polygon,
 	ScreenCoordinate,
@@ -321,7 +319,8 @@ define('view/battlefield_ground', [
 		},
 
 		createUnit : function(unit) {
-			animateHelper.animateUnit(this, unit, this.$layer_units);
+
+			animateHelper.animateUnit(unit, this.$layer_units, this.OFFSET_X, this.OFFSET_Y, this.controller.getHexPixelPosition.bind(this.controller));
 		},
 
 		destroy : function() {

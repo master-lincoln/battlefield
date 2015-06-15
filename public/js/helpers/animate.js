@@ -24,17 +24,17 @@ define('helper/animate', [], function() {
 
 	}
 	return {
-		animateUnit : function(view, unit, ctx) {
+		animateUnit : function(unit, ctx, offset_x, offset_y, getHexPixelPosition) {
 			//this code is only for tests purposes
 
 			var animation_type = 'mouseover_active';
 			var sprite_data = unit.getSpriteData(),
 				cube = unit.getCube(),
-				position = view.grid.hexToCenter(cube);
+				position = getHexPixelPosition(cube);
 
 			var start_point = {
-				x : view.OFFSET_X + position.x - sprite_data.legs_x,
-				y : view.OFFSET_Y + position.y - sprite_data.legs_y
+				x : offset_x + position.x - sprite_data.legs_x,
+				y : offset_y + position.y - sprite_data.legs_y
 			};
 
 			var destination_point = {
