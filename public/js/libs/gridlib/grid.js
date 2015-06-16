@@ -212,6 +212,16 @@ define('gridlib/grid', [
 		},
 
 		/**
+		 * The shape of a hexagon is adjusted by the scale;
+		 * the rotation is handled elsewhere, using svg transforms (not up-to-date info)
+		 *
+		 * @returns {Array}
+		 */
+		getHexagonShape : function getHexagonShape() {
+			return this.hexToPolygon(0, 0);
+		},
+
+		/**
 		 * @param {Number} x   (x, y) should be the center
 		 * @param {Number} y   (x, y) should be the center
 		 */

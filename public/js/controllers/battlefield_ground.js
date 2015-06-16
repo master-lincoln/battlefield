@@ -15,7 +15,11 @@ define('controller/battlefield_ground', [
 		initialize : function(options) {
 			BaseController.prototype.initialize.apply(this, arguments);
 
-			this.grid = new Grid(this.getScale(), this.getOrientation(), this.getMapShape());
+			var scale = this.parent_controller.getScale();
+			var orientation = this.parent_controller.getOrientation();
+			var map_shape = this.parent_controller.getMapShape();
+
+			this.grid = new Grid(scale, orientation, map_shape);
 
 			this.initializeView();
 			this.initializeEvents();
@@ -28,15 +32,7 @@ define('controller/battlefield_ground', [
 		initializeView : function() {
 			this.view = new BattlefieldGroundView({
 				el : this.$el,
-				controller : this,
-				layers : {
-					grid : this.$el.find('.layer-grid'),
-					grid_hover : this.$el.find('.layer-grid-hover'),
-					grid_obstacles : this.$el.find('.layer-grid-obstacles'),
-					grid_route : this.$el.find('.layer-grid-route'),
-					grid_range : this.$el.find('.layer-grid-range'),
-					units : this.$el.find('.layer-units')
-				}
+				controller : this
 			});
 
 			//Add distance labels
@@ -47,18 +43,8 @@ define('controller/battlefield_ground', [
 			this.view.render();
 		},
 
-		getHexPixelPosition : function(cube) {
-			return this.grid.hexToCenter(cube);
-		},
-
-		/**
-		 * The shape of a hexagon is adjusted by the scale;
-		 * the rotation is handled elsewhere, using svg transforms (not up-to-date info)
-		 *
-		 * @returns {Array}
-		 */
-		getHexagonShape : function getHexagonShape() {
-			return this.grid.hexToPolygon(0, 0);
+		getGrid : function() {
+			return this.grid;
 		},
 
 		getObstacles : function() {
@@ -75,6 +61,26 @@ define('controller/battlefield_ground', [
 			//Later we will check here whether unit is standing on this hex as well
 
 			return is_obstacle /*|| has_unit_standing*/;
+		},
+
+		getHexes : function() {
+			return this.getCollection('hexes').getHexes();
+		},
+
+		addHexes : function(hexes) {
+			return this.getCollection('hexes').addHexes(hexes, true);
+		},
+
+		isMovementRouteEnabled : function() {
+			return this.parent_controller.isMovementRouteEnabled();
+		},
+
+		getUnits : function() {
+			return this.getCollection('battlefield_units').getUnits();
+		},
+
+		hasUnitStanding : function(hex) {
+			return this.getCollection('battlefield_units').isUnit(hex);
 		},
 
 		getBFS : function(from) {
@@ -96,38 +102,6 @@ define('controller/battlefield_ground', [
 			}
 
 			return path;
-		},
-
-		getHexes : function() {
-			return this.getCollection('hexes').getHexes();
-		},
-
-		addHexes : function(hexes) {
-			return this.getCollection('hexes').addHexes(hexes, true);
-		},
-
-		isMovementRouteEnabled : function() {
-			return this.parent_controller.isMovementRouteEnabled();
-		},
-
-		getScale : function() {
-			return this.parent_controller.getScale();
-		},
-
-		getOrientation : function() {
-			return this.parent_controller.getOrientation();
-		},
-
-		getMapShape : function() {
-			return this.parent_controller.getMapShape();
-		},
-
-		getUnits : function() {
-			return this.getCollection('battlefield_units').getUnits();
-		},
-
-		hasUnitStanding : function(hex) {
-			return this.getCollection('battlefield_units').isUnit(hex);
 		},
 
 		destroy : function() {
