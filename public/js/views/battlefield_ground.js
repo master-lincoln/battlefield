@@ -14,10 +14,6 @@ define('view/battlefield_ground', [
 	CanvasHelper
 ) {
 	return BaseView.extend({
-		$root : null,
-
-		layers : null,
-
 		initialize : function(options) {
 			BaseView.prototype.initialize.apply(this, arguments);
 

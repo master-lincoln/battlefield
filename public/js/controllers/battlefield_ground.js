@@ -17,7 +17,7 @@ define('controller/battlefield_ground', [
 
 			var scale = this.parent_controller.getScale();
 			var orientation = this.parent_controller.getOrientation();
-			var map_shape = this.parent_controller.getMapShape();
+			var map_shape = this.getMapShape();
 
 			this.grid = new Grid(scale, orientation, map_shape);
 
@@ -45,6 +45,10 @@ define('controller/battlefield_ground', [
 
 		getGrid : function() {
 			return this.grid;
+		},
+
+		getMapShape : function() {
+			return this.parent_controller.getMapShape();
 		},
 
 		getObstacles : function() {
