@@ -16,3 +16,8 @@ Tasks:
 * create 100% look of the battlefield
 * create h3 window
 * export cursors
+
+#Copyrights
+
+Images in this example are taken from Heroes of Might and Magic 3 game which is owned by Ubisoft S.A. and are used only to
+visualize game mechanics and make it more user-friendly.
