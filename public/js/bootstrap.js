@@ -15,6 +15,7 @@ requirejs.config({
 		collection : 'collections',
 		enum : 'enums',
 		helper : 'helpers',
+		'class' : 'classes',
 
 		map : 'data/maps',
 		unit : 'data/units'
@@ -48,8 +49,10 @@ requirejs([
 
 	function getBattlefieldUnits() {
 		return [
-			{type : 'hobgoblin', position : {x : 1, y : -3, z : 2}}/*,
-			{type : 'hobgoblin', position : {x : 2, y : -2, z : 0}}*/
+			{type : 'hobgoblin', position : {x : 1, y : -3, z : 2}},
+			{type : 'hobgoblin', position : {x : 0, y : 0, z : 0}},
+			{type : 'hobgoblin', position : {x : 2, y : -7, z : 5}},
+			{type : 'hobgoblin', position : {x : 6, y : -7, z : 1}}
 		];
 	}
 

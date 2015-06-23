@@ -3,17 +3,21 @@ define('view/battlefield_ground', [
 	'gridlib/cube',
 	'gridlib/polygon',
 	'gridlib/screen_coordinate',
-	'helper/animate',
-	'helper/canvas'
+	'helper/canvas',
+	'manager/animation',
+	'class/animation_unit_behaviour'
 ], function(
 	BaseView,
 	Cube,
 	Polygon,
 	ScreenCoordinate,
-	animateHelper,
-	CanvasHelper
+	CanvasHelper,
+	AnimationsManager,
+	UnitBehaviourAnimation
 ) {
 	return BaseView.extend({
+		animations_manager : null,
+
 		initialize : function(options) {
 			BaseView.prototype.initialize.apply(this, arguments);
 
@@ -35,6 +39,8 @@ define('view/battlefield_ground', [
 			this.canvasUnitRoute = new CanvasHelper(this.$el.find('.layer-grid-route'), grid);
 			this.canvasUnitRange = new CanvasHelper(this.$el.find('.layer-grid-range'), grid);
 			this.canvasUnits = new CanvasHelper(this.$el.find('.layer-units'), grid);
+
+			this.animations_manager = new AnimationsManager(this.canvasUnits);
 		},
 
 		render : function() {
@@ -150,7 +156,12 @@ define('view/battlefield_ground', [
 		},
 
 		createUnit : function(unit) {
-			this.canvasUnits.animateUnit(unit);
+			//this.canvasUnits.animateUnit(unit);
+
+
+			var unit = new UnitBehaviourAnimation(unit);
+
+			unit.initialize(this.animations_manager);
 		},
 
 		destroy : function() {
