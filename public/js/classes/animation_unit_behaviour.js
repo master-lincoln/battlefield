@@ -37,35 +37,17 @@ define('class/animation_unit_behaviour', [
 	};
 
 	UnitBehaviourAnimation.prototype.drawInFrame = function(canvas_helper) {
-		var ctx = canvas_helper.ctx;
 		var animation_type = 'mouseover_active';
 
 		var sprite_data = this.unit.getSpriteData(),
-			steps = sprite_data.states[animation_type],
-			step_count = steps.length;
+			step_count = sprite_data.states[animation_type].length;
 
-		var img_width = sprite_data.width,
-			img_height = sprite_data.height;
-
-		var cube = this.unit.getCube();
-
-		var position = canvas_helper.grid.hexToCenter(cube);
-
-		var pos = {
-			x : canvas_helper.OFFSET_X + position.x - sprite_data.legs_x,
-			y : canvas_helper.OFFSET_Y + position.y - sprite_data.legs_y
-		};
-
-		ctx.drawImage(
+		canvas_helper.renderUnit(
 			this.img,
-			img_width * (steps[this.frame_number] - 1),
-			0,
-			img_width,
-			img_height,
-			pos.x,
-			pos.y,
-			img_width,
-			img_height
+			animation_type,
+			sprite_data,
+			this.unit.getCube(),
+			this.frame_number
 		);
 
 		this.frame_number++;

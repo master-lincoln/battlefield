@@ -175,78 +175,23 @@ define('helper/canvas', [
 		}
 	};
 
-	CanvasHelper.prototype.animateUnit = function(unit) {
-		//this code is only for tests purposes
-		var ctx = this.ctx;
+	CanvasHelper.prototype.renderImage = function(img, sx, sy, s_width, s_height, dx, dy, d_width, d_height) {
+		this.ctx.drawImage(img, sx, sy, s_width, s_height, dx, dy, d_width, d_height);
+	};
 
-		var animation_type = 'mouseover_active';
-		var sprite_data = unit.getSpriteData(),
-			cube = unit.getCube(),
-			position = this.grid.hexToCenter(cube);
+	CanvasHelper.prototype.renderUnit = function(img, animation_type, sprite_data, cube, frame_number) {
+		var position = this.grid.hexToCenter(cube);
+		var img_width = sprite_data.width,
+			img_height = sprite_data.height;
+		var steps = sprite_data.states[animation_type];
+		var sx = img_width * (steps[frame_number] - 1);
 
-		var start_point = {
+		var pos = {
 			x : OFFSET_X + position.x - sprite_data.legs_x,
 			y : OFFSET_Y + position.y - sprite_data.legs_y
 		};
 
-		var destination_point = {
-			x : 500,
-			y : 500
-		};
-
-		var getCurrentPosition = function() {
-			return start_point;//Calculate here current position
-		};
-
-		var steps = sprite_data.states[animation_type],
-			step_count = steps.length;
-
-
-		var img = document.createElement('img');
-		img.src = sprite_data.url;
-
-		var counter = 0;
-		var startTime = (new Date()).getTime();
-
-		var animate = function() {
-			var img_width = sprite_data.width,
-				img_height = sprite_data.height;
-
-			var pos = getCurrentPosition();
-
-			img.width = img_width * step_count;
-			img.height = img_height;
-
-			ctx.clearRect(0, 0, 800, 556);
-
-			ctx.drawImage(
-				img,
-				img_width * (steps[counter] - 1),
-				0,
-				img_width,
-				img_height,
-				pos.x,
-				pos.y,
-				img_width,
-				img_height
-			);
-
-			counter++;
-
-			if(counter === step_count) {
-				counter = 0;
-			}
-
-			setTimeout(function() {
-				window.requestAnimationFrame(function() {
-					animate();
-				});
-			}, 100);
-		};
-
-		img.onload = function() {
-			animate();
-		}.bind(this);
+		this.renderImage(img, sx, 0, img_width, img_height, pos.x, pos.y, img_width, img_height);
 	};
 
 	return CanvasHelper;
