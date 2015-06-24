@@ -12,6 +12,7 @@
 * handle archers
 
 Tasks:
+* add hobb goblin with animations
 * create 100% look of the battlefield
 * create h3 window
 * export cursors
