@@ -22,8 +22,6 @@ define('controller/battlefield', [
 			sub : 'main'
 		},
 
-		active_unit : null,
-
 		initialize : function(options) {
 			BaseController.prototype.initialize.apply(this, arguments);
 
@@ -54,16 +52,16 @@ define('controller/battlefield', [
 			}));
 		},
 
-		getStartingPoint : function() {
-			return this.getActiveUnit().getCube();
-		},
-
 		/**
 		 * =============================
 		 *          Active Unit
 		 * =============================
 		 */
-		getUnitSpeed : function() {
+		getActiveUnitCube : function() {
+			return this.getActiveUnit().getCube();
+		},
+
+		getActiveUnitSpeed : function() {
 			return this.getActiveUnit().getSpeed();
 		},
 
@@ -77,10 +75,6 @@ define('controller/battlefield', [
 
 		getActiveUnit : function() {
 			return this.getModel('battlefield').getActiveUnit();
-		},
-
-		setStartingPoint : function(hex) {
-			this.setActiveUnit(this.getCollection('battlefield_units').getUnit(hex));
 		},
 
 		/**

@@ -90,7 +90,7 @@ define('controller/battlefield_ground', [
 		getBFS : function(from) {
 			return this.grid.breadthFirstSearch(
 				from,
-				this.parent_controller.getUnitSpeed(),
+				this.parent_controller.getActiveUnitSpeed(),
 				this.parent_controller.getMaxDistance(),
 				this.isHexBlocked.bind(this)
 			);

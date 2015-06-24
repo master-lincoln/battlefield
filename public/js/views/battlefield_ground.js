@@ -68,7 +68,7 @@ define('view/battlefield_ground', [
 
 				// Reconstruct path to mouse over position
 				if (this.controller.isMovementRouteEnabled()) {
-					var from = this.controller.parent_controller.getStartingPoint();
+					var from = this.controller.parent_controller.getActiveUnitCube();
 					this.createRouteBetweenPoints(from, hex);
 				}
 			}
@@ -118,9 +118,9 @@ define('view/battlefield_ground', [
 
 		drawCurrentUnitRange : function() {
 			var hexes = this.controller.getHexes();
-			var from = this.controller.parent_controller.getStartingPoint();
+			var from = this.controller.parent_controller.getActiveUnitCube();
 			var bfs = this.controller.getBFS(from);
-			var unit_speed = this.controller.parent_controller.getUnitSpeed();
+			var unit_speed = this.controller.parent_controller.getActiveUnitSpeed();
 
 			for (var i = 0; i < hexes.length; i++) {
 				var hex = hexes[i];
@@ -160,8 +160,8 @@ define('view/battlefield_ground', [
 
 
 			var unit = new UnitBehaviourAnimation(unit);
-
 			unit.initialize(this.animations_manager);
+			unit.moveTo(new ScreenCoordinate(100, 200));
 		},
 
 		destroy : function() {

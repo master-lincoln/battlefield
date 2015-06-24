@@ -57,5 +57,9 @@ define('class/animation_unit_behaviour', [
 		}
 	};
 
+	UnitBehaviourAnimation.prototype.moveTo = function(cube) {
+		console.log(this.unit.getCube(), cube);
+	};
+
 	return UnitBehaviourAnimation;
 });
