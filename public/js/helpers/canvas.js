@@ -39,8 +39,6 @@ define('helper/canvas', [
 		}
 	};
 
-
-
 	function CanvasHelper(canvas, grid) {
 		this.canvas = canvas;
 		this.grid = grid;
@@ -53,12 +51,6 @@ define('helper/canvas', [
 			width : WIDTH,
 			height : HEIGHT
 		});
-
-		//@todo
-		this.OFFSET_X = OFFSET_X;
-		this.OFFSET_Y = OFFSET_Y;
-		this.WIDTH = WIDTH;
-		this.HEIGHT = HEIGHT;
 
 		this.hexagon_points = this.grid.getHexagonShape();
 		this.ctx = this.canvas[0].getContext('2d');
