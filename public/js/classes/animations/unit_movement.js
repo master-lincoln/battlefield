@@ -1,17 +1,22 @@
 define('class/animations/unit_movement', [
 	'map/default',
-	'helper/plane_2d'
+	'helper/plane_2d',
+	'class/animations/unit_base'
 ], function(
 	BattlefieldData,
-	Plane2DHelper
+	Plane2DHelper,
+	UnitBaseAnimation
 ) {
 	function UnitMovementAnimation(unit, animation_type, line) {
-		this.unit = unit;
-		this.animation_type = animation_type;
+		UnitBaseAnimation.prototype.constructor.apply(this, arguments);
+
 		this.line = line;
 
 		this.initialize();
 	}
+
+	UnitMovementAnimation.prototype = Object.create(UnitBaseAnimation.prototype);
+	UnitMovementAnimation.prototype.constructor = UnitMovementAnimation;
 
 	UnitMovementAnimation.prototype.initialize = function() {
 		this.frame_number = 0;
@@ -27,9 +32,9 @@ define('class/animations/unit_movement', [
 		}
 
 		var passed_time = Math.min((new Date()).getTime() - this.starting_time, BattlefieldData.SINGLE_MOVEMENT_TIME);
-		var img_width = this.sprite_data.width,
-			img_height = this.sprite_data.height;
-		var steps = this.sprite_data.states[this.animation_type].steps;
+		var img_width = this.getImageWidth(),
+			img_height = this.getImageHeight();
+		var steps = this.getAnimationSteps();
 		var sx = img_width * (steps[this.frame_number] - 1);
 		var percent = (100 * passed_time) / BattlefieldData.SINGLE_MOVEMENT_TIME;
 		var pos = Plane2DHelper.getPointOnLine(this.line[0].x, this.line[0].y, this.line[1].x, this.line[1].y, percent);

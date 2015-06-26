@@ -1,28 +1,30 @@
 define('class/animations/unit_standing', [
-	'map/default'
+	'map/default',
+	'class/animations/unit_base'
 ], function(
-	BattlefieldData
+	BattlefieldData,
+	UnitBaseAnimation
 ) {
 
-	function UnitStandingAnimation(unit, animation_type) {
-		this.unit = unit;
-		this.animation_type = animation_type;
+	function UnitStandingAnimation() {
+		UnitBaseAnimation.prototype.constructor.apply(this, arguments);
 
 		this.initialize();
 	}
 
+	UnitStandingAnimation.prototype = Object.create(UnitBaseAnimation.prototype);
+	UnitStandingAnimation.prototype.constructor = UnitStandingAnimation;
+
 	UnitStandingAnimation.prototype.initialize = function() {
-		this.frame_number = 0;
-		this.sprite_data = this.unit.getSpriteData();
 		this.percent = 0;
 	};
 
 	UnitStandingAnimation.prototype.getFrame = function(canvas_helper) {
 		var cube = this.unit.getCube();
 		var position = canvas_helper.grid.hexToCenter(cube);
-		var img_width = this.sprite_data.width,
-			img_height = this.sprite_data.height;
-		var steps = this.sprite_data.states[this.animation_type].steps;
+		var img_width = this.getImageWidth(),
+			img_height = this.getImageHeight();
+		var steps = this.getAnimationSteps();
 		var sx = img_width * (steps[this.frame_number] - 1);
 
 		var pos = {

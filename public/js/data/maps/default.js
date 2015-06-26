@@ -13,10 +13,11 @@ define('map/default', [
 		CANVAS_WIDTH = 800,
 		CANVAS_HEIGHT = 556;
 
-	var SINGLE_MOVEMENT_TIME = 1000;//time for unit to move from one cell to another
+	var SINGLE_MOVEMENT_TIME = 800;//time for unit to move from one cell to another
 
 	function getObstacles() {
-		console.log("obstacles")
+		//The borders represents obstacles which are not visible on the map. They are around the battlefield grid to create
+		//a virtual wall for the script which calculates path for unit to walk on
 
 		var top_border = [],
 			bottom_border = [];
