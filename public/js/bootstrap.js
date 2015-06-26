@@ -50,11 +50,11 @@ requirejs([
 	function getBattlefieldUnits() {
 		return [
 			//{type : 'hobgoblin', position : {x : -4, y : 3, z : 7}},
-			{type : 'hobgoblin', position : {x : 0, y : 0, z : 0}},
+			{type : 'hobgoblin', position : {x : 0, y : 0, z : 0}}/*,
 			{type : 'hobgoblin', position : {x : -2, y : 5, z : 7}},
 			{type : 'hobgoblin', position : {x : 0, y : -7, z : 7}},
 			{type : 'hobgoblin', position : {x : 2, y : -9, z : 7}},
-			{type : 'hobgoblin', position : {x : 4, y : -11, z : 7}}
+			{type : 'hobgoblin', position : {x : 4, y : -11, z : 7}}*/
 		];
 	}
 

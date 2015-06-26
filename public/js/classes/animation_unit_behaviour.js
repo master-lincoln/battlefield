@@ -57,8 +57,12 @@ define('class/animation_unit_behaviour', [
 		}
 	};
 
-	UnitBehaviourAnimation.prototype.moveTo = function(cube) {
-		console.log(this.unit.getCube(), cube);
+	UnitBehaviourAnimation.prototype.isUnit = function(unit) {
+		return this.unit.cid === unit.cid;
+	};
+
+	UnitBehaviourAnimation.prototype.moveUnitOnPath = function(cube) {
+
 	};
 
 	return UnitBehaviourAnimation;

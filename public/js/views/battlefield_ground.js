@@ -51,6 +51,10 @@ define('view/battlefield_ground', [
 			this.$el.on('mousemove', function(e) {
 				this.handleMouseOver(e.offsetX, e.offsetY);
 			}.bind(this));
+
+			this.$el.on('click', function(e) {
+				this.handleMouseClick(e.offsetX, e.offsetY);
+			}.bind(this));
 		},
 
 		handleMouseOver : function(x, y) {
@@ -59,18 +63,17 @@ define('view/battlefield_ground', [
 
 			//Grid does not fill entire battlefield, so there might be space where hexes don't exist
 			if (hex) {
-				var cube = hex.getCube();
+				this.controller.handleMouseOver(hex);
+			}
+		},
 
-				if (!this.controller.isHexBlocked(cube)) {
-					this.canvasGridHover.cleanUp();
-					this.canvasGridHover.drawHoverPolygon(hex.getCube());
-				}
+		handleMouseClick : function(x, y) {
+			var point = new ScreenCoordinate(x, y),
+				hex = this.controller.getHexByScreenCoordinate(point);
 
-				// Reconstruct path to mouse over position
-				if (this.controller.isMovementRouteEnabled()) {
-					var from = this.controller.parent_controller.getActiveUnitCube();
-					this.createRouteBetweenPoints(from, hex);
-				}
+			//Grid does not fill entire battlefield, so there might be space where hexes don't exist
+			if (hex) {
+				this.controller.handleMouseClick(hex);
 			}
 		},
 
@@ -109,10 +112,7 @@ define('view/battlefield_ground', [
 			}
 		},
 
-		createRouteBetweenPoints : function(from, hex) {
-			var to = hex.getCube();
-			var path = this.controller.getPath(from, to);
-
+		createRouteBetweenPoints : function(path) {
 			this.canvasUnitRoute.drawPath(path);
 		},
 
@@ -155,13 +155,37 @@ define('view/battlefield_ground', [
 			}
 		},
 
+		unit_views : [],
+
 		createUnit : function(unit) {
 			//this.canvasUnits.animateUnit(unit);
 
 
 			var unit = new UnitBehaviourAnimation(unit);
 			unit.initialize(this.animations_manager);
-			unit.moveTo(new ScreenCoordinate(100, 200));
+
+			this.unit_views.push(unit);
+			//unit.moveTo(new ScreenCoordinate(100, 200));
+		},
+
+		getUnitAnimation : function(unit) {
+			var units = this.unit_views;
+
+			for(var i = 0; i < units.length; i++) {
+				if (units[i].isUnit(unit)) {
+					return units[i];
+				}
+			}
+
+			return null;
+		},
+
+		moveUnitOnPath : function(unit, path) {
+			var unit_view = this.getUnitAnimation(unit);
+
+
+
+
 		},
 
 		destroy : function() {

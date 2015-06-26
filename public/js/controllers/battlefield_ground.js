@@ -108,6 +108,33 @@ define('controller/battlefield_ground', [
 			return path;
 		},
 
+		handleMouseClick : function(hex) {
+			var to = hex.getCube();
+			var from = this.parent_controller.getActiveUnitCube();
+			var path = this.getPath(from, to);
+			var active_unit = this.parent_controller.getActiveUnit();
+
+			this.view.moveUnitOnPath(active_unit, path);
+		},
+
+		handleMouseOver : function(hex) {
+			var cube = hex.getCube();
+
+			if (!this.isHexBlocked(cube)) {
+				this.view.canvasGridHover.cleanUp();
+				this.view.canvasGridHover.drawHoverPolygon(hex.getCube());
+			}
+
+			// Reconstruct path to mouse over position
+			if (this.isMovementRouteEnabled()) {
+				var to = hex.getCube();
+				var from = this.parent_controller.getActiveUnitCube();
+				var path = this.getPath(from, to);
+
+				this.view.createRouteBetweenPoints(path);
+			}
+		},
+
 		destroy : function() {
 
 		}
