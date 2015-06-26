@@ -1,15 +1,12 @@
 define('helper/canvas', [
+	'map/default',
 	'enum/hex_states',
 	'gridlib/screen_coordinate'
 ], function(
+	BattlefieldData,
 	hexStatesEnum,
 	ScreenCoordinate
 ) {
-
-	var OFFSET_X = 103,
-		OFFSET_Y = 132,
-		WIDTH = 800,
-		HEIGHT = 556;
 
 	var setHexStyles = function(ctx, state) {
 		ctx.lineWidth = 1;
@@ -47,8 +44,8 @@ define('helper/canvas', [
 
 	CanvasHelper.prototype.initialize = function() {
 		this.canvas.attr({
-			width : WIDTH,
-			height : HEIGHT
+			width : BattlefieldData.CANVAS_WIDTH,
+			height : BattlefieldData.CANVAS_HEIGHT
 		});
 
 		this.hexagon_points = this.grid.getHexagonShape();
@@ -56,7 +53,7 @@ define('helper/canvas', [
 	};
 
 	CanvasHelper.prototype.cleanUp = function() {
-		this.ctx.clearRect(0, 0, WIDTH, HEIGHT);
+		this.ctx.clearRect(0, 0, BattlefieldData.CANVAS_WIDTH, BattlefieldData.CANVAS_HEIGHT);
 	};
 
 	CanvasHelper.prototype.drawIdlePolygon = function(cube) {
@@ -91,8 +88,8 @@ define('helper/canvas', [
 		var ctx = this.ctx;
 		var hexagon_points = this.hexagon_points;
 		var position = this.grid.hexToCenter(cube);
-		var x = position.x + OFFSET_X;
-		var y = position.y + OFFSET_Y;
+		var x = position.x + BattlefieldData.GRID_OFFSET_X;
+		var y = position.y + BattlefieldData.GRID_OFFSET_Y;
 		var polygon = [];
 
 		ctx.beginPath();
@@ -121,8 +118,8 @@ define('helper/canvas', [
 
 	CanvasHelper.prototype.drawPath = function(path) {
 		var ctx = this.ctx;
-		var x = OFFSET_X;
-		var y = OFFSET_Y;
+		var x = BattlefieldData.GRID_OFFSET_X;
+		var y = BattlefieldData.GRID_OFFSET_Y;
 
 		//
 		if (path.length === 0) {
@@ -162,7 +159,7 @@ define('helper/canvas', [
 			var position = this.grid.hexToCenter(cube);
 
 			ctx.font = "9px serif";
-			ctx.fillText(cube.x + ',' + cube.y + ',' + cube.z, OFFSET_X + position.x - 10, OFFSET_Y + position.y + 4);
+			ctx.fillText(cube.x + ',' + cube.y + ',' + cube.z, BattlefieldData.GRID_OFFSET_X + position.x - 10, BattlefieldData.GRID_OFFSET_Y + position.y + 4);
 		}
 	};
 
@@ -178,8 +175,8 @@ define('helper/canvas', [
 		var sx = img_width * (steps[frame_number] - 1);
 
 		var pos = {
-			x : OFFSET_X + position.x - sprite_data.legs_x,
-			y : OFFSET_Y + position.y - sprite_data.legs_y
+			x : BattlefieldData.GRID_OFFSET_X + position.x - sprite_data.legs_x,
+			y : BattlefieldData.GRID_OFFSET_Y + position.y - sprite_data.legs_y
 		};
 
 		this.renderImage(img, sx, 0, img_width, img_height, pos.x, pos.y, img_width, img_height);

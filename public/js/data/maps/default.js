@@ -8,7 +8,16 @@ define('map/default', [
 	var HOR_HEX_COUNT = 15,
 		VER_HEX_COUNT = 11;
 
+	var GRID_OFFSET_X = 103,
+		GRID_OFFSET_Y = 132,
+		CANVAS_WIDTH = 800,
+		CANVAS_HEIGHT = 556;
+
+	var SINGLE_MOVEMENT_TIME = 1000;//time for unit to move from one cell to another
+
 	function getObstacles() {
+		console.log("obstacles")
+
 		var top_border = [],
 			bottom_border = [];
 		var hor_count = 15 + 2,
@@ -58,6 +67,13 @@ define('map/default', [
 	}
 
 	return {
+		SINGLE_MOVEMENT_TIME : SINGLE_MOVEMENT_TIME,
+
+		GRID_OFFSET_X : GRID_OFFSET_X,
+		GRID_OFFSET_Y : GRID_OFFSET_Y,
+		CANVAS_WIDTH : CANVAS_WIDTH,
+		CANVAS_HEIGHT : CANVAS_HEIGHT,
+
 		obstacles : getObstacles(),
 		shape : Grid.trapezoidalShape(0, HOR_HEX_COUNT - 1, 0, VER_HEX_COUNT - 1, Grid.evenRToCube)
 	};

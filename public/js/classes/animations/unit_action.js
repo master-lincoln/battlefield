@@ -1,29 +1,8 @@
-define('class/animation_unit', [
+define('class/animations/unit_action', [
 
 ], function(
 
 ) {
-	var vectorLength = function(vector) {
-		return Math.sqrt(vector.map(function (a) {
-			return a * a;
-		}).reduce(function (a, b) {
-			return a + b;
-		}));
-	};
-
-	var getPointOnLine = function getPointOnLine(x1, y1, x2, y2, percent) {
-		var vector_length = vectorLength([x1 - x2, y1 - y2]),
-			distance = -((vector_length / 100) * percent),
-			vx = x1 - x2,
-			vy = y1 - y2,
-			mag = Math.sqrt(vx * vx + vy * vy);
-
-		return {
-			x : (x2 + (vx / mag) * (mag + distance)),
-			y : (y2 + (vy / mag) * (mag + distance))
-		};
-	};
-
 	var OFFSET_X = 103;
 	var OFFSET_Y = 132;
 	var SINGLE_MOVEMENT_TIME = 1000;//time for unit to move from one cell to another

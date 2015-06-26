@@ -17,6 +17,7 @@ define('view/battlefield_ground', [
 ) {
 	return BaseView.extend({
 		animations_manager : null,
+		grid : null,
 
 		initialize : function(options) {
 			BaseView.prototype.initialize.apply(this, arguments);
@@ -31,14 +32,14 @@ define('view/battlefield_ground', [
 		},
 
 		initializeLayers : function() {
-			var grid = this.controller.getGrid();
+			this.grid = this.controller.getGrid();
 
-			this.canvasGrid = new CanvasHelper(this.$el.find('.layer-grid'), grid);
-			this.canvasGridHover = new CanvasHelper(this.$el.find('.layer-grid-hover'), grid);
-			this.canvasObstacles = new CanvasHelper(this.$el.find('.layer-grid-obstacles'), grid);
-			this.canvasUnitRoute = new CanvasHelper(this.$el.find('.layer-grid-route'), grid);
-			this.canvasUnitRange = new CanvasHelper(this.$el.find('.layer-grid-range'), grid);
-			this.canvasUnits = new CanvasHelper(this.$el.find('.layer-units'), grid);
+			this.canvasGrid = new CanvasHelper(this.$el.find('.layer-grid'), this.grid);
+			this.canvasGridHover = new CanvasHelper(this.$el.find('.layer-grid-hover'), this.grid);
+			this.canvasObstacles = new CanvasHelper(this.$el.find('.layer-grid-obstacles'), this.grid);
+			this.canvasUnitRoute = new CanvasHelper(this.$el.find('.layer-grid-route'), this.grid);
+			this.canvasUnitRange = new CanvasHelper(this.$el.find('.layer-grid-range'), this.grid);
+			this.canvasUnits = new CanvasHelper(this.$el.find('.layer-units'), this.grid);
 
 			this.animations_manager = new AnimationsManager(this.canvasUnits);
 		},
@@ -180,12 +181,17 @@ define('view/battlefield_ground', [
 			return null;
 		},
 
-		moveUnitOnPath : function(unit, path) {
+		moveUnitOnPolyline : function(unit, path) {
+			var polyline_points = [];
 			var unit_view = this.getUnitAnimation(unit);
 
+			var l = path.length;
+			while(l--) {
+			//for (var i = 0; i < path.length; i++) {
+				polyline_points.push(this.grid.hexToCenter(path[l]));
+			}
 
-
-
+			unit_view.moveUnitOnPolyline(polyline_points);
 		},
 
 		destroy : function() {

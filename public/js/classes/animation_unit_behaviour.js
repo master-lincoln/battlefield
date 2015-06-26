@@ -1,16 +1,20 @@
 define('class/animation_unit_behaviour', [
-	'class/animation_unit',
-	'enum/battlefield_unit_animation_types'
+	'enum/battlefield_unit_animation_types',
+	'class/animations/unit_standing',
+	'class/animations/unit_action',
+	'class/animations/unit_movement'
 ], function(
-	UnitAnimation,
-	battlefieldUnitAnimationTypesEnum
+	battlefieldUnitAnimationTypesEnum,
+	UnitStandingAnimation,
+	UnitActionAnimation,
+	UnitMovementAnimation
 ) {
 
 	function UnitBehaviourAnimation(unit) {
 		this.unit = unit;
 		this.animations = [];
 
-		this.default_animation = new UnitAnimation(unit, battlefieldUnitAnimationTypesEnum.MOVING);
+		this.default_animation = new UnitStandingAnimation(unit, battlefieldUnitAnimationTypesEnum.STANDING);
 	}
 
 	UnitBehaviourAnimation.prototype.initialize = function(animations_manager) {
@@ -41,8 +45,12 @@ define('class/animation_unit_behaviour', [
 		return this.unit.cid === unit.cid;
 	};
 
-	UnitBehaviourAnimation.prototype.moveUnitOnPath = function(cube) {
+	UnitBehaviourAnimation.prototype.moveUnitOnPolyline = function(polyline_points) {
+		for (var i = 1; i < polyline_points.length; i++) {
+			var line = [polyline_points[i - 1], polyline_points[i]];
 
+			this.animations.push(new UnitMovementAnimation(this.unit, battlefieldUnitAnimationTypesEnum.MOVING, line));
+		}
 	};
 
 	return UnitBehaviourAnimation;
