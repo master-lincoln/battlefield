@@ -20,7 +20,11 @@ define('class/animations/unit_base', [
 	};
 
 	UnitAnimationBase.prototype.getAnimationSteps = function() {
-		return this.sprite_data.states[this.getAnimationType()].steps;
+		return this.getAnimation().steps;
+	};
+
+	UnitAnimationBase.prototype.getAnimation = function() {
+		return this.sprite_data.states[this.getAnimationType()];
 	};
 
 	UnitAnimationBase.prototype.getImageWidth = function() {

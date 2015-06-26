@@ -31,7 +31,27 @@ define('class/animation_unit_behaviour', [
 	};
 
 	UnitBehaviourAnimation.prototype._getCurrentAnimation = function() {
-		return this.animations.length === 0 ? this.default_animation : this.animations[0];
+		var l = this.animations.length;
+		var ready_to_play_animation = null;
+
+		while(l--) {
+			var animation = this.animations[l];
+
+			if (animation.isFinished()) {
+				this.animations.splice(l, 1);
+			}
+			else {
+				ready_to_play_animation = animation;
+			}
+		}
+
+		//If there is no animation to play, then animate unit standing
+		//@todo later check wheter unit is active or not
+		if (this.animations.length === 0) {
+			return this.default_animation;
+		}
+
+		return ready_to_play_animation;
 	};
 
 	UnitBehaviourAnimation.prototype.drawInFrame = function(canvas_helper) {

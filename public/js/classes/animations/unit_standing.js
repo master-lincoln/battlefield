@@ -42,7 +42,7 @@ define('class/animations/unit_standing', [
 	};
 
 	UnitStandingAnimation.prototype.isFinished = function() {
-
+		return false;
 	};
 
 	return UnitStandingAnimation;
