@@ -1,6 +1,6 @@
 define('manager/animation', [], function() {
 	var drawing_frame,
-		frame_life_time = 130;
+		frame_life_time = 130;//ms
 
 	var animations = [];
 

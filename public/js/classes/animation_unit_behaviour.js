@@ -1,60 +1,40 @@
 define('class/animation_unit_behaviour', [
-
+	'class/animation_unit',
+	'enum/battlefield_unit_animation_types'
 ], function(
-
+	UnitAnimation,
+	battlefieldUnitAnimationTypesEnum
 ) {
-	var img_width = 100,
-		img_height = 100;
 
 	function UnitBehaviourAnimation(unit) {
-		//UnitAnimation.prototype.constructor.apply(this, arguments);
-
-		this.frame_number = 0;
 		this.unit = unit;
+		this.animations = [];
+
+		this.default_animation = new UnitAnimation(unit, battlefieldUnitAnimationTypesEnum.MOVING);
 	}
 
-	//UnitBehaviourAnimation.inherits(UnitAnimation);
-
 	UnitBehaviourAnimation.prototype.initialize = function(animations_manager) {
-		var animation_type = 'mouseover_active';
-		var sprite_data = this.unit.getSpriteData(),
-			steps = sprite_data.states[animation_type],
-			step_count = steps.length;
-
-		var img_width = sprite_data.width,
-			img_height = sprite_data.height;
-
+		var sprite_data = this.unit.getSpriteData();
 		var img = document.createElement('img');
-		img.src = sprite_data.url;
-		img.width = img_width * step_count;
-		img.height = img_height;
+			img.src = sprite_data.url;
+			img.height = sprite_data.height;
 
-		img.onload = function(animations_manager) {
-			animations_manager.add(this);
-		}.bind(this, animations_manager);
+			img.onload = function(animations_manager) {
+				animations_manager.add(this);
+			}.bind(this, animations_manager);
 
 		this.img = img;
 	};
 
+	UnitBehaviourAnimation.prototype._getCurrentAnimation = function() {
+		return this.animations.length === 0 ? this.default_animation : this.animations[0];
+	};
+
 	UnitBehaviourAnimation.prototype.drawInFrame = function(canvas_helper) {
-		var animation_type = 'mouseover_active';
+		var current_animation = this._getCurrentAnimation();
+		var frame = current_animation.getFrame(canvas_helper);
 
-		var sprite_data = this.unit.getSpriteData(),
-			step_count = sprite_data.states[animation_type].length;
-
-		canvas_helper.renderUnit(
-			this.img,
-			animation_type,
-			sprite_data,
-			this.unit.getCube(),
-			this.frame_number
-		);
-
-		this.frame_number++;
-
-		if (this.frame_number === step_count) {
-			this.frame_number = 0;
-		}
+		canvas_helper.renderImage.apply(canvas_helper, [this.img].concat(frame));
 	};
 
 	UnitBehaviourAnimation.prototype.isUnit = function(unit) {

@@ -11,7 +11,6 @@ define('helper/canvas', [
 		WIDTH = 800,
 		HEIGHT = 556;
 
-
 	var setHexStyles = function(ctx, state) {
 		ctx.lineWidth = 1;
 

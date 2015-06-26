@@ -1,4 +1,4 @@
-define('enum/battlefield_unit_states', [], function() {
+define('enum/battlefield_unit_animation_types', [], function() {
 	return {
 		MOVING : 'moving',
 		MOUSEOVER : 'mouseover',
