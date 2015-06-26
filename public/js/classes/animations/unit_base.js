@@ -1,7 +1,7 @@
 define('class/animations/unit_base', [
-
+	'map/default'
 ], function(
-
+	BattlefieldData
 ) {
 	function UnitAnimationBase(unit, animation_type) {
 		this.unit = unit;
@@ -21,6 +21,10 @@ define('class/animations/unit_base', [
 
 	UnitAnimationBase.prototype.getAnimationSteps = function() {
 		return this.getAnimation().steps;
+	};
+
+	UnitAnimationBase.prototype.getAnimationDuration = function() {
+		return this.getAnimationSteps().length * BattlefieldData.FRAME_LIFE_TIME;
 	};
 
 	UnitAnimationBase.prototype.getAnimation = function() {

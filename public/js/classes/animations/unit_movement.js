@@ -31,12 +31,13 @@ define('class/animations/unit_movement', [
 			this.starting_time = (new Date()).getTime();
 		}
 
-		var passed_time = Math.min((new Date()).getTime() - this.starting_time, BattlefieldData.SINGLE_MOVEMENT_TIME);
+		var duration = this.getAnimationDuration();
+		var passed_time = Math.min((new Date()).getTime() - this.starting_time, duration);
 		var img_width = this.getImageWidth(),
 			img_height = this.getImageHeight();
 		var steps = this.getAnimationSteps();
 		var sx = img_width * (steps[this.frame_number] - 1);
-		var percent = (100 * passed_time) / BattlefieldData.SINGLE_MOVEMENT_TIME;
+		var percent = (100 * passed_time) / duration;
 		var pos = Plane2DHelper.getPointOnLine(this.line[0].x, this.line[0].y, this.line[1].x, this.line[1].y, percent);
 
 		this.percent = percent;

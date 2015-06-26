@@ -13,7 +13,7 @@ define('map/default', [
 		CANVAS_WIDTH = 800,
 		CANVAS_HEIGHT = 556;
 
-	var SINGLE_MOVEMENT_TIME = 800;//time for unit to move from one cell to another
+	var FRAME_LIFE_TIME = 75;//ms
 
 	function getObstacles() {
 		//The borders represents obstacles which are not visible on the map. They are around the battlefield grid to create
@@ -68,12 +68,11 @@ define('map/default', [
 	}
 
 	return {
-		SINGLE_MOVEMENT_TIME : SINGLE_MOVEMENT_TIME,
-
 		GRID_OFFSET_X : GRID_OFFSET_X,
 		GRID_OFFSET_Y : GRID_OFFSET_Y,
 		CANVAS_WIDTH : CANVAS_WIDTH,
 		CANVAS_HEIGHT : CANVAS_HEIGHT,
+		FRAME_LIFE_TIME : FRAME_LIFE_TIME,
 
 		obstacles : getObstacles(),
 		shape : Grid.trapezoidalShape(0, HOR_HEX_COUNT - 1, 0, VER_HEX_COUNT - 1, Grid.evenRToCube)

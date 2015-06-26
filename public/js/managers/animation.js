@@ -1,6 +1,9 @@
-define('manager/animation', [], function() {
-	var drawing_frame,
-		frame_life_time = 130;//ms
+define('manager/animation', [
+	'map/default'
+], function(
+	BattlefieldData
+) {
+	var drawing_frame;
 
 	var animations = [];
 
@@ -21,7 +24,7 @@ define('manager/animation', [], function() {
 					animations[i].drawInFrame(canvas_helper);
 				}
 			});
-		}, frame_life_time);
+		}, BattlefieldData.FRAME_LIFE_TIME);
 	};
 
 	AnimationsManager.prototype.add = function(animate_object) {
