@@ -39,5 +39,9 @@ define('class/animations/unit_base', [
 		return this.sprite_data.height;
 	};
 
+	UnitAnimationBase.prototype.destroy = function() {
+
+	};
+
 	return UnitAnimationBase;
 });

@@ -123,6 +123,8 @@ define('view/battlefield_ground', [
 			var bfs = this.controller.getBFS(from);
 			var unit_speed = this.controller.parent_controller.getActiveUnitSpeed();
 
+			this.canvasUnitRange.cleanUp();
+
 			for (var i = 0; i < hexes.length; i++) {
 				var hex = hexes[i];
 				var cube = hex.getCube();
@@ -181,17 +183,16 @@ define('view/battlefield_ground', [
 			return null;
 		},
 
-		moveUnitOnPolyline : function(unit, path) {
+		moveUnitOnPolyline : function(unit, path, callback) {
 			var polyline_points = [];
 			var unit_view = this.getUnitAnimation(unit);
-
 			var l = path.length;
+
 			while(l--) {
-			//for (var i = 0; i < path.length; i++) {
 				polyline_points.push(this.grid.hexToCenter(path[l]));
 			}
 
-			unit_view.moveUnitOnPolyline(polyline_points);
+			unit_view.moveUnitOnPolyline(polyline_points, callback);
 		},
 
 		destroy : function() {

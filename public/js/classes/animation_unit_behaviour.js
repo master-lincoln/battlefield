@@ -39,6 +39,10 @@ define('class/animation_unit_behaviour', [
 
 			if (animation.isFinished()) {
 				this.animations.splice(l, 1);
+
+				if (this.animations.length === 0) {
+					animation.destroy();
+				}
 			}
 			else {
 				ready_to_play_animation = animation;
@@ -65,11 +69,11 @@ define('class/animation_unit_behaviour', [
 		return this.unit.cid === unit.cid;
 	};
 
-	UnitBehaviourAnimation.prototype.moveUnitOnPolyline = function(polyline_points) {
+	UnitBehaviourAnimation.prototype.moveUnitOnPolyline = function(polyline_points, callback) {
 		for (var i = 1; i < polyline_points.length; i++) {
 			var line = [polyline_points[i - 1], polyline_points[i]];
 
-			this.animations.push(new UnitMovementAnimation(this.unit, battlefieldUnitAnimationTypesEnum.MOVING, line));
+			this.animations.push(new UnitMovementAnimation(this.unit, battlefieldUnitAnimationTypesEnum.MOVING, line, callback));
 		}
 	};
 

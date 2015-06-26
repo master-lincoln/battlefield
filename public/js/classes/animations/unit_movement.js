@@ -7,10 +7,11 @@ define('class/animations/unit_movement', [
 	Plane2DHelper,
 	UnitBaseAnimation
 ) {
-	function UnitMovementAnimation(unit, animation_type, line) {
+	function UnitMovementAnimation(unit, animation_type, line, callback) {
 		UnitBaseAnimation.prototype.constructor.apply(this, arguments);
 
 		this.line = line;
+		this.callback = callback;
 
 		this.initialize();
 	}
@@ -52,6 +53,12 @@ define('class/animations/unit_movement', [
 
 	UnitMovementAnimation.prototype.isFinished = function() {
 		return this.percent === 100;
+	};
+
+	UnitMovementAnimation.prototype.destroy = function() {
+		UnitBaseAnimation.prototype.destroy.apply(this, arguments);
+
+		this.callback();
 	};
 
 	return UnitMovementAnimation;
