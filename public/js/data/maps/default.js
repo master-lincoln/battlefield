@@ -13,7 +13,7 @@ define('map/default', [
 		CANVAS_WIDTH = 800,
 		CANVAS_HEIGHT = 556;
 
-	var FRAME_LIFE_TIME = 75;//ms
+	var FRAME_LIFE_TIME = 45;//ms
 
 	function getObstacles() {
 		//The borders represents obstacles which are not visible on the map. They are around the battlefield grid to create
