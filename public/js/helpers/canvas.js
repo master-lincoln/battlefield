@@ -56,6 +56,18 @@ define('helper/canvas', [
 		this.ctx.clearRect(0, 0, BattlefieldData.CANVAS_WIDTH, BattlefieldData.CANVAS_HEIGHT);
 	};
 
+	CanvasHelper.prototype.flipLeft = function() {
+		this.ctx.translate(BattlefieldData.CANVAS_WIDTH, 0);
+		this.ctx.scale(-1, 1);
+
+
+		//this.ctx.clearRect(0, 0, BattlefieldData.CANVAS_WIDTH, BattlefieldData.CANVAS_HEIGHT);
+	};
+
+	CanvasHelper.prototype.flipRight = function() {
+		//this.ctx.clearRect(0, 0, BattlefieldData.CANVAS_WIDTH, BattlefieldData.CANVAS_HEIGHT);
+	};
+
 	CanvasHelper.prototype.drawIdlePolygon = function(cube) {
 		return this.drawPolygon(cube, {
 			state : hexStatesEnum.IDLE
@@ -163,23 +175,45 @@ define('helper/canvas', [
 		}
 	};
 
-	CanvasHelper.prototype.renderImage = function(img, sx, sy, s_width, s_height, dx, dy, d_width, d_height) {
-		this.ctx.drawImage(img, sx, sy, s_width, s_height, dx, dy, d_width, d_height);
-	};
+	CanvasHelper.prototype.renderImage = function(img, sx, sy, s_width, s_height, dx, dy, d_width, d_height, orientation) {
+		var $virtual_canvas = $('#canvas_unit_movement');
+		$virtual_canvas.attr('width', s_width);
+		$virtual_canvas.attr('height', s_height);
+		var virtual_canvas = $virtual_canvas[0];
+		var virtual_ctx = virtual_canvas.getContext('2d');
 
-	CanvasHelper.prototype.renderUnit = function(img, animation_type, sprite_data, cube, frame_number) {
-		var position = this.grid.hexToCenter(cube);
-		var img_width = sprite_data.width,
-			img_height = sprite_data.height;
-		var steps = sprite_data.states[animation_type];
-		var sx = img_width * (steps[frame_number] - 1);
+		var flip_offset = 0;
 
-		var pos = {
-			x : BattlefieldData.GRID_OFFSET_X + position.x - sprite_data.legs_x,
-			y : BattlefieldData.GRID_OFFSET_Y + position.y - sprite_data.legs_y
-		};
 
-		this.renderImage(img, sx, 0, img_width, img_height, pos.x, pos.y, img_width, img_height);
+		if (orientation) {
+			virtual_ctx.save();
+			virtual_ctx.translate(s_width, 0);
+			virtual_ctx.scale(-1, 1);
+			flip_offset = -45;
+		}
+
+		virtual_ctx.drawImage(img, sx, sy, s_width, s_height, 0, 0, d_width, d_height);
+
+		if (orientation) {
+			virtual_ctx.restore();
+		}
+
+		/*if (orientation) {
+			this.ctx.save();
+
+			this.flipLeft();
+
+		}*/
+
+		this.ctx.drawImage(virtual_canvas, 0, 0, s_width, s_height, dx + flip_offset, dy, d_width, d_height);
+		//this.ctx.drawImage(img, sx, sy, s_width, s_height, dx, dy, d_width, d_height);
+
+		/*if (orientation) {
+			this.flipLeft();
+			this.ctx.translate(-400, 0);
+
+			this.ctx.restore();
+		}*/
 	};
 
 	return CanvasHelper;

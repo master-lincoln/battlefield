@@ -38,9 +38,6 @@ define('class/animations/unit_action', [
 			this.frame_number = -1;
 		}
 
-		//canvasContext.translate(width, 0);
-		//canvasContext.scale(-1, 1);
-
 		canvas_helper.renderImage(img, sx, 0, img_width, img_height, pos.x, pos.y, img_width, img_height);
 	};
 

@@ -2,12 +2,14 @@ define('class/animation_unit_behaviour', [
 	'enum/battlefield_unit_animation_types',
 	'class/animations/unit_standing',
 	'class/animations/unit_action',
-	'class/animations/unit_movement'
+	'class/animations/unit_movement',
+	'class/animations/unit_flip'
 ], function(
 	battlefieldUnitAnimationTypesEnum,
 	UnitStandingAnimation,
 	UnitActionAnimation,
-	UnitMovementAnimation
+	UnitMovementAnimation,
+	UnitFlipAnimation
 ) {
 
 	function UnitBehaviourAnimation(unit) {
@@ -73,16 +75,9 @@ define('class/animation_unit_behaviour', [
 			var a = polyline_points[i - 1];
 			var b = polyline_points[i];
 			var line = [a, b];
+			var orientation = b.x < a.x /*? battlefieldUnitAnimationTypesEnum.TURN_LEFT : battlefieldUnitAnimationTypesEnum.TURN_RIGHT*/;
 
-
-			if (b.x < a.x) {
-				this.animations.push(new UnitActionAnimation(this.unit, battlefieldUnitAnimationTypesEnum.TURN_LEFT));
-			}
-			/*else {
-				this.animations.push(new UnitActionAnimation(this.unit, battlefieldUnitAnimationTypesEnum.TURN_RIGHT));
-			}*/
-
-			this.animations.push(new UnitMovementAnimation(this.unit, battlefieldUnitAnimationTypesEnum.MOVING, line, callback));
+			this.animations.push(new UnitMovementAnimation(this.unit, battlefieldUnitAnimationTypesEnum.MOVING, callback, line, orientation));
 		}
 	};
 

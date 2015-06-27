@@ -7,10 +7,11 @@ define('class/animations/unit_movement', [
 	Plane2DHelper,
 	UnitBaseAnimation
 ) {
-	function UnitMovementAnimation(unit, animation_type, line, callback) {
+	function UnitMovementAnimation(unit, animation_type, callback, line, orientation) {
 		UnitBaseAnimation.prototype.constructor.apply(this, arguments);
 
 		this.line = line;
+		this.orientation = orientation;
 
 		this.initialize();
 	}
@@ -56,7 +57,8 @@ define('class/animations/unit_movement', [
 			pos.x + BattlefieldData.GRID_OFFSET_X - this.sprite_data.legs_x,
 			pos.y + BattlefieldData.GRID_OFFSET_Y - this.sprite_data.legs_y,
 			img_width,
-			img_height
+			img_height,
+			this.orientation
 		);
 	};
 
