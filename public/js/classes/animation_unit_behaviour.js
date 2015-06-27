@@ -60,9 +60,8 @@ define('class/animation_unit_behaviour', [
 
 	UnitBehaviourAnimation.prototype.drawInFrame = function(canvas_helper) {
 		var current_animation = this._getCurrentAnimation();
-		var frame = current_animation.getFrame(canvas_helper);
 
-		canvas_helper.renderImage.apply(canvas_helper, [this.img].concat(frame));
+		current_animation.drawFrame(canvas_helper, this.img);
 	};
 
 	UnitBehaviourAnimation.prototype.isUnit = function(unit) {
@@ -71,7 +70,17 @@ define('class/animation_unit_behaviour', [
 
 	UnitBehaviourAnimation.prototype.moveUnitOnPolyline = function(polyline_points, callback) {
 		for (var i = 1; i < polyline_points.length; i++) {
-			var line = [polyline_points[i - 1], polyline_points[i]];
+			var a = polyline_points[i - 1];
+			var b = polyline_points[i];
+			var line = [a, b];
+
+
+			if (b.x < a.x) {
+				this.animations.push(new UnitActionAnimation(this.unit, battlefieldUnitAnimationTypesEnum.TURN_LEFT));
+			}
+			/*else {
+				this.animations.push(new UnitActionAnimation(this.unit, battlefieldUnitAnimationTypesEnum.TURN_RIGHT));
+			}*/
 
 			this.animations.push(new UnitMovementAnimation(this.unit, battlefieldUnitAnimationTypesEnum.MOVING, line, callback));
 		}

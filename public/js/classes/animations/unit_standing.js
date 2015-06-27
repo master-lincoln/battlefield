@@ -16,10 +16,10 @@ define('class/animations/unit_standing', [
 	UnitStandingAnimation.prototype.constructor = UnitStandingAnimation;
 
 	UnitStandingAnimation.prototype.initialize = function() {
-		this.percent = 0;
+
 	};
 
-	UnitStandingAnimation.prototype.getFrame = function(canvas_helper) {
+	UnitStandingAnimation.prototype.drawFrame = function(canvas_helper, img) {
 		var cube = this.unit.getCube();
 		var position = canvas_helper.grid.hexToCenter(cube);
 		var img_width = this.getImageWidth(),
@@ -38,11 +38,15 @@ define('class/animations/unit_standing', [
 			this.frame_number = 0;
 		}
 
-		return [sx, 0, img_width, img_height, pos.x, pos.y, img_width, img_height];
+		canvas_helper.renderImage(img, sx, 0, img_width, img_height, pos.x, pos.y, img_width, img_height);
 	};
 
 	UnitStandingAnimation.prototype.isFinished = function() {
 		return false;
+	};
+
+	UnitStandingAnimation.prototype.destroy = function() {
+		UnitBaseAnimation.prototype.destroy.apply(this, arguments);
 	};
 
 	return UnitStandingAnimation;

@@ -29,7 +29,7 @@ define('helper/canvas', [
 				break;
 			case hexStatesEnum.OBSTACLE:
 				ctx.strokeStyle = 'red';
-				ctx.fillStyle = 'rgba(0,0,0,0)';
+				ctx.fillStyle = 'rgba(255,0,0,0.3)';
 				ctx.fill();
 				break;
 		}

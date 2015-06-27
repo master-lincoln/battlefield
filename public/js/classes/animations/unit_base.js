@@ -3,9 +3,10 @@ define('class/animations/unit_base', [
 ], function(
 	BattlefieldData
 ) {
-	function UnitAnimationBase(unit, animation_type) {
+	function UnitAnimationBase(unit, animation_type, callback) {
 		this.unit = unit;
 		this.animation_type = animation_type;
+		this.callback = callback;
 
 		this.frame_number = 0;
 		this.sprite_data = this.unit.getSpriteData();
@@ -40,7 +41,9 @@ define('class/animations/unit_base', [
 	};
 
 	UnitAnimationBase.prototype.destroy = function() {
-
+		if (typeof this.callback === 'funciton') {
+			this.callback();
+		}
 	};
 
 	return UnitAnimationBase;

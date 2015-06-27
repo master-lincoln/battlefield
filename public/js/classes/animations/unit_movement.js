@@ -11,7 +11,6 @@ define('class/animations/unit_movement', [
 		UnitBaseAnimation.prototype.constructor.apply(this, arguments);
 
 		this.line = line;
-		this.callback = callback;
 
 		this.initialize();
 	}
@@ -26,7 +25,7 @@ define('class/animations/unit_movement', [
 		this.starting_time = null;
 	};
 
-	UnitMovementAnimation.prototype.getFrame = function(canvas_helper) {
+	UnitMovementAnimation.prototype.drawFrame = function(canvas_helper, img) {
 		//Save time when animation was called for a first time
 		if (this.starting_time === null) {
 			this.starting_time = (new Date()).getTime();
@@ -48,7 +47,17 @@ define('class/animations/unit_movement', [
 			this.frame_number = 0;
 		}
 
-		return [sx, 0, img_width, img_height, pos.x + BattlefieldData.GRID_OFFSET_X - this.sprite_data.legs_x, pos.y + BattlefieldData.GRID_OFFSET_Y - this.sprite_data.legs_y, img_width, img_height];
+		canvas_helper.renderImage(
+			img,
+			sx,
+			0,
+			img_width,
+			img_height,
+			pos.x + BattlefieldData.GRID_OFFSET_X - this.sprite_data.legs_x,
+			pos.y + BattlefieldData.GRID_OFFSET_Y - this.sprite_data.legs_y,
+			img_width,
+			img_height
+		);
 	};
 
 	UnitMovementAnimation.prototype.isFinished = function() {
@@ -57,8 +66,6 @@ define('class/animations/unit_movement', [
 
 	UnitMovementAnimation.prototype.destroy = function() {
 		UnitBaseAnimation.prototype.destroy.apply(this, arguments);
-
-		this.callback();
 	};
 
 	return UnitMovementAnimation;
