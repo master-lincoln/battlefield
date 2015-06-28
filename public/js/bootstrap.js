@@ -55,7 +55,8 @@ requirejs([
 		];
 	}
 
-	var obstacles = new ObstaclesCollection(BattlefieldData.obstacles);
+	var obstacles = new ObstaclesCollection();
+		obstacles.addObstacles(BattlefieldData.obstacles);
 	var hexes = new HexesCollection();
 	var battlefield_units = new BattlefieldUnitsCollection(getBattlefieldUnits());
 	var battlefield = new Battlefield();

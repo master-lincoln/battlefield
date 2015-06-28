@@ -59,14 +59,11 @@ define('helper/canvas', [
 	CanvasHelper.prototype.flipLeft = function() {
 		this.ctx.translate(BattlefieldData.CANVAS_WIDTH, 0);
 		this.ctx.scale(-1, 1);
-
-
-		//this.ctx.clearRect(0, 0, BattlefieldData.CANVAS_WIDTH, BattlefieldData.CANVAS_HEIGHT);
 	};
 
-	CanvasHelper.prototype.flipRight = function() {
+	//CanvasHelper.prototype.flipRight = function() {
 		//this.ctx.clearRect(0, 0, BattlefieldData.CANVAS_WIDTH, BattlefieldData.CANVAS_HEIGHT);
-	};
+	//};
 
 	CanvasHelper.prototype.drawIdlePolygon = function(cube) {
 		return this.drawPolygon(cube, {
@@ -126,6 +123,10 @@ define('helper/canvas', [
 		ctx.stroke();
 
 		return polygon;
+	};
+
+	CanvasHelper.prototype.drawObstacle = function(cube, definition) {
+
 	};
 
 	CanvasHelper.prototype.drawPath = function(path) {

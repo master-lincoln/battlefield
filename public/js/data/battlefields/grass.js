@@ -1,8 +1,10 @@
 define('data/battlefields/grass', [
 	'gridlib/grid',
+	'gridlib/cube',
 	'enum/obstacle_types'
 ], function(
 	Grid,
+	Cube,
 	obstacleTypesEnum
 ) {
 	var HOR_HEX_COUNT = 15,
@@ -58,9 +60,9 @@ define('data/battlefields/grass', [
 		];
 
 		var obstacles = [
-			{position : {x : 2, y : -4, z : 2}},
+			{position : {x : 2, y : -4, z : 2}, type : obstacleTypesEnum.GRASS_OBSTACLE1}/*,
 			{position : {x : 1, y : -4, z : 3}},
-			{position : {x : 0, y : -2, z : 2}}
+			{position : {x : 0, y : -2, z : 2}}*/
 		];
 
 		//Blocking the start

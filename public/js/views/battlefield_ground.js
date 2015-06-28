@@ -112,10 +112,18 @@ define('view/battlefield_ground', [
 			for (var i = 0, l = obstacles.length; i < l; i++) {
 				var obstacle = obstacles[i];
 
-				if (!obstacle.isFakeBorder()) {
+				if (obstacle.isStartingPoint()) {
 					var cube = obstacle.getCube();
+					var definition = obstacle.getDefinition();
+					var obstacles_hexes = obstacle.getOccupiedTerritory();
 
-					this.canvasObstacles.drawObstaclePolygon(cube);
+					for (var j = 0; j < obstacles_hexes.length; j++) {
+						//First draw all polygons for all parts of the obstacle
+						this.canvasObstacles.drawObstaclePolygon(obstacles_hexes[j]);
+					}
+
+					//Draw obstacle image over polygons
+					this.canvasObstacles.drawObstacle(cube, definition);
 				}
 			}
 		},
