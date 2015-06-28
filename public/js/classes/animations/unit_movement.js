@@ -48,7 +48,7 @@ define('class/animations/unit_movement', [
 			this.frame_number = 0;
 		}
 
-		canvas_helper.renderImage(
+		canvas_helper.renderUnitMovement(
 			img,
 			sx,
 			0,

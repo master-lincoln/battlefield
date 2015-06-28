@@ -173,14 +173,10 @@ define('view/battlefield_ground', [
 		unit_views : [],
 
 		createUnit : function(unit) {
-			//this.canvasUnits.animateUnit(unit);
-
-
 			var unit = new UnitBehaviourAnimation(unit);
 			unit.initialize(this.animations_manager);
 
 			this.unit_views.push(unit);
-			//unit.moveTo(new ScreenCoordinate(100, 200));
 		},
 
 		getUnitAnimation : function(unit) {
