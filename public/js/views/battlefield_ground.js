@@ -68,12 +68,7 @@ define('view/battlefield_ground', [
 			var point = new ScreenCoordinate(x, y),
 				hex = this.controller.getHexByScreenCoordinate(point);
 
-			//Grid does not fill entire battlefield, so there might be space where hexes don't exist
-			if (hex) {
-				this.controller.handleMouseOver(hex);
-			}
-
-			this.updateCursor(hex);
+			this.controller.handleMouseOver(hex);
 		},
 
 		handleMouseClick : function(x, y) {
@@ -86,15 +81,8 @@ define('view/battlefield_ground', [
 			}
 		},
 
-		updateCursor : function(hex) {
-			if (!hex || this.controller.isHexBlocked(hex)) {
-				this.$body.removeClass().addClass('cursor_not_allowed');
-			} else {
-				this.$body.removeClass().addClass('cursor_move');
-			}
-
-			//this.$body.toggleClass('cursor_pointer', hex);
-			//
+		updateCursor : function(css_class) {
+			this.$body.removeClass().addClass(css_class);
 		},
 
 		createGroundCells : function() {
@@ -138,9 +126,6 @@ define('view/battlefield_ground', [
 
 		drawCurrentUnitRange : function() {
 			var hexes = this.controller.getHexes();
-			var from = this.controller.parent_controller.getActiveUnitCube();
-			var bfs = this.controller.getBFS(from);
-			var unit_speed = this.controller.parent_controller.getActiveUnitSpeed();
 
 			this.canvasUnitRange.cleanUp();
 
@@ -148,7 +133,7 @@ define('view/battlefield_ground', [
 				var hex = hexes[i];
 				var cube = hex.getCube();
 
-				if (!bfs.cost_so_far.has(cube) || bfs.cost_so_far.get(cube) > unit_speed) {
+				if (this.controller.isHexInactive(cube)) {
 					this.canvasUnitRange.drawBlockedPolygon(cube);
 				}
 			}

@@ -30,10 +30,16 @@ define('controller/battlefield', [
 			});*/
 
 			this.map = options.map;
+
 			this.setActiveUnit(this.getCollection('battlefield_units').getFirstUnit());
 
 			this.initializeView();
 			this.initializeBattlefieldGroundController();
+			this.initializeEventListeners();
+		},
+
+		initializeEventListeners : function() {
+
 		},
 
 		initializeView : function() {

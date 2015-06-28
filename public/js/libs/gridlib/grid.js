@@ -179,10 +179,10 @@ define('gridlib/grid', [
 		 * @param starting_point
 		 * @param max_movement
 		 * @param max_magnitude
-		 * @param isBlocked
+		 * @param isImpassable
 		 * @returns {{cost_so_far: (Array|*), came_from: (Array|*)}}
 		 */
-		breadthFirstSearch : function(starting_point, max_movement, max_magnitude, isBlocked) {
+		breadthFirstSearch : function(starting_point, max_movement, max_magnitude, isImpassable) {
 			var cost_so_far = d3.map();
 			var came_from = d3.map();
 			var fringes = [[starting_point]];
@@ -196,7 +196,7 @@ define('gridlib/grid', [
 					for (var dir = 0; dir < 6; dir++) {
 						var neighbor = Cube.neighbor(cube, dir);
 
-						if (!cost_so_far.has(neighbor) && !isBlocked(neighbor) && Cube.$length(neighbor) <= max_magnitude) {
+						if (!cost_so_far.has(neighbor) && !isImpassable(neighbor) && Cube.$length(neighbor) <= max_magnitude) {
 							cost_so_far.set(neighbor, k + 1);
 							came_from.set(neighbor, cube);
 							fringes[k + 1].push(neighbor);
