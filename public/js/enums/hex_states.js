@@ -3,6 +3,7 @@ define('enum/hex_states', [], function() {
 		IDLE : 'idle',
 		HOVER : 'hover',
 		BLOCKED : 'blocked',
-		OBSTACLE : 'obstacle'
+		OBSTACLE : 'obstacle',
+		EMPTY : 'empty'
 	};
 });

@@ -15,18 +15,22 @@ define('helper/canvas', [
 		ctx.lineWidth = 1;
 
 		switch(state) {
-			case hexStatesEnum.IDLE:
+			case hexStatesEnum.EMPTY:
 				fill_color = 'rgba(0,0,0,0)';
+				border_color = '#678a00';
+				break;
+			case hexStatesEnum.IDLE:
+				fill_color = 'rgba(0,0,0,0.3)';
 				break;
 			case hexStatesEnum.HOVER:
 				border_color = '#fff200';
 				fill_color = 'rgba(0,0,0,0)';
 				break;
 			case hexStatesEnum.BLOCKED:
-				fill_color = 'rgba(0,0,0,0.3)';
+				fill_color = 'rgba(0,0,0,0)';
 				break;
 			case hexStatesEnum.OBSTACLE:
-				fill_color = 'rgba(0,0,0,0.3)';
+				fill_color = 'rgba(0,0,0,0)';
 				break;
 		}
 
@@ -55,6 +59,12 @@ define('helper/canvas', [
 
 	CanvasHelper.prototype.cleanUp = function() {
 		this.ctx.clearRect(0, 0, BattlefieldData.CANVAS_WIDTH, BattlefieldData.CANVAS_HEIGHT);
+	};
+
+	CanvasHelper.prototype.drawEmptyPolygon = function(cube) {
+		return this.drawPolygon(cube, {
+			state : hexStatesEnum.EMPTY
+		});
 	};
 
 	CanvasHelper.prototype.drawIdlePolygon = function(cube) {
@@ -129,8 +139,8 @@ define('helper/canvas', [
 				img,
 				0, 0,
 				img_width, img_height,
-				position.x + BattlefieldData.GRID_OFFSET_X - definition.offset_width,
-				position.y + BattlefieldData.GRID_OFFSET_Y - definition.offset_height - img_height / 2,
+				position.x + BattlefieldData.GRID_OFFSET_X + definition.offset_width,
+				position.y + BattlefieldData.GRID_OFFSET_Y + definition.offset_height - img_height / 2,
 				img_width, img_height
 			);
 		}.bind(this);
@@ -141,7 +151,6 @@ define('helper/canvas', [
 		var x = BattlefieldData.GRID_OFFSET_X;
 		var y = BattlefieldData.GRID_OFFSET_Y;
 
-		//
 		if (path.length === 0) {
 			return;
 		}

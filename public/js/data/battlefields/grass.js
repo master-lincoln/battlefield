@@ -60,9 +60,9 @@ define('data/battlefields/grass', [
 		];
 
 		var obstacles = [
-			{position : {x : 2, y : -4, z : 2}, type : obstacleTypesEnum.GRASS_OBSTACLE1}/*,
-			{position : {x : 1, y : -4, z : 3}},
-			{position : {x : 0, y : -2, z : 2}}*/
+			{position : {x : 2, y : -4, z : 2}, type : obstacleTypesEnum.GRASS_OBSTACLE1},
+			{position : {x : 4, y : -11, z : 7}, type : obstacleTypesEnum.GRASS_OBSTACLE2},
+			{position : {x : 7, y : -16, z : 9}, type : obstacleTypesEnum.GRASS_OBSTACLE2}
 		];
 
 		//Blocking the start

@@ -91,7 +91,7 @@ define('view/battlefield_ground', [
 
 			for(var i = 0, l = cubes.length; i < l; i++) {
 				var cube = cubes[i];
-				var polygon = this.canvasGrid.drawIdlePolygon(cube);
+				var polygon = this.canvasGrid.drawEmptyPolygon(cube);
 
 				plainHexes.push({
 					polygon : new Polygon(polygon),
@@ -141,8 +141,8 @@ define('view/battlefield_ground', [
 				var hex = hexes[i];
 				var cube = hex.getCube();
 
-				if (this.controller.isHexInactive(cube)) {
-					this.canvasUnitRange.drawBlockedPolygon(cube);
+				if (this.controller.isHexActive(cube)) {
+					this.canvasUnitRange.drawIdlePolygon(cube);
 				}
 			}
 

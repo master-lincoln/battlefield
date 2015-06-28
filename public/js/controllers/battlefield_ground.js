@@ -91,6 +91,11 @@ define('controller/battlefield_ground', [
 			return is_obstacle /*|| has_unit_standing*/;
 		},
 
+		/**
+		 *
+		 * @param {Cube|Hex}arg_cube
+		 * @returns {boolean}
+		 */
 		isHexInactive : function(arg_cube) {
 			var cube = arg_cube;
 
@@ -103,6 +108,10 @@ define('controller/battlefield_ground', [
 			var unit_speed = this.parent_controller.getActiveUnitSpeed();
 
 			return !bfs.cost_so_far.has(cube) || bfs.cost_so_far.get(cube) > unit_speed;
+		},
+
+		isHexActive : function(arg_cube) {
+			return !this.isHexInactive(arg_cube);
 		},
 
 		getHexes : function() {
