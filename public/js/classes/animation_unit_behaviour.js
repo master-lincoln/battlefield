@@ -2,14 +2,12 @@ define('class/animation_unit_behaviour', [
 	'enum/battlefield_unit_animation_types',
 	'class/animations/unit_standing',
 	'class/animations/unit_action',
-	'class/animations/unit_movement',
-	'class/animations/unit_flip'
+	'class/animations/unit_movement'
 ], function(
 	battlefieldUnitAnimationTypesEnum,
 	UnitStandingAnimation,
 	UnitActionAnimation,
-	UnitMovementAnimation,
-	UnitFlipAnimation
+	UnitMovementAnimation
 ) {
 
 	function UnitBehaviourAnimation(unit) {

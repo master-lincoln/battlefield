@@ -8,31 +8,32 @@ define('helper/canvas', [
 	ScreenCoordinate
 ) {
 
-	var setHexStyles = function(ctx, state) {
+	var setHexStyles = function(ctx, state, cube) {
+		var border_color = '#678a00',
+			fill_color = 'rgba(0,0,0,0)';
+
 		ctx.lineWidth = 1;
 
 		switch(state) {
 			case hexStatesEnum.IDLE:
-				ctx.strokeStyle = '#678a00';
-				ctx.fillStyle = 'rgba(0,0,0,0)';
-				ctx.fill();
+				fill_color = 'rgba(0,0,0,0)';
 				break;
 			case hexStatesEnum.HOVER:
-				ctx.strokeStyle = '#fff200';
-				ctx.fillStyle = 'rgba(0,0,0,0)';
-				ctx.fill();
+				border_color = '#fff200';
+				fill_color = 'rgba(0,0,0,0)';
 				break;
 			case hexStatesEnum.BLOCKED:
-				ctx.strokeStyle = '#678a00';
-				ctx.fillStyle = 'rgba(0,0,0,0.3)';
-				ctx.fill();
+				fill_color = 'rgba(0,0,0,0.3)';
 				break;
 			case hexStatesEnum.OBSTACLE:
-				ctx.strokeStyle = 'red';
-				ctx.fillStyle = 'rgba(255,0,0,0.3)';
-				ctx.fill();
+				fill_color = 'rgba(0,0,0,0.3)';
 				break;
 		}
+
+		ctx.fillStyle = fill_color;
+		ctx.fill();
+		ctx.strokeStyle = border_color;
+		ctx.stroke();
 	};
 
 	function CanvasHelper(canvas, grid) {
@@ -55,15 +56,6 @@ define('helper/canvas', [
 	CanvasHelper.prototype.cleanUp = function() {
 		this.ctx.clearRect(0, 0, BattlefieldData.CANVAS_WIDTH, BattlefieldData.CANVAS_HEIGHT);
 	};
-
-	CanvasHelper.prototype.flipLeft = function() {
-		this.ctx.translate(BattlefieldData.CANVAS_WIDTH, 0);
-		this.ctx.scale(-1, 1);
-	};
-
-	//CanvasHelper.prototype.flipRight = function() {
-		//this.ctx.clearRect(0, 0, BattlefieldData.CANVAS_WIDTH, BattlefieldData.CANVAS_HEIGHT);
-	//};
 
 	CanvasHelper.prototype.drawIdlePolygon = function(cube) {
 		return this.drawPolygon(cube, {
@@ -116,17 +108,32 @@ define('helper/canvas', [
 		}
 
 		ctx.lineTo(x + hexagon_points[0].x, y + hexagon_points[0].y);
-
-		setHexStyles(ctx, settings.state);
-
 		ctx.closePath();
-		ctx.stroke();
+		setHexStyles(ctx, settings.state, cube);
 
 		return polygon;
 	};
 
 	CanvasHelper.prototype.drawObstacle = function(cube, definition) {
+		var img_width = definition.width,
+			img_height = definition.height;
 
+		var img = document.createElement('img');
+			img.src = definition.url;
+			img.height = img_height;
+
+		img.onload = function() {
+			var position = this.grid.hexToCenter(cube);
+
+			this.renderImage(
+				img,
+				0, 0,
+				img_width, img_height,
+				position.x + BattlefieldData.GRID_OFFSET_X - definition.offset_width,
+				position.y + BattlefieldData.GRID_OFFSET_Y - definition.offset_height - img_height / 2,
+				img_width, img_height
+			);
+		}.bind(this);
 	};
 
 	CanvasHelper.prototype.drawPath = function(path) {
@@ -176,8 +183,8 @@ define('helper/canvas', [
 		}
 	};
 
-	CanvasHelper.prototype.renderImage = function(img, sx, sy, s_width, s_height, dx, dy, d_width, d_height, orientation) {
-		var $virtual_canvas = $('#canvas_unit_movement');
+	CanvasHelper.prototype.renderUnitMovement = function(img, sx, sy, s_width, s_height, dx, dy, d_width, d_height, orientation) {
+		var $virtual_canvas = $('#canvas_unit_movement');//@todo I don't like to have it here, do something with it
 		$virtual_canvas.attr('width', s_width);
 		$virtual_canvas.attr('height', s_height);
 		var virtual_canvas = $virtual_canvas[0];
@@ -185,12 +192,13 @@ define('helper/canvas', [
 
 		var flip_offset = 0;
 
-
 		if (orientation) {
 			virtual_ctx.save();
+			//flip hor
 			virtual_ctx.translate(s_width, 0);
 			virtual_ctx.scale(-1, 1);
-			flip_offset = -45;
+			//flip hor end
+			flip_offset = -45;//@todo figure out how to deal with it later when will be more units
 		}
 
 		virtual_ctx.drawImage(img, sx, sy, s_width, s_height, 0, 0, d_width, d_height);
@@ -199,22 +207,11 @@ define('helper/canvas', [
 			virtual_ctx.restore();
 		}
 
-		/*if (orientation) {
-			this.ctx.save();
-
-			this.flipLeft();
-
-		}*/
-
 		this.ctx.drawImage(virtual_canvas, 0, 0, s_width, s_height, dx + flip_offset, dy, d_width, d_height);
-		//this.ctx.drawImage(img, sx, sy, s_width, s_height, dx, dy, d_width, d_height);
+	};
 
-		/*if (orientation) {
-			this.flipLeft();
-			this.ctx.translate(-400, 0);
-
-			this.ctx.restore();
-		}*/
+	CanvasHelper.prototype.renderImage = function(img, sx, sy, s_width, s_height, dx, dy, d_width, d_height) {
+		this.ctx.drawImage(img, sx, sy, s_width, s_height, dx, dy, d_width, d_height);
 	};
 
 	return CanvasHelper;
