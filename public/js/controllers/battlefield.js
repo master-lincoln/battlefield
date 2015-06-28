@@ -14,8 +14,8 @@ define('controller/battlefield', [
 	return BaseController.extend({
 		SCALE : 51, //scale should be the distance from corner to corner of the polygon
 		ORIENTATION : true, //orientation should be 0 (flat bottom hex) or 1 (flat side hex)
-		HEX_LABELS_ENABLED : true,
-		MOVEMENT_ROUTE_ENABLED : true,
+		HEX_LABELS_ENABLED : false,
+		MOVEMENT_ROUTE_ENABLED : false,
 
 		cm_context : {
 			main : 'battlefield',
