@@ -9,6 +9,8 @@ define('data/battlefields/obstacles/all', [
 		url : 'images/battlefield/obstacles/grass_obstacle1.png',
 		width : 275,
 		height : 53,
+		offset_width : 50,
+		offset_height : 0,
 		hexes : [
 			{x : 0, y : 0, z : 0},
 			{x : 1, y : -1, z : 0},
