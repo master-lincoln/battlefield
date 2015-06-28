@@ -114,8 +114,9 @@ define('controller/battlefield_ground', [
 			var path = this.getPath(from, to);
 			var active_unit = this.parent_controller.getActiveUnit();
 
-			this.parent_controller.moveActiveUnitTo(hex);
 			this.view.moveUnitOnPolyline(active_unit, path, function() {
+				console.log(hex);
+				this.parent_controller.moveActiveUnitTo(hex);
 				this.view.drawCurrentUnitRange();
 			}.bind(this));
 		},

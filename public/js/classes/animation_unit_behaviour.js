@@ -42,7 +42,7 @@ define('class/animation_unit_behaviour', [
 			if (animation.isFinished()) {
 				this.animations.splice(l, 1);
 
-				if (this.animations.length === 0) {
+				if (animation.animation_type !== battlefieldUnitAnimationTypesEnum.MOVING || this.animations.length === 0) {
 					animation.destroy();
 				}
 			}

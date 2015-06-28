@@ -41,7 +41,7 @@ define('class/animations/unit_base', [
 	};
 
 	UnitAnimationBase.prototype.destroy = function() {
-		if (typeof this.callback === 'funciton') {
+		if (typeof this.callback === 'function') {
 			this.callback();
 		}
 	};
