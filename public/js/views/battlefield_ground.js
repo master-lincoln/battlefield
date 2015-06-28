@@ -5,7 +5,8 @@ define('view/battlefield_ground', [
 	'gridlib/screen_coordinate',
 	'helper/canvas',
 	'manager/animation',
-	'class/animation_unit_behaviour'
+	'class/animation_unit_behaviour',
+	'jquery'
 ], function(
 	BaseView,
 	Cube,
@@ -13,14 +14,19 @@ define('view/battlefield_ground', [
 	ScreenCoordinate,
 	CanvasHelper,
 	AnimationsManager,
-	UnitBehaviourAnimation
+	UnitBehaviourAnimation,
+	$
 ) {
 	return BaseView.extend({
 		animations_manager : null,
 		grid : null,
 
+		$body : null,
+
 		initialize : function(options) {
 			BaseView.prototype.initialize.apply(this, arguments);
+
+			this.$body = $('body');
 
 			this.initializeLayers();
 
@@ -66,6 +72,8 @@ define('view/battlefield_ground', [
 			if (hex) {
 				this.controller.handleMouseOver(hex);
 			}
+
+			this.updateCursor(hex);
 		},
 
 		handleMouseClick : function(x, y) {
@@ -76,6 +84,17 @@ define('view/battlefield_ground', [
 			if (hex) {
 				this.controller.handleMouseClick(hex);
 			}
+		},
+
+		updateCursor : function(hex) {
+			if (!hex || this.controller.isHexBlocked(hex)) {
+				this.$body.removeClass().addClass('cursor_not_allowed');
+			} else {
+				this.$body.removeClass().addClass('cursor_move');
+			}
+
+			//this.$body.toggleClass('cursor_pointer', hex);
+			//
 		},
 
 		createGroundCells : function() {

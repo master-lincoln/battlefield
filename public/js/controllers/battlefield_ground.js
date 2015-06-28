@@ -59,12 +59,20 @@ define('controller/battlefield_ground', [
 			return this.getCollection('hexes').getHexByScreenCoordinate(point);
 		},
 
-		isHexBlocked : function(cube) {
-			var is_obstacle = this.getCollection('obstacles').isObstacle(cube);
+		isObstacle : function(cube) {
+			return this.getCollection('obstacles').isObstacle(cube);
+		},
+
+		isCubeBlocked : function(cube) {
+			var is_obstacle = this.isObstacle(cube);
 
 			//Later we will check here whether unit is standing on this hex as well
 
 			return is_obstacle /*|| has_unit_standing*/;
+		},
+
+		isHexBlocked : function(hex) {
+			return this.isCubeBlocked(hex.getCube());
 		},
 
 		getHexes : function() {
@@ -92,7 +100,7 @@ define('controller/battlefield_ground', [
 				from,
 				this.parent_controller.getActiveUnitSpeed(),
 				this.parent_controller.getMaxDistance(),
-				this.isHexBlocked.bind(this)
+				this.isCubeBlocked.bind(this)
 			);
 		},
 
@@ -115,16 +123,13 @@ define('controller/battlefield_ground', [
 			var active_unit = this.parent_controller.getActiveUnit();
 
 			this.view.moveUnitOnPolyline(active_unit, path, function() {
-				console.log(hex);
 				this.parent_controller.moveActiveUnitTo(hex);
 				this.view.drawCurrentUnitRange();
 			}.bind(this));
 		},
 
 		handleMouseOver : function(hex) {
-			var cube = hex.getCube();
-
-			if (!this.isHexBlocked(cube)) {
+			if (!this.isHexBlocked(hex)) {
 				this.view.canvasGridHover.cleanUp();
 				this.view.canvasGridHover.drawHoverPolygon(hex.getCube());
 			}
