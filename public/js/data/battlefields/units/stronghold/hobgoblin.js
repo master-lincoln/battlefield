@@ -1,4 +1,4 @@
-define('unit/stronghold/hobgoblin', [
+define('data/battlefields/units/stronghold/hobgoblin', [
 	'enum/battlefield_unit_animation_types'
 ], function(
 	battlefieldUnitAnimationTypesEnum

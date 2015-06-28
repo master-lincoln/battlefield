@@ -1,5 +1,5 @@
 define('manager/animation', [
-	'map/default'
+	'data/battlefields/grass'
 ], function(
 	BattlefieldData
 ) {

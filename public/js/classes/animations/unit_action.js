@@ -1,5 +1,5 @@
 define('class/animations/unit_action', [
-	'map/default',
+	'data/battlefields/grass',
 	'class/animations/unit_base'
 ], function(
 	BattlefieldData,

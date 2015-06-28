@@ -1,7 +1,7 @@
 define('model/battlefield_unit', [
 	'backbone',
 	'gridlib/cube',
-	'data/units/all'
+	'data/battlefields/units/all'
 ], function(
 	Backbone,
 	Cube,

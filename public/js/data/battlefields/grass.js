@@ -1,4 +1,4 @@
-define('map/default', [
+define('data/battlefields/grass', [
 	'gridlib/grid',
 	'enum/obstacle_types'
 ], function(

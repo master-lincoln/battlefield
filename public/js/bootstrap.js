@@ -15,10 +15,7 @@ requirejs.config({
 		collection : 'collections',
 		enum : 'enums',
 		helper : 'helpers',
-		'class' : 'classes',
-
-		map : 'data/maps',
-		unit : 'data/units'
+		'class' : 'classes'
 	},
 	'shim': {
 		'underscore': {
@@ -37,14 +34,14 @@ requirejs([
 	'collection/hexes',
 	'collection/battlefield_units',
 	'model/battlefield',
-	'map/default'
+	'data/battlefields/grass'
 ], function(
 	BattlefieldController,
 	ObstaclesCollection,
 	HexesCollection,
 	BattlefieldUnitsCollection,
 	Battlefield,
-	map
+	BattlefieldData
 ) {
 
 	function getBattlefieldUnits() {
@@ -58,7 +55,7 @@ requirejs([
 		];
 	}
 
-	var obstacles = new ObstaclesCollection(map.obstacles);
+	var obstacles = new ObstaclesCollection(BattlefieldData.obstacles);
 	var hexes = new HexesCollection();
 	var battlefield_units = new BattlefieldUnitsCollection(getBattlefieldUnits());
 	var battlefield = new Battlefield();
@@ -74,6 +71,6 @@ requirejs([
 		models : {
 			battlefield : battlefield
 		},
-		map : map
+		map : BattlefieldData
 	});
 });

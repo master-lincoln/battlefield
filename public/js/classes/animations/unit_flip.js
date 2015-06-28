@@ -1,5 +1,5 @@
 define('class/animations/unit_flip', [
-	'map/default',
+	'data/battlefields/grass',
 	'class/animations/unit_base',
 	'enum/battlefield_unit_animation_types'
 ], function(

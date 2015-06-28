@@ -1,5 +1,5 @@
 define('helper/canvas', [
-	'map/default',
+	'data/battlefields/grass',
 	'enum/hex_states',
 	'gridlib/screen_coordinate'
 ], function(
