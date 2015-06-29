@@ -1,0 +1,304 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: "Source Sans Pro", "Open Sans", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "Tahoma", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.cursor_attack_e {
+  cursor: url('../../public/images/cursors/attack_e.png'), default;
+}
+.cursor_attack_n {
+  cursor: url('../../public/images/cursors/attack_n.png'), default;
+}
+.cursor_attack_ne {
+  cursor: url('../../public/images/cursors/attack_ne.png'), default;
+}
+.cursor_attack_nw {
+  cursor: url('../../public/images/cursors/attack_nw.png'), default;
+}
+.cursor_attack_s {
+  cursor: url('../../public/images/cursors/attack_s.png'), default;
+}
+.cursor_attack_se {
+  cursor: url('../../public/images/cursors/attack_se.png'), default;
+}
+.cursor_attack_sw {
+  cursor: url('../../public/images/cursors/attack_sw.png'), default;
+}
+.cursor_attack_w {
+  cursor: url('../../public/images/cursors/attack_w.png'), default;
+}
+.cursor_catapult_attack {
+  cursor: url('../../public/images/cursors/catapult_attack.png'), default;
+}
+.cursor_cure {
+  cursor: url('../../public/images/cursors/cure.png'), default;
+}
+.cursor_dimension_door {
+  cursor: url('../../public/images/cursors/dimension_door.png'), default;
+}
+.cursor_fly_to {
+  cursor: url('../../public/images/cursors/fly_to.png'), default;
+}
+.cursor_move {
+  cursor: url('../../public/images/cursors/move.png'), default;
+}
+.cursor_not_allowed {
+  cursor: url('../../public/images/cursors/not_allowed.png'), default;
+}
+.cursor_pointer {
+  cursor: url('../../public/images/cursors/pointer.png'), default;
+}
+.cursor_question_mark {
+  cursor: url('../../public/images/cursors/question_mark.png'), default;
+}
+.cursor_sacrifice {
+  cursor: url('../../public/images/cursors/sacrifice.png'), default;
+}
+.cursor_select_hero {
+  cursor: url('../../public/images/cursors/select_hero.png'), default;
+}
+.cursor_shoot_penalty {
+  cursor: url('../../public/images/cursors/shoot_penalty.png'), default;
+}
+.cursor_shoot {
+  cursor: url('../../public/images/cursors/shoot.png'), default;
+}
+.battlefield_button {
+  background-image: url("../images/battlefield/bottom_bar/buttons/sprite.jpg");
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  width: 48px;
+  height: 36px;
+  display: inline-block;
+  position: relative;
+  cursor: url('../../public/images/cursors/pointer.png'), default;
+}
+.battlefield_button.autocombat {
+  background-position: 0 -72px;
+}
+.battlefield_button.autocombat.hover,
+.battlefield_button.autocombat:hover {
+  background-position: 0 -36px;
+}
+.battlefield_button.autocombat.pressed,
+.battlefield_button.autocombat:active {
+  background-position: 0 -108px;
+}
+.battlefield_button.autocombat.disabled {
+  background-position: 0 0;
+}
+.battlefield_button.defend {
+  background-position: -48px -72px;
+}
+.battlefield_button.defend.hover,
+.battlefield_button.defend:hover {
+  background-position: -48px -36px;
+}
+.battlefield_button.defend.pressed,
+.battlefield_button.defend:active {
+  background-position: -48px -108px;
+}
+.battlefield_button.defend.disabled {
+  background-position: -48px 0;
+}
+.battlefield_button.retreat {
+  background-position: -96px -72px;
+}
+.battlefield_button.retreat.hover,
+.battlefield_button.retreat:hover {
+  background-position: -96px -36px;
+}
+.battlefield_button.retreat.pressed,
+.battlefield_button.retreat:active {
+  background-position: -96px -108px;
+}
+.battlefield_button.retreat.disabled {
+  background-position: -96px 0;
+}
+.battlefield_button.settings {
+  background-position: -144px -72px;
+}
+.battlefield_button.settings.hover,
+.battlefield_button.settings:hover {
+  background-position: -144px -36px;
+}
+.battlefield_button.settings.pressed,
+.battlefield_button.settings:active {
+  background-position: -144px -108px;
+}
+.battlefield_button.settings.disabled {
+  background-position: -144px 0;
+}
+.battlefield_button.spellbook {
+  background-position: -192px -72px;
+}
+.battlefield_button.spellbook.hover,
+.battlefield_button.spellbook:hover {
+  background-position: -192px -36px;
+}
+.battlefield_button.spellbook.pressed,
+.battlefield_button.spellbook:active {
+  background-position: -192px -108px;
+}
+.battlefield_button.spellbook.disabled {
+  background-position: -192px 0;
+}
+.battlefield_button.surrender {
+  background-position: -240px -72px;
+}
+.battlefield_button.surrender.hover,
+.battlefield_button.surrender:hover {
+  background-position: -240px -36px;
+}
+.battlefield_button.surrender.pressed,
+.battlefield_button.surrender:active {
+  background-position: -240px -108px;
+}
+.battlefield_button.surrender.disabled {
+  background-position: -240px 0;
+}
+.battlefield_button.wait {
+  background-position: -288px -72px;
+}
+.battlefield_button.wait.hover,
+.battlefield_button.wait:hover {
+  background-position: -288px -36px;
+}
+.battlefield_button.wait.pressed,
+.battlefield_button.wait:active {
+  background-position: -288px -108px;
+}
+.battlefield_button.wait.disabled {
+  background-position: -288px 0;
+}
+.battlefield {
+  width: 800px;
+  height: 600px;
+  position: relative;
+  margin: 0 auto;
+}
+.battlefield .terrain {
+  position: relative;
+}
+.battlefield .terrain .layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.battlefield .terrain .layer.layer-grid {
+  z-index: 1;
+}
+.battlefield .terrain .layer.layer-grid-range {
+  z-index: 2;
+}
+.battlefield .terrain .layer.layer-grid-route {
+  z-index: 3;
+}
+.battlefield .terrain .layer.layer-grid-obstacles {
+  z-index: 4;
+}
+.battlefield .terrain .layer.layer-grid-hover {
+  z-index: 5;
+}
+.battlefield .terrain .layer.layer-units {
+  z-index: 6;
+}
+.battlefield .bar {
+  width: 800px;
+  height: 44px;
+  background: url("../images/battlefield/bottom_bar/background.jpg") no-repeat 0 0;
+  position: relative;
+}
+.battlefield .bar .battlefield_button {
+  position: absolute;
+  top: 5px;
+}
+.battlefield .bar .battlefield_button.settings {
+  left: 3px;
+}
+.battlefield .bar .battlefield_button.surrender {
+  left: 54px;
+}
+.battlefield .bar .battlefield_button.retreat {
+  left: 105px;
+}
+.battlefield .bar .battlefield_button.autocombat {
+  left: 156px;
+}
+.battlefield .bar .battlefield_button.spellbook {
+  left: 645px;
+}
+.battlefield .bar .battlefield_button.wait {
+  left: 696px;
+}
+.battlefield .bar .battlefield_button.defend {
+  left: 747px;
+}
+.battlefield .unit {
+  width: 50px;
+  height: 50px;
+  fill: red;
+}
+.battlefield .tile polygon {
+  pointer-events: visiblePainted;
+  fill: rgba(0, 0, 0, 0.4);
+  stroke: #678a00;
+  stroke-width: 1.3;
+}
+.battlefield .tile text {
+  fill: white;
+  font-size: 8px;
+  text-anchor: middle;
+}
+.battlefield .tile.inactive polygon {
+  fill: transparent;
+}
+.battlefield .tile.inactive text {
+  fill: #babaab;
+}
+.battlefield .tile.goal polygon {
+  fill: rgba(0, 0, 0, 0.7);
+}
+.battlefield .tile.goal.inactive polygon {
+  fill: rgba(0, 0, 0, 0.4);
+}
+.battlefield .tile.start polygon {
+  fill: #ffff00;
+}
+.battlefield .tile.start.selected polygon {
+  fill: #f5192b;
+}
+.battlefield .tile.blocked polygon {
+  fill: #c2a3a3;
+}
+.battlefield .path {
+  fill: none;
+  stroke: #c2c2a3;
+  stroke-width: 20px;
+  stroke-opacity: 0.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.terrain {
+  width: 800px;
+  height: 556px;
+}
+.terrain.rough {
+  background: url("../images/battlefield/backgrounds/rough.png") no-repeat 0 0;
+}
+.terrain.grass {
+  background: url("../images/battlefield/backgrounds/grass.png") no-repeat 0 0;
+}
+/*.flipH {
+	-moz-transform: scaleX(-1);
+	-o-transform: scaleX(-1);
+	-webkit-transform: scaleX(-1);
+	transform: scaleX(-1);
+	filter: FlipH;
+	-ms-filter: "FlipH";
+}*/
