@@ -55,12 +55,12 @@ define('view/battlefield_ground', [
 		},
 
 		initializeUIListeners : function() {
-			this.$el.on('mousemove', function(e) {
-				this.handleMouseOver(e.offsetX, e.offsetY);
+			this.el.addEventListener('mousemove', function(e) {
+				this.handleMouseOver(e.layerX, e.layerY);
 			}.bind(this));
 
-			this.$el.on('click', function(e) {
-				this.handleMouseClick(e.offsetX, e.offsetY);
+			this.el.addEventListener('click', function(e) {
+				this.handleMouseClick(e.layerX, e.layerY);
 			}.bind(this));
 		},
 

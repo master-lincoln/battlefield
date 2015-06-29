@@ -17,7 +17,7 @@ define('manager/animation', [
 		var canvas_helper = this.canvas_helper;
 
 		drawing_frame = setInterval(function() {
-			window.requestAnimationFrame(function() {
+			window.requestAnimFrame(function() {
 				canvas_helper.cleanUp();
 
 				for (var i = 0; i < animations.length; i++) {

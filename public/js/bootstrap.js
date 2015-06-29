@@ -34,14 +34,16 @@ requirejs([
 	'collection/hexes',
 	'collection/battlefield_units',
 	'model/battlefield',
-	'data/battlefields/grass'
+	'data/battlefields/grass',
+	'libs/polyfill/request_animation_frame'
 ], function(
 	BattlefieldController,
 	ObstaclesCollection,
 	HexesCollection,
 	BattlefieldUnitsCollection,
 	Battlefield,
-	BattlefieldData
+	BattlefieldData,
+	request_anim_frame
 ) {
 
 	function getBattlefieldUnits() {
